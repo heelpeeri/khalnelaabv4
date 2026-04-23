@@ -266,15 +266,13 @@ export default function MatchPage() {
   const currentGameBoard =
     activeGame === "word" ? (
       <WordGame
-        onRoundEnd={endRound}
-        roundKey={roundSeed}
-        side1Name={side1}
-        side2Name={side2}
-        side1Score={side1Score}
-        side2Score={side2Score}
-        currentRound={currentRound}
-        totalRounds={rounds}
-      />
+  onRoundEnd={endRound}
+  roundKey={roundSeed}
+  side1Name={side1}
+  side2Name={side2}
+  side1Score={side1Score}
+  side2Score={side2Score}
+/>
     ) : activeGame === "draw" ? (
       <ProverbGame
         side1Name={side1}
