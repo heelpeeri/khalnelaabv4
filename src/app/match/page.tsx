@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Logo } from "@/components/Logo";
 import SetupGame from "@/components/SetupGame";
 import WordGame from "@/components/match/WordGame";
@@ -11,7 +11,6 @@ import WheelGame from "@/components/match/WheelGame";
 import QuizGame from "@/components/match/QuizGame";
 
 import type { GameType, SessionMode, WinnerType } from "@/types/game";
-
 
 const GAME_OPTIONS: {
   id: GameType;
@@ -42,7 +41,7 @@ function FinalWinnerOverlay({
 
   return (
     <div className="arcade-backdrop fixed inset-0 z-[60] flex items-center justify-center px-4">
-      <div className="arcade-card w-full max-w-2xl p-8 text-center md:p-10">
+      <div className="arcade-card w-full max-w-2xl p-8 text-center md:p-10 animate-fade-in-up">
         <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
           FINAL RESULT
         </p>
@@ -72,11 +71,13 @@ function CountdownOverlay({ count }: { count: number | null }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-sm">
-      <div className="rounded-[36px] border border-white/20 bg-[#130019]/90 px-16 py-12 text-center shadow-2xl">
+      <div className="rounded-[36px] border border-white/20 bg-[#130019]/90 px-16 py-12 text-center shadow-2xl animate-fade-in-up">
         <p className="text-sm font-black tracking-[0.18em] text-cyan-300/80">
           GET READY
         </p>
-        <p className="mt-4 text-8xl font-black text-white">{count}</p>
+        <p className="mt-4 text-8xl font-black text-white">
+          {count === 0 ? "GO!" : count}
+        </p>
       </div>
     </div>
   );
@@ -112,6 +113,9 @@ export default function MatchPage() {
   const [showFinalWinnerOverlay, setShowFinalWinnerOverlay] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
 
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const masterGainRef = useRef<GainNode | null>(null);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const modeParam = params.get("mode");
@@ -119,10 +123,9 @@ export default function MatchPage() {
 
     if (modeParam === "session") {
       setSessionMode("session");
-      return;
+    } else {
+      setSessionMode("quick");
     }
-
-    setSessionMode("quick");
 
     if (
       game === "word" ||
@@ -143,21 +146,94 @@ export default function MatchPage() {
   }, [gameEnded]);
 
   useEffect(() => {
+    return () => {
+      if (audioContextRef.current && audioContextRef.current.state !== "closed") {
+        audioContextRef.current.close().catch(() => {});
+      }
+    };
+  }, []);
+
+  function ensureAudio() {
+    if (typeof window === "undefined") return;
+    if (audioContextRef.current) return;
+
+    const AudioCtx =
+      window.AudioContext ||
+      (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+
+    if (!AudioCtx) return;
+
+    const ctx = new AudioCtx();
+    const gain = ctx.createGain();
+    gain.gain.value = 0.035;
+    gain.connect(ctx.destination);
+
+    audioContextRef.current = ctx;
+    masterGainRef.current = gain;
+  }
+
+  async function unlockAudio() {
+    ensureAudio();
+    if (!audioContextRef.current) return;
+
+    if (audioContextRef.current.state === "suspended") {
+      try {
+        await audioContextRef.current.resume();
+      } catch {}
+    }
+  }
+
+  function playBeep(freq = 700, duration = 0.12, type: OscillatorType = "square") {
+    const ctx = audioContextRef.current;
+    const master = masterGainRef.current;
+    if (!ctx || !master) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+    osc.connect(gain);
+    gain.connect(master);
+
+    osc.start(now);
+    osc.stop(now + duration + 0.02);
+  }
+
+  function playCountdownTick(value: number) {
+    if (value > 0) {
+      playBeep(740, 0.08, "square");
+      return;
+    }
+
+    playBeep(520, 0.08, "triangle");
+    setTimeout(() => playBeep(900, 0.14, "triangle"), 80);
+  }
+
+  useEffect(() => {
     if (countdown === null) return;
+
+    playCountdownTick(countdown);
 
     if (countdown === 0) {
       const timeout = setTimeout(() => {
         setCountdown(null);
         setRoundReady(false);
         setRoundSeed((s) => s + 1);
-      }, 150);
+      }, 350);
 
       return () => clearTimeout(timeout);
     }
 
     const timeout = setTimeout(() => {
       setCountdown((prev) => (prev === null ? null : prev - 1));
-    }, 1000);
+    }, 900);
 
     return () => clearTimeout(timeout);
   }, [countdown]);
@@ -177,8 +253,8 @@ export default function MatchPage() {
   const finalWinnerName = isDraw
     ? "الفريقان"
     : side1Score > side2Score
-    ? side1
-    : side2;
+    ? side1 || "فريق 1"
+    : side2 || "فريق 2";
 
   function toggleSessionGame(gameId: GameType) {
     setSelectedSessionGames((prev) => {
@@ -191,11 +267,16 @@ export default function MatchPage() {
   }
 
   function startGame() {
-    if (!side1.trim() || !side2.trim()) return;
     if (sessionMode === "session" && selectedSessionGames.length === 0) return;
+
+    const finalSide1 = side1.trim() || "فريق 1";
+    const finalSide2 = side2.trim() || "فريق 2";
 
     const nextRounds =
       sessionMode === "session" ? selectedSessionGames.length : rounds;
+
+    setSide1(finalSide1);
+    setSide2(finalSide2);
 
     setStarted(true);
     setCurrentRound(1);
@@ -211,8 +292,9 @@ export default function MatchPage() {
     setCountdown(null);
   }
 
-  function beginRound() {
+  async function beginRound() {
     if (countdown !== null) return;
+    await unlockAudio();
     setCountdown(3);
   }
 
@@ -239,6 +321,7 @@ export default function MatchPage() {
 
     setCurrentRound((r) => r + 1);
     setRoundReady(true);
+    setCountdown(null);
   }
 
   function resetGame() {
@@ -260,15 +343,15 @@ export default function MatchPage() {
   const currentGameBoard =
     activeGame === "word" ? (
       <WordGame
-  onRoundEnd={endRound}
-  roundKey={roundSeed}
-  side1Name={side1}
-  side2Name={side2}
-  side1Score={side1Score}
-  side2Score={side2Score}
-  currentRound={currentRound}
-  totalRounds={rounds}
-/>
+        onRoundEnd={endRound}
+        roundKey={roundSeed}
+        side1Name={side1}
+        side2Name={side2}
+        side1Score={side1Score}
+        side2Score={side2Score}
+        currentRound={currentRound}
+        totalRounds={rounds}
+      />
     ) : activeGame === "draw" ? (
       <ProverbGame
         side1Name={side1}
@@ -326,43 +409,63 @@ export default function MatchPage() {
         </div>
 
         {!started ? (
-          <SetupGame
-            sessionMode={sessionMode}
-            side1={side1}
-            side2={side2}
-            rounds={rounds}
-            selectedGame={selectedGame}
-            selectedSessionGames={selectedSessionGames}
-            onSide1Change={setSide1}
-            onSide2Change={setSide2}
-            onRoundsChange={setRounds}
-            onSelectedGameChange={setSelectedGame}
-            onToggleSessionGame={toggleSessionGame}
-            onStart={startGame}
-          />
+          <div className="animate-fade-in-up">
+            <SetupGame
+              sessionMode={sessionMode}
+              side1={side1}
+              side2={side2}
+              rounds={rounds}
+              selectedGame={selectedGame}
+              selectedSessionGames={selectedSessionGames}
+              onSide1Change={setSide1}
+              onSide2Change={setSide2}
+              onRoundsChange={setRounds}
+              onSelectedGameChange={setSelectedGame}
+              onToggleSessionGame={toggleSessionGame}
+              onStart={startGame}
+            />
+          </div>
         ) : !gameEnded ? (
           <div className="mx-auto max-w-6xl">
             {roundReady ? (
-              <div className="rounded-[32px] border border-white/10 bg-black/20 p-8 text-center">
-                <h2 className="text-5xl font-black">الجولة {currentRound}</h2>
+              <div className="animate-fade-in-up rounded-[32px] border border-white/10 bg-black/20 p-8 text-center shadow-[0_0_24px_rgba(255,255,255,0.04)]">
+                <p className="text-sm font-black tracking-[0.16em] text-cyan-300/75">
+                  ROUND START
+                </p>
+
+                <h2 className="mt-3 text-5xl font-black">الجولة {currentRound}</h2>
+
                 <p className="mt-4 text-2xl font-bold">
                   {gameMeta.icon} {gameMeta.title}
                 </p>
 
+                <p className="mt-2 text-sm text-white/60">{gameMeta.hint}</p>
+
+                {activeGame === "quiz" && quizQuestionTotal > 0 && (
+                  <p className="mt-4 text-sm text-white/70">
+                    السؤال {quizQuestionIndex} من {quizQuestionTotal}
+                  </p>
+                )}
+
                 <button
                   type="button"
                   onClick={beginRound}
-                  className="btn-primary mt-8 min-w-[220px]"
+                  className="btn-primary mt-8 min-w-[220px] transition duration-200 hover:scale-[1.03]"
                 >
                   ابدأ الجولة
                 </button>
               </div>
             ) : (
-              currentGameBoard
+              <div
+                key={`${activeGame}-${currentRound}-${roundSeed}`}
+                className="animate-fade-in-up transition-all duration-300"
+              >
+                {currentGameBoard}
+              </div>
             )}
           </div>
         ) : (
-          <div className="mx-auto max-w-3xl rounded-[32px] border border-white/10 bg-black/20 p-8 text-center">
+          <div className="animate-fade-in-up mx-auto max-w-3xl rounded-[32px] border border-white/10 bg-black/20 p-8 text-center shadow-[0_0_24px_rgba(255,255,255,0.04)]">
             <p className="text-sm font-black tracking-[0.18em] text-yellow-200/85">
               GAME OVER
             </p>
@@ -385,7 +488,10 @@ export default function MatchPage() {
               </div>
             </div>
 
-            <button onClick={resetGame} className="btn-primary mt-8 min-w-[220px]">
+            <button
+              onClick={resetGame}
+              className="btn-primary mt-8 min-w-[220px] transition duration-200 hover:scale-[1.03]"
+            >
               إعادة اللعب
             </button>
           </div>
@@ -394,7 +500,7 @@ export default function MatchPage() {
 
       {showWinnerModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-[32px] border border-white/20 bg-[#7a001f] p-6 text-center shadow-2xl">
+          <div className="animate-fade-in-up w-full max-w-md rounded-[32px] border border-white/20 bg-[#7a001f] p-6 text-center shadow-2xl">
             <h3 className="mt-2 text-3xl font-black">🏆 مين فاز؟</h3>
 
             <div className="mt-6 space-y-3">
