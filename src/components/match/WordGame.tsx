@@ -161,7 +161,7 @@ export default function WordGame({
           {feedback}
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_220px] lg:items-start">
+        <div className="grid gap-6 lg:grid-cols-[1fr_200px] lg:items-start">
           <div className="space-y-2">
             {guesses.map((guess, rowIndex) => (
               <div key={rowIndex} className="flex justify-center gap-2">
@@ -201,18 +201,29 @@ export default function WordGame({
             ))}
           </div>
 
-          <div className="mx-auto w-full max-w-[220px] rounded-2xl border border-white/10 bg-white/5 p-4 text-right lg:mx-0">
+          <div className="mx-auto w-full max-w-[200px] rounded-2xl border border-white/10 bg-white/5 p-4 text-right lg:mx-0">
             <p className="text-sm font-black text-white/80">دليل الألوان</p>
 
             <div className="mt-4 space-y-3">
               <div className="flex items-center justify-between gap-3">
-                <span className="text-sm text-white/75">حرف غير موجود</span>
-                <span className="h-4 w-4 rounded-md border border-[#4b5676] bg-[#2f3750]" />
+                <span className="text-sm text-white/75">
+                  حرف صحيح + مكانه صحيح
+                </span>
+                <span className="h-4 w-4 rounded-md border border-green-400 bg-green-500" />
               </div>
 
               <div className="flex items-center justify-between gap-3">
-                <span className="text-sm text-white/75">موجود بمكان غير صحيح</span>
+                <span className="text-sm text-white/75">
+                  موجود بمكان غير صحيح
+                </span>
                 <span className="h-4 w-4 rounded-md border border-yellow-300 bg-yellow-400" />
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm text-white/75">
+                  حرف غير موجود
+                </span>
+                <span className="h-4 w-4 rounded-md border border-[#4b5676] bg-[#2f3750]" />
               </div>
             </div>
           </div>
