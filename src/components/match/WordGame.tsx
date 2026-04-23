@@ -7,6 +7,14 @@ import type { WinnerType } from "@/types/game";
 
 type CellState = "correct" | "present" | "absent";
 
+const MAX_TRIES = 5;
+
+const keyboardRows = [
+  "ضصثقفغعهخحج",
+  "شسيبلاتنمكط",
+  "ئءؤرىةوزظ",
+];
+
 export default function WordGame({
   onRoundEnd,
   roundKey,
@@ -26,7 +34,7 @@ export default function WordGame({
   currentRound?: number;
   totalRounds?: number;
 }) {
-    const [answer, setAnswer] = useState("");
+  const [answer, setAnswer] = useState("");
   const [guesses, setGuesses] = useState<string[]>([]);
   const [current, setCurrent] = useState("");
   const [status, setStatus] = useState<"playing" | "won" | "lost">("playing");
@@ -36,6 +44,7 @@ export default function WordGame({
 
   useEffect(() => {
     resetRound();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roundKey]);
 
   function resetRound() {
