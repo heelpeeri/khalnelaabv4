@@ -11,8 +11,8 @@ const MAX_TRIES = 5;
 
 const keyboardRows = [
   "ضصثقفغعهخحج",
-  "شسيبلاتنمكط",
-  "ئءؤرىةوزظ",
+   "شسيبلاتنمكط",
+   "ئءؤرىةوزظ",
 ];
 
 export default function WordGame({
@@ -22,8 +22,6 @@ export default function WordGame({
   side2Name = "فريق 2",
   side1Score = 0,
   side2Score = 0,
-  currentRound = 1,
-  totalRounds = 3,
 }: {
   onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
@@ -31,8 +29,6 @@ export default function WordGame({
   side2Name?: string;
   side1Score?: number;
   side2Score?: number;
-  currentRound?: number;
-  totalRounds?: number;
 }) {
   const [answer, setAnswer] = useState("");
   const [guesses, setGuesses] = useState<string[]>([]);
@@ -44,7 +40,6 @@ export default function WordGame({
 
   useEffect(() => {
     resetRound();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roundKey]);
 
   function resetRound() {
@@ -65,19 +60,6 @@ export default function WordGame({
       .replace(/أ|إ|آ/g, "ا")
       .replace(/ى/g, "ي");
   }
-
-  const roundLabel =
-    currentRound === 1
-      ? `الجولة الأولى من ${totalRounds}`
-      : currentRound === 2
-      ? `الجولة الثانية من ${totalRounds}`
-      : currentRound === 3
-      ? `الجولة الثالثة من ${totalRounds}`
-      : currentRound === 4
-      ? `الجولة الرابعة من ${totalRounds}`
-      : currentRound === 5
-      ? `الجولة الخامسة من ${totalRounds}`
-      : `الجولة ${currentRound} من ${totalRounds}`;
 
   function getCurrentTurnName() {
     return activeSide === "side1" ? side1Name : side2Name;
@@ -167,7 +149,7 @@ export default function WordGame({
 
   return (
     <GameLayout
-      title={`خمن الكلمة — ${roundLabel}`}
+      title="خمن الكلمة"
       side1={side1Name}
       side2={side2Name}
       side1Score={side1Score}
@@ -179,43 +161,61 @@ export default function WordGame({
           {feedback}
         </div>
 
-        <div className="space-y-2">
-          {guesses.map((guess, rowIndex) => (
-            <div key={rowIndex} className="flex justify-center gap-2">
-              {guess.split("").map((letter, colIndex) => (
-                <div
-                  key={colIndex}
-                  className={`flex h-11 w-11 items-center justify-center rounded-xl border text-xl font-black md:h-14 md:w-14 md:text-2xl sm:h-12 sm:w-12 ${getCellColor(
-                    letter,
-                    colIndex
-                  )}`}
-                >
-                  {letter}
-                </div>
-              ))}
-            </div>
-          ))}
-
-          {Array.from({ length: remainingRows }).map((_, rowIndex) => (
-            <div key={`empty-${rowIndex}`} className="flex justify-center gap-2">
-              {Array.from({ length: answer.length }).map((__, colIndex) => {
-                const previewLetter = rowIndex === 0 ? current[colIndex] ?? "" : "";
-
-                return (
+        <div className="grid gap-6 lg:grid-cols-[1fr_220px] lg:items-start">
+          <div className="space-y-2">
+            {guesses.map((guess, rowIndex) => (
+              <div key={rowIndex} className="flex justify-center gap-2">
+                {guess.split("").map((letter, colIndex) => (
                   <div
                     key={colIndex}
-                    className={`flex h-11 w-11 items-center justify-center rounded-xl border text-xl font-black text-white md:h-14 md:w-14 md:text-2xl sm:h-12 sm:w-12 ${
-                      rowIndex === 0
-                        ? "border-[#6d6be9] bg-[#20193f]"
-                        : "border-white/10 bg-[#16142a]"
-                    }`}
+                    className={`flex h-11 w-11 items-center justify-center rounded-xl border text-xl font-black md:h-14 md:w-14 md:text-2xl sm:h-12 sm:w-12 ${getCellColor(
+                      letter,
+                      colIndex
+                    )}`}
                   >
-                    {previewLetter}
+                    {letter}
                   </div>
-                );
-              })}
+                ))}
+              </div>
+            ))}
+
+            {Array.from({ length: remainingRows }).map((_, rowIndex) => (
+              <div key={`empty-${rowIndex}`} className="flex justify-center gap-2">
+                {Array.from({ length: answer.length }).map((__, colIndex) => {
+                  const previewLetter = rowIndex === 0 ? current[colIndex] ?? "" : "";
+
+                  return (
+                    <div
+                      key={colIndex}
+                      className={`flex h-11 w-11 items-center justify-center rounded-xl border text-xl font-black text-white md:h-14 md:w-14 md:text-2xl sm:h-12 sm:w-12 ${
+                        rowIndex === 0
+                          ? "border-[#6d6be9] bg-[#20193f]"
+                          : "border-white/10 bg-[#16142a]"
+                      }`}
+                    >
+                      {previewLetter}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+
+          <div className="mx-auto w-full max-w-[220px] rounded-2xl border border-white/10 bg-white/5 p-4 text-right lg:mx-0">
+            <p className="text-sm font-black text-white/80">دليل الألوان</p>
+
+            <div className="mt-4 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm text-white/75">حرف غير موجود</span>
+                <span className="h-4 w-4 rounded-md border border-[#4b5676] bg-[#2f3750]" />
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm text-white/75">موجود بمكان غير صحيح</span>
+                <span className="h-4 w-4 rounded-md border border-yellow-300 bg-yellow-400" />
+              </div>
             </div>
-          ))}
+          </div>
         </div>
 
         <div className="mt-1 space-y-2">
