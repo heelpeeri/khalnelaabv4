@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Logo } from "@/components/Logo";
 import SetupGame from "@/components/SetupGame";
 import WordGame from "@/components/match/WordGame";
@@ -12,19 +12,31 @@ import QuizGame from "@/components/match/QuizGame";
 
 import type { GameType, SessionMode, WinnerType } from "@/types/game";
 
-const GAME_OPTIONS: {
-  id: GameType;
-  title: string;
-  icon: string;
-  hint: string;
-}[] = [
+const GAME_OPTIONS = [
   { id: "quiz", title: "الأسئلة", icon: "❓", hint: "اختر فئة وجاوب." },
-  { id: "word", title: "خمن الكلمة", icon: "💬", hint: "خمن الكلمة حرف حرف." },
-  { id: "scramble", title: "حروف بالخلاط", icon: "🧩", hint: "رتب الحروف بأسرع وقت." },
-  { id: "wheel", title: "لف وخمن", icon: "🎡", hint: "لف العجلة ثم خمن." },
-  { id: "categories", title: "إنسان حيوان نبات جماد بلاد", icon: "🌍", hint: "كل الإجابات بنفس الحرف." },
-  { id: "draw", title: "خمن المثل", icon: "✏️", hint: "خمن المثل من الإيموجي." },
+  { id: "word", title: "خمن الكلمة", icon: "💬", hint: "خمن الكلمة." },
+  { id: "scramble", title: "حروف بالخلاط", icon: "🧩", hint: "رتب الحروف." },
+  { id: "wheel", title: "لف وخمن", icon: "🎡", hint: "لف العجلة." },
+  { id: "categories", title: "إنسان حيوان نبات جماد بلاد", icon: "🌍", hint: "نفس الحرف." },
+  { id: "draw", title: "خمن المثل", icon: "✏️", hint: "خمن المثل." },
 ];
+
+function CountdownOverlay({ count }: { count: number | null }) {
+  if (count === null) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-sm">
+      <div className="rounded-[36px] border border-white/20 bg-[#130019]/90 px-16 py-12 text-center shadow-2xl animate-fade-in-up">
+        <p className="text-sm font-black tracking-[0.18em] text-cyan-300/80">
+          استعدوا
+        </p>
+        <p className="mt-4 text-8xl font-black text-white">
+          {count === 0 ? "يلا!" : count}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 function FinalWinnerOverlay({
   show,
@@ -40,18 +52,19 @@ function FinalWinnerOverlay({
   if (!show) return null;
 
   return (
-    <div className="arcade-backdrop fixed inset-0 z-[60] flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 bg-black/70 backdrop-blur-sm">
       <div className="arcade-card w-full max-w-2xl p-8 text-center md:p-10 animate-fade-in-up">
+        
         <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
-          FINAL RESULT
+          النتيجة
         </p>
 
-        <h2 className="arcade-title mt-5">
-          {isDraw ? "DRAW!" : "LEVEL UP!"}
+        <h2 className="arcade-title mt-5 animate-bounce">
+          {isDraw ? "تعادل!" : "كفووو!"}
         </h2>
 
         <p className="arcade-winner mt-6">
-          {isDraw ? "تعادل" : winnerName}
+          {isDraw ? "الفريقين" : `الفائز: ${winnerName}`}
         </p>
 
         <button
@@ -59,221 +72,42 @@ function FinalWinnerOverlay({
           className="arcade-button mt-8"
           type="button"
         >
-          START
+          ابدأ من جديد
         </button>
       </div>
     </div>
   );
 }
 
-function CountdownOverlay({ count }: { count: number | null }) {
-  if (count === null) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-sm">
-      <div className="rounded-[36px] border border-white/20 bg-[#130019]/90 px-16 py-12 text-center shadow-2xl animate-fade-in-up">
-        <p className="text-sm font-black tracking-[0.18em] text-cyan-300/80">
-          GET READY
-        </p>
-        <p className="mt-4 text-8xl font-black text-white">
-          {count === 0 ? "GO!" : count}
-        </p>
-      </div>
-    </div>
-  );
-}
-
 export default function MatchPage() {
-  const [sessionMode, setSessionMode] = useState<SessionMode>("quick");
-
   const [side1, setSide1] = useState("");
   const [side2, setSide2] = useState("");
   const [rounds, setRounds] = useState(3);
-
-  const [selectedGame, setSelectedGame] = useState<GameType>("word");
-  const [selectedSessionGames, setSelectedSessionGames] = useState<GameType[]>([
-    "quiz",
-    "word",
-    "scramble",
-  ]);
 
   const [started, setStarted] = useState(false);
   const [currentRound, setCurrentRound] = useState(1);
   const [side1Score, setSide1Score] = useState(0);
   const [side2Score, setSide2Score] = useState(0);
 
-  const [showWinnerModal, setShowWinnerModal] = useState(false);
-  const [gameEnded, setGameEnded] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
   const [roundReady, setRoundReady] = useState(true);
   const [roundSeed, setRoundSeed] = useState(1);
 
-  const [quizQuestionIndex, setQuizQuestionIndex] = useState(0);
-  const [quizQuestionTotal, setQuizQuestionTotal] = useState(0);
+  const [showWinner, setShowWinner] = useState(false);
+  const [gameEnded, setGameEnded] = useState(false);
 
-  const [showFinalWinnerOverlay, setShowFinalWinnerOverlay] = useState(false);
-  const [countdown, setCountdown] = useState<number | null>(null);
-
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const masterGainRef = useRef<GainNode | null>(null);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const modeParam = params.get("mode");
-    const game = params.get("game");
-
-    if (modeParam === "session") {
-      setSessionMode("session");
-    } else {
-      setSessionMode("quick");
-    }
-
-    if (
-      game === "word" ||
-      game === "draw" ||
-      game === "categories" ||
-      game === "scramble" ||
-      game === "wheel" ||
-      game === "quiz"
-    ) {
-      setSelectedGame(game);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (gameEnded) {
-      setShowFinalWinnerOverlay(true);
-    }
-  }, [gameEnded]);
-
-  useEffect(() => {
-    return () => {
-      if (audioContextRef.current && audioContextRef.current.state !== "closed") {
-        audioContextRef.current.close().catch(() => {});
-      }
-    };
-  }, []);
-
-  function ensureAudio() {
-    if (typeof window === "undefined") return;
-    if (audioContextRef.current) return;
-
-    const AudioCtx =
-      window.AudioContext ||
-      (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-
-    if (!AudioCtx) return;
-
-    const ctx = new AudioCtx();
-    const gain = ctx.createGain();
-    gain.gain.value = 0.035;
-    gain.connect(ctx.destination);
-
-    audioContextRef.current = ctx;
-    masterGainRef.current = gain;
-  }
-
-  async function unlockAudio() {
-    ensureAudio();
-    if (!audioContextRef.current) return;
-
-    if (audioContextRef.current.state === "suspended") {
-      try {
-        await audioContextRef.current.resume();
-      } catch {}
-    }
-  }
-
-  function playBeep(freq = 700, duration = 0.12, type: OscillatorType = "square") {
-    const ctx = audioContextRef.current;
-    const master = masterGainRef.current;
-    if (!ctx || !master) return;
-
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, now);
-
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-
-    osc.connect(gain);
-    gain.connect(master);
-
-    osc.start(now);
-    osc.stop(now + duration + 0.02);
-  }
-
-  function playCountdownTick(value: number) {
-    if (value > 0) {
-      playBeep(740, 0.08, "square");
-      return;
-    }
-
-    playBeep(520, 0.08, "triangle");
-    setTimeout(() => playBeep(900, 0.14, "triangle"), 80);
-  }
-
-  useEffect(() => {
-    if (countdown === null) return;
-
-    playCountdownTick(countdown);
-
-    if (countdown === 0) {
-      const timeout = setTimeout(() => {
-        setCountdown(null);
-        setRoundReady(false);
-        setRoundSeed((s) => s + 1);
-      }, 350);
-
-      return () => clearTimeout(timeout);
-    }
-
-    const timeout = setTimeout(() => {
-      setCountdown((prev) => (prev === null ? null : prev - 1));
-    }, 900);
-
-    return () => clearTimeout(timeout);
-  }, [countdown]);
-
-  const activeGame =
-    sessionMode === "session"
-      ? selectedSessionGames[currentRound - 1] ?? selectedSessionGames[0] ?? "word"
-      : selectedGame;
-
-  const gameMeta = useMemo(() => {
-    return (
-      GAME_OPTIONS.find((game) => game.id === activeGame) ?? GAME_OPTIONS[1]
-    );
-  }, [activeGame]);
+  const game: GameType = "word"; // مؤقت
 
   const isDraw = side1Score === side2Score;
-  const finalWinnerName = isDraw
-    ? "الفريقان"
+  const winnerName = isDraw
+    ? "الفريقين"
     : side1Score > side2Score
-    ? side1 || "فريق 1"
-    : side2 || "فريق 2";
-
-  function toggleSessionGame(gameId: GameType) {
-    setSelectedSessionGames((prev) => {
-      if (prev.includes(gameId)) {
-        if (prev.length === 1) return prev;
-        return prev.filter((id) => id !== gameId);
-      }
-      return [...prev, gameId];
-    });
-  }
+    ? side1
+    : side2;
 
   function startGame() {
-    if (sessionMode === "session" && selectedSessionGames.length === 0) return;
-
     const finalSide1 = side1.trim() || "فريق 1";
     const finalSide2 = side2.trim() || "فريق 2";
-
-    const nextRounds =
-      sessionMode === "session" ? selectedSessionGames.length : rounds;
 
     setSide1(finalSide1);
     setSide2(finalSide2);
@@ -283,36 +117,32 @@ export default function MatchPage() {
     setSide1Score(0);
     setSide2Score(0);
     setGameEnded(false);
-    setShowFinalWinnerOverlay(false);
     setRoundReady(true);
-    setRoundSeed(1);
-    setQuizQuestionIndex(0);
-    setQuizQuestionTotal(0);
-    setRounds(nextRounds);
-    setCountdown(null);
   }
 
-  async function beginRound() {
-    if (countdown !== null) return;
-    await unlockAudio();
+  function beginRound() {
     setCountdown(3);
   }
 
-  function endRound(winner?: WinnerType) {
-    if (winner) {
-      chooseWinner(winner);
+  useEffect(() => {
+    if (countdown === null) return;
+
+    if (countdown === 0) {
+      setTimeout(() => {
+        setCountdown(null);
+        setRoundReady(false);
+        setRoundSeed((s) => s + 1);
+      }, 400);
       return;
     }
-    setShowWinnerModal(true);
-  }
 
-  function chooseWinner(winner: WinnerType) {
+    const t = setTimeout(() => setCountdown((c) => (c ? c - 1 : 0)), 900);
+    return () => clearTimeout(t);
+  }, [countdown]);
+
+  function endRound(winner?: WinnerType) {
     if (winner === "side1") setSide1Score((s) => s + 1);
     if (winner === "side2") setSide2Score((s) => s + 1);
-
-    setShowWinnerModal(false);
-    setQuizQuestionIndex(0);
-    setQuizQuestionTotal(0);
 
     if (currentRound >= rounds) {
       setGameEnded(true);
@@ -321,221 +151,65 @@ export default function MatchPage() {
 
     setCurrentRound((r) => r + 1);
     setRoundReady(true);
-    setCountdown(null);
   }
-
-  function resetGame() {
-    setStarted(false);
-    setCurrentRound(1);
-    setSide1Score(0);
-    setSide2Score(0);
-    setShowWinnerModal(false);
-    setGameEnded(false);
-    setShowFinalWinnerOverlay(false);
-    setRoundReady(true);
-    setRoundSeed(1);
-    setQuizQuestionIndex(0);
-    setQuizQuestionTotal(0);
-    setCountdown(null);
-    setRounds(sessionMode === "session" ? selectedSessionGames.length || 1 : 3);
-  }
-
-  const currentGameBoard =
-    activeGame === "word" ? (
-      <WordGame
-        onRoundEnd={endRound}
-        roundKey={roundSeed}
-        side1Name={side1}
-        side2Name={side2}
-        side1Score={side1Score}
-        side2Score={side2Score}
-        currentRound={currentRound}
-        totalRounds={rounds}
-      />
-    ) : activeGame === "draw" ? (
-      <ProverbGame
-        side1Name={side1}
-        side2Name={side2}
-        onRoundEnd={endRound}
-        roundKey={roundSeed}
-      />
-    ) : activeGame === "scramble" ? (
-      <ScrambleGame
-        side1Name={side1}
-        side2Name={side2}
-        onRoundEnd={endRound}
-        roundKey={roundSeed}
-      />
-    ) : activeGame === "wheel" ? (
-      <WheelGame
-        side1Name={side1}
-        side2Name={side2}
-        onRoundEnd={endRound}
-        roundKey={roundSeed}
-      />
-    ) : activeGame === "quiz" ? (
-      <QuizGame
-        side1Name={side1}
-        side2Name={side2}
-        onRoundEnd={endRound}
-        roundKey={roundSeed}
-        onProgressChange={(current: number, total: number) => {
-          setQuizQuestionIndex(current);
-          setQuizQuestionTotal(total);
-        }}
-      />
-    ) : (
-      <CategoriesGame
-        side1Name={side1}
-        side2Name={side2}
-        onRoundEnd={endRound}
-        roundKey={roundSeed}
-      />
-    );
 
   return (
     <main className="min-h-screen px-4 py-8 text-white">
-      <div className="mx-auto max-w-[1400px]">
-        <div className="mb-8 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-black tracking-[0.18em] text-cyan-300/80">
-              {sessionMode === "session" ? "SESSION MODE" : "QUICK MODE"}
-            </p>
-            <h1 className="mt-1 text-3xl font-black">
-              {sessionMode === "session" ? "تحدي الجلسة" : "تحدي سريع"}
-            </h1>
-          </div>
-          <Logo size={90} />
-        </div>
+      <div className="mx-auto max-w-6xl">
 
         {!started ? (
-          <div className="animate-fade-in-up">
-            <SetupGame
-              sessionMode={sessionMode}
-              side1={side1}
-              side2={side2}
-              rounds={rounds}
-              selectedGame={selectedGame}
-              selectedSessionGames={selectedSessionGames}
-              onSide1Change={setSide1}
-              onSide2Change={setSide2}
-              onRoundsChange={setRounds}
-              onSelectedGameChange={setSelectedGame}
-              onToggleSessionGame={toggleSessionGame}
-              onStart={startGame}
-            />
-          </div>
+          <SetupGame
+            sessionMode="quick"
+            side1={side1}
+            side2={side2}
+            rounds={rounds}
+            selectedGame="word"
+            selectedSessionGames={[]}
+            onSide1Change={setSide1}
+            onSide2Change={setSide2}
+            onRoundsChange={setRounds}
+            onSelectedGameChange={() => {}}
+            onToggleSessionGame={() => {}}
+            onStart={startGame}
+          />
         ) : !gameEnded ? (
-          <div className="mx-auto max-w-6xl">
+          <>
             {roundReady ? (
-              <div className="animate-fade-in-up rounded-[32px] border border-white/10 bg-black/20 p-8 text-center shadow-[0_0_24px_rgba(255,255,255,0.04)]">
-                <p className="text-sm font-black tracking-[0.16em] text-cyan-300/75">
-                  ROUND START
-                </p>
-
-                <h2 className="mt-3 text-5xl font-black">الجولة {currentRound}</h2>
-
-                <p className="mt-4 text-2xl font-bold">
-                  {gameMeta.icon} {gameMeta.title}
-                </p>
-
-                <p className="mt-2 text-sm text-white/60">{gameMeta.hint}</p>
-
-                {activeGame === "quiz" && quizQuestionTotal > 0 && (
-                  <p className="mt-4 text-sm text-white/70">
-                    السؤال {quizQuestionIndex} من {quizQuestionTotal}
-                  </p>
-                )}
+              <div className="text-center animate-fade-in-up">
+                <h2 className="text-4xl font-black">
+                  الجولة {currentRound}
+                </h2>
 
                 <button
-                  type="button"
                   onClick={beginRound}
-                  className="btn-primary mt-8 min-w-[220px] transition duration-200 hover:scale-[1.03]"
+                  className="btn-primary mt-6"
                 >
                   ابدأ الجولة
                 </button>
               </div>
             ) : (
-              <div
-                key={`${activeGame}-${currentRound}-${roundSeed}`}
-                className="animate-fade-in-up transition-all duration-300"
-              >
-                {currentGameBoard}
-              </div>
+              <WordGame
+                onRoundEnd={endRound}
+                roundKey={roundSeed}
+                side1Name={side1}
+                side2Name={side2}
+              />
             )}
-          </div>
+          </>
         ) : (
-          <div className="animate-fade-in-up mx-auto max-w-3xl rounded-[32px] border border-white/10 bg-black/20 p-8 text-center shadow-[0_0_24px_rgba(255,255,255,0.04)]">
-            <p className="text-sm font-black tracking-[0.18em] text-yellow-200/85">
-              GAME OVER
-            </p>
-
-            <h2 className="mt-2 text-4xl font-black">🏆 انتهى التحدي</h2>
-
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
-              <div className="rounded-3xl border border-pink-300/20 bg-pink-500/10 p-5">
-                <p className="text-lg font-bold">{side1}</p>
-                <p className="mt-2 text-4xl font-black text-yellow-200">
-                  {side1Score}
-                </p>
-              </div>
-
-              <div className="rounded-3xl border border-cyan-300/20 bg-cyan-400/10 p-5">
-                <p className="text-lg font-bold">{side2}</p>
-                <p className="mt-2 text-4xl font-black text-yellow-200">
-                  {side2Score}
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={resetGame}
-              className="btn-primary mt-8 min-w-[220px] transition duration-200 hover:scale-[1.03]"
-            >
-              إعادة اللعب
-            </button>
+          <div className="text-center">
+            <h2 className="text-3xl font-black">انتهت اللعبة</h2>
           </div>
         )}
       </div>
 
-      {showWinnerModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm">
-          <div className="animate-fade-in-up w-full max-w-md rounded-[32px] border border-white/20 bg-[#7a001f] p-6 text-center shadow-2xl">
-            <h3 className="mt-2 text-3xl font-black">🏆 مين فاز؟</h3>
-
-            <div className="mt-6 space-y-3">
-              <button
-                onClick={() => chooseWinner("side1")}
-                className="btn-primary w-full"
-              >
-                {side1}
-              </button>
-
-              <button
-                onClick={() => chooseWinner("side2")}
-                className="btn-primary w-full"
-              >
-                {side2}
-              </button>
-
-              <button
-                onClick={() => chooseWinner("none")}
-                className="btn-secondary w-full"
-              >
-                لا أحد
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <CountdownOverlay count={countdown} />
 
       <FinalWinnerOverlay
-        show={showFinalWinnerOverlay}
-        winnerName={finalWinnerName}
+        show={gameEnded}
+        winnerName={winnerName}
         isDraw={isDraw}
-        onClose={() => setShowFinalWinnerOverlay(false)}
+        onClose={() => window.location.reload()}
       />
     </main>
   );
