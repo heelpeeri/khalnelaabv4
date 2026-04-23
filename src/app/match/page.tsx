@@ -85,8 +85,8 @@ function CountdownOverlay({ count }: { count: number | null }) {
 export default function MatchPage() {
   const [sessionMode, setSessionMode] = useState<SessionMode>("quick");
 
-  const [side1, setSide1] = useState("فريق 1");
-  const [side2, setSide2] = useState("فريق 2");
+  const [side1, setSide1] = useState("");
+  const [side2, setSide2] = useState("");
   const [rounds, setRounds] = useState(3);
 
   const [selectedGame, setSelectedGame] = useState<GameType>("word");
