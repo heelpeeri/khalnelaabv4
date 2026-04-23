@@ -11,8 +11,8 @@ const MAX_TRIES = 5;
 
 const keyboardRows = [
   "ضصثقفغعهخحج",
-   "شسيبلاتنمكط",
-   "ئءؤرىةوزظ",
+  "شسيبلاتنمكط",
+  "ئءؤرىةوزظ",
 ];
 
 export default function WordGame({
