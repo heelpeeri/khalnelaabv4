@@ -65,7 +65,7 @@ export default function SetupGame({
           </h1>
 
           <p className="mt-3 text-sm text-white/65 md:text-base">
-            تقدر تغيّر أسماء الفرق قبل البداية.
+            تقدر تكتب أسماء الفرق قبل البداية.
           </p>
         </div>
 
