@@ -296,8 +296,8 @@ export default function WheelGame({
     setSpinning(true);
 
     const index = Math.floor(Math.random() * SEGMENTS.length);
-    const value = SEGMENTS[index].value;
-    setCurrentValue(value);
+const value: Value = SEGMENTS[index].value as Value;
+setCurrentValue(value);
 
     const targetCenter = index * segmentAngle + segmentAngle / 2;
     const extraSpins = 8 * 360;
