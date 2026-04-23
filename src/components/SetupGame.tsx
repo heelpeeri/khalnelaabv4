@@ -61,7 +61,7 @@ export default function SetupGame({
           <h1 className="mt-2 text-3xl font-black md:text-5xl">
             {sessionMode === "session"
               ? "تحدي الجلسة"
-              : `${selectedGameMeta.icon} ${selectedGameMeta.title}`}
+              : `${selectedGameMeta.title} ${selectedGameMeta.icon}`}
           </h1>
 
           <p className="mt-3 text-sm text-white/65 md:text-base">
@@ -76,18 +76,12 @@ export default function SetupGame({
                 الفريق 1
               </span>
 
-              <div className="relative">
-                <input
-                  value={side1}
-                  onChange={(e) => onSide1Change(e.target.value)}
-                  className="input h-16 rounded-[24px] border-white/10 bg-white/[0.04] pr-5 text-center text-xl font-black transition duration-200 focus:border-cyan-300/30 focus:bg-white/[0.06]"
-                  placeholder="فريق 1"
-                />
-
-                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-white/35 transition group-focus-within:text-cyan-200/70">
-                  قابل للتعديل
-                </span>
-              </div>
+              <input
+                value={side1}
+                onChange={(e) => onSide1Change(e.target.value)}
+                className="input h-14 rounded-[20px] border-white/10 bg-white/[0.04] px-5 text-center text-lg font-black transition duration-200 focus:border-cyan-300/30 focus:bg-white/[0.06]"
+                placeholder="اختر اسم الفريق"
+              />
             </label>
 
             <label className="group block">
@@ -95,26 +89,20 @@ export default function SetupGame({
                 الفريق 2
               </span>
 
-              <div className="relative">
-                <input
-                  value={side2}
-                  onChange={(e) => onSide2Change(e.target.value)}
-                  className="input h-16 rounded-[24px] border-white/10 bg-white/[0.04] pr-5 text-center text-xl font-black transition duration-200 focus:border-pink-300/30 focus:bg-white/[0.06]"
-                  placeholder="فريق 2"
-                />
-
-                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-white/35 transition group-focus-within:text-pink-200/70">
-                  قابل للتعديل
-                </span>
-              </div>
+              <input
+                value={side2}
+                onChange={(e) => onSide2Change(e.target.value)}
+                className="input h-14 rounded-[20px] border-white/10 bg-white/[0.04] px-5 text-center text-lg font-black transition duration-200 focus:border-pink-300/30 focus:bg-white/[0.06]"
+                placeholder="اختر اسم الفريق"
+              />
             </label>
           </div>
 
           {sessionMode === "quick" ? (
             <div className="mt-8 text-center">
-              <p className="text-3xl font-black md:text-5xl">عدد الجولات</p>
+              <p className="text-3xl font-black md:text-4xl">عدد الجولات</p>
 
-              <div className="mx-auto mt-6 w-full max-w-[340px] rounded-full border border-white/10 bg-white/[0.05] p-1.5 shadow-[inset_0_0_10px_rgba(255,255,255,0.03)]">
+              <div className="mx-auto mt-5 w-full max-w-[280px] rounded-full border border-white/10 bg-white/[0.05] p-1.5 shadow-[inset_0_0_10px_rgba(255,255,255,0.03)]">
                 <div className="grid grid-cols-3 gap-1.5">
                   {ROUND_OPTIONS.map((value) => {
                     const active = rounds === value;
@@ -124,9 +112,9 @@ export default function SetupGame({
                         key={value}
                         type="button"
                         onClick={() => onRoundsChange(value)}
-                        className={`h-16 rounded-full text-3xl font-black transition duration-200 ${
+                        className={`h-12 rounded-full text-2xl font-black transition duration-200 ${
                           active
-                            ? "bg-white text-[#120022] shadow-[0_0_20px_rgba(255,255,255,0.22)]"
+                            ? "bg-white text-[#120022] shadow-[0_0_20px_rgba(255,255,255,0.22)] scale-[1.02]"
                             : "bg-transparent text-white/85 hover:bg-white/10"
                         }`}
                       >
@@ -137,7 +125,7 @@ export default function SetupGame({
                 </div>
               </div>
 
-              <p className="mt-4 text-sm text-white/55">
+              <p className="mt-3 text-sm text-white/55">
                 اختر عدد الجولات ثم ابدأ مباشرة.
               </p>
             </div>
