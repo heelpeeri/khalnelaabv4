@@ -161,73 +161,69 @@ export default function WordGame({
           {feedback}
         </div>
 
-        <div className="flex flex-col gap-6 lg:flex-row-reverse lg:items-start">
-          <div className="mx-auto w-full max-w-[200px] shrink-0 rounded-2xl border border-white/10 bg-white/5 p-4 text-right lg:mx-0">
-            <p className="text-sm font-black text-white/80">دليل الألوان</p>
+        <div className="relative min-h-[340px]">
+          <div className="flex justify-center">
+            <div className="space-y-2">
+              {guesses.map((guess, rowIndex) => (
+                <div key={rowIndex} className="flex justify-center gap-2">
+                  {guess.split("").map((letter, colIndex) => (
+                    <div
+                      key={colIndex}
+                      className={`flex h-11 w-11 items-center justify-center rounded-xl border text-xl font-black md:h-14 md:w-14 md:text-2xl sm:h-12 sm:w-12 ${getCellColor(
+                        letter,
+                        colIndex
+                      )}`}
+                    >
+                      {letter}
+                    </div>
+                  ))}
+                </div>
+              ))}
 
-            <div className="mt-4 space-y-3">
+              {Array.from({ length: remainingRows }).map((_, rowIndex) => (
+                <div key={`empty-${rowIndex}`} className="flex justify-center gap-2">
+                  {Array.from({ length: answer.length }).map((__, colIndex) => {
+                    const previewLetter = rowIndex === 0 ? current[colIndex] ?? "" : "";
+
+                    return (
+                      <div
+                        key={colIndex}
+                        className={`flex h-11 w-11 items-center justify-center rounded-xl border text-xl font-black text-white md:h-14 md:w-14 md:text-2xl sm:h-12 sm:w-12 ${
+                          rowIndex === 0
+                            ? "border-[#6d6be9] bg-[#20193f]"
+                            : "border-white/10 bg-[#16142a]"
+                        }`}
+                      >
+                        {previewLetter}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-[220px] text-right">
+            <div className="space-y-3">
               <div className="flex items-center justify-between gap-3">
                 <span className="text-sm text-white/75">
                   حرف صحيح + مكانه صحيح
                 </span>
-                <span className="h-4 w-4 rounded-md border border-green-400 bg-green-500" />
+                <span className="h-4 w-4 rounded-md bg-green-500" />
               </div>
 
               <div className="flex items-center justify-between gap-3">
                 <span className="text-sm text-white/75">
                   موجود بمكان غير صحيح
                 </span>
-                <span className="h-4 w-4 rounded-md border border-yellow-300 bg-yellow-400" />
+                <span className="h-4 w-4 rounded-md bg-yellow-400" />
               </div>
 
               <div className="flex items-center justify-between gap-3">
                 <span className="text-sm text-white/75">
                   حرف غير موجود
                 </span>
-                <span className="h-4 w-4 rounded-md border border-[#4b5676] bg-[#2f3750]" />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex-1">
-            <div className="flex justify-center">
-              <div className="space-y-2">
-                {guesses.map((guess, rowIndex) => (
-                  <div key={rowIndex} className="flex justify-center gap-2">
-                    {guess.split("").map((letter, colIndex) => (
-                      <div
-                        key={colIndex}
-                        className={`flex h-11 w-11 items-center justify-center rounded-xl border text-xl font-black md:h-14 md:w-14 md:text-2xl sm:h-12 sm:w-12 ${getCellColor(
-                          letter,
-                          colIndex
-                        )}`}
-                      >
-                        {letter}
-                      </div>
-                    ))}
-                  </div>
-                ))}
-
-                {Array.from({ length: remainingRows }).map((_, rowIndex) => (
-                  <div key={`empty-${rowIndex}`} className="flex justify-center gap-2">
-                    {Array.from({ length: answer.length }).map((__, colIndex) => {
-                      const previewLetter = rowIndex === 0 ? current[colIndex] ?? "" : "";
-
-                      return (
-                        <div
-                          key={colIndex}
-                          className={`flex h-11 w-11 items-center justify-center rounded-xl border text-xl font-black text-white md:h-14 md:w-14 md:text-2xl sm:h-12 sm:w-12 ${
-                            rowIndex === 0
-                              ? "border-[#6d6be9] bg-[#20193f]"
-                              : "border-white/10 bg-[#16142a]"
-                          }`}
-                        >
-                          {previewLetter}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
+                <span className="h-4 w-4 rounded-md bg-[#2f3750]" />
               </div>
             </div>
           </div>
