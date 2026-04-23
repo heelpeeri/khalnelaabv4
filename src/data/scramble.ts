@@ -1,0 +1,18 @@
+export const SCRAMBLE_QUESTIONS = [
+    { category: "أكلة", answer: "شاورما" },
+    { category: "أكلة", answer: "شكشوكة" },
+    { category: "أكلة", answer: "بروستد" },
+    { category: "براند", answer: "سامسونج" },
+    { category: "براند", answer: "نايكي" },
+    { category: "مدينة", answer: "الرياض" },
+    { category: "مدينة", answer: "سويسرا" },
+    { category: "سيارة", answer: "تويوتا" },
+    { category: "سيارة", answer: "مرسيدس" },
+    { category: "سيارة", answer: "كورولا" },
+    { category: "تطبيق", answer: "واتساب" },
+    { category: "تطبيق", answer: "تيكتوك" },
+    { category: "تطبيق", answer: "انستقرام" },
+    { category: "لاعب", answer: "رونالدو" },
+    { category: "لاعب", answer: "بنزيما" },
+    { category: "لاعب", answer: "مبابي" },
+  ];
