@@ -850,7 +850,6 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
     {
       question: "في حلقة الكستنائي ياهوه وش كان لون سيارة فؤاد؟",
       answer: "تركوازي",
-      options: ["موفق الصلاح", "سمير عارف", "عامر الحمود", "عبدالخالق الغانم"],
     },
     {
       question: "وش اسم شخصيه الشايب البخيل اللي يلعب دوره عبدالله السدحان؟",
