@@ -6,22 +6,31 @@ import SetupGame from "@/components/SetupGame";
 import WordGame from "@/components/match/WordGame";
 import QuizGame from "@/components/match/QuizGame";
 
+import type { QuizCategoryKey } from "@/data/quiz";
+
+type GameType = "word" | "quiz";
+
+type Round = {
+  game: GameType;
+  category: QuizCategoryKey | null;
+};
+
 export default function MatchPage() {
 
   const [side1, setSide1] = useState("");
   const [side2, setSide2] = useState("");
 
-  const [selectedGames, setSelectedGames] = useState<string[]>([]);
+  const [selectedGames, setSelectedGames] = useState<GameType[]>([]);
   const [gameRounds, setGameRounds] = useState<Record<string, number>>({});
-  const [quizCategories, setQuizCategories] = useState<string[]>([]);
+  const [quizCategories, setQuizCategories] = useState<QuizCategoryKey[]>([]);
 
-  const [queue, setQueue] = useState<{ game: string; category: string | null }[]>([]);
+  const [queue, setQueue] = useState<Round[]>([]);
   const [started, setStarted] = useState(false);
   const [index, setIndex] = useState(0);
 
-  // 🔥 بناء الجولات
-  function buildQueue() {
-    const q: { game: string; category: string | null }[] = [];
+  // 🧠 بناء الجولات
+  function buildQueue(): Round[] {
+    const q: Round[] = [];
 
     selectedGames.forEach((game) => {
       const count = gameRounds[game] || 1;
@@ -29,17 +38,20 @@ export default function MatchPage() {
       for (let i = 0; i < count; i++) {
         const cat =
           game === "quiz"
-            ? quizCategories[i % quizCategories.length] || null
+            ? quizCategories[i % quizCategories.length]
             : null;
 
-        q.push({ game, category: cat });
+        q.push({
+          game,
+          category: cat,
+        });
       }
     });
 
     return q;
   }
 
-  // ▶️ بدء اللعبة
+  // ▶️ بدء
   function start() {
     if (selectedGames.length === 0) {
       alert("اختر لعبة");
@@ -104,7 +116,7 @@ export default function MatchPage() {
             <QuizGame
               onRoundEnd={next}
               roundKey={index}
-              category={current.category ?? null}
+              category={current.category}
               side1Name={side1}
               side2Name={side2}
             />
