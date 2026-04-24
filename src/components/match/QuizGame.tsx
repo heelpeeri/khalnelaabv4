@@ -112,9 +112,17 @@ export default function QuizGame({
       </div>
 
       <div className="mt-7 rounded-3xl border border-white/15 bg-white/10 p-6">
-        <p className="text-2xl font-black leading-relaxed">
-          {current.question}
-        </p>
+  {current.image && (
+    <img
+      src={current.image}
+      alt={current.question}
+      className="mx-auto mb-5 max-h-[260px] w-full rounded-2xl object-cover"
+    />
+  )}
+
+  <p className="text-2xl font-black leading-relaxed">
+    {current.question}
+  </p>
 
         {current.options && current.options.length > 0 && (
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
