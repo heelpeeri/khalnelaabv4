@@ -64,24 +64,6 @@ function FinalWinnerOverlay({
   );
 }
 
-function CountdownOverlay({ count }: { count: number | null }) {
-  if (count === null) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-sm">
-      <div className="rounded-[36px] border border-white/20 bg-[#130019]/90 px-16 py-12 text-center shadow-2xl animate-fade-in-up">
-        <p className="text-sm font-black tracking-[0.18em] text-cyan-300/80">
-          استعدوا
-        </p>
-
-        <p className="mt-4 text-8xl font-black text-white">
-          {count === 0 ? "يلا!" : count}
-        </p>
-      </div>
-    </div>
-  );
-}
-
 export default function MatchPage() {
   const [sessionMode, setSessionMode] = useState<SessionMode>("quick");
 
@@ -112,8 +94,6 @@ export default function MatchPage() {
   const [quizQuestionTotal, setQuizQuestionTotal] = useState(0);
 
   const [showFinalWinnerOverlay, setShowFinalWinnerOverlay] = useState(false);
-  const [countdown, setCountdown] = useState<number | null>(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -121,11 +101,7 @@ export default function MatchPage() {
     const game = params.get("game");
     const category = params.get("category");
 
-    if (modeParam === "session") {
-      setSessionMode("session");
-    } else {
-      setSessionMode("quick");
-    }
+    setSessionMode(modeParam === "session" ? "session" : "quick");
 
     if (
       game === "word" ||
@@ -148,26 +124,6 @@ export default function MatchPage() {
       setShowFinalWinnerOverlay(true);
     }
   }, [gameEnded]);
-
-  useEffect(() => {
-    if (countdown === null) return;
-
-    if (countdown === 0) {
-      const timeout = setTimeout(() => {
-        setCountdown(null);
-        setRoundSeed((s) => s + 1);
-        setIsTransitioning(false);
-      }, 350);
-
-      return () => clearTimeout(timeout);
-    }
-
-    const timeout = setTimeout(() => {
-      setCountdown((prev) => (prev === null ? null : prev - 1));
-    }, 850);
-
-    return () => clearTimeout(timeout);
-  }, [countdown]);
 
   const activeGame =
     sessionMode === "session"
@@ -207,11 +163,6 @@ export default function MatchPage() {
     });
   }
 
-  function startRoundTransition() {
-    setIsTransitioning(true);
-    setCountdown(3);
-  }
-
   function startGame() {
     if (sessionMode === "session" && selectedSessionGames.length === 0) return;
 
@@ -230,26 +181,19 @@ export default function MatchPage() {
     setSide2Score(0);
     setGameEnded(false);
     setShowFinalWinnerOverlay(false);
-    setRoundSeed(0);
+    setRoundSeed((s) => s + 1);
     setQuizQuestionIndex(0);
     setQuizQuestionTotal(0);
     setRounds(nextRounds);
-
-    startRoundTransition();
   }
 
   function endRound(winner?: WinnerType) {
-    if (activeGame === "quiz" && winner === "none") {
+    if (!winner || winner === "none") {
       setShowWinnerModal(true);
       return;
     }
 
-    if (winner) {
-      chooseWinner(winner);
-      return;
-    }
-
-    setShowWinnerModal(true);
+    chooseWinner(winner);
   }
 
   function chooseWinner(winner: WinnerType) {
@@ -266,7 +210,7 @@ export default function MatchPage() {
     }
 
     setCurrentRound((r) => r + 1);
-    startRoundTransition();
+    setRoundSeed((s) => s + 1);
   }
 
   function resetGame() {
@@ -277,11 +221,9 @@ export default function MatchPage() {
     setShowWinnerModal(false);
     setGameEnded(false);
     setShowFinalWinnerOverlay(false);
-    setRoundSeed(1);
+    setRoundSeed((s) => s + 1);
     setQuizQuestionIndex(0);
     setQuizQuestionTotal(0);
-    setCountdown(null);
-    setIsTransitioning(false);
     setRounds(sessionMode === "session" ? selectedSessionGames.length || 1 : 3);
   }
 
@@ -375,24 +317,16 @@ export default function MatchPage() {
           <div className="mx-auto max-w-6xl">
             <div
               key={`${activeGame}-${currentRound}-${roundSeed}`}
-              className={`transition-all duration-500 ${
-                isTransitioning || countdown !== null
-                  ? "scale-[0.985] opacity-0 blur-[6px]"
-                  : "scale-100 opacity-100 blur-0 animate-fade-in-up"
-              }`}
+              className="animate-fade-in-up"
             >
               {currentGameBoard}
             </div>
 
-            {countdown !== null && <CountdownOverlay count={countdown} />}
-
-            {countdown === null && !isTransitioning && (
-              <div className="mt-5 text-center animate-fade-in-up">
-                <p className="text-sm font-bold text-white/45">
-                  الجولة {currentRound} • {gameMeta.icon} {gameMeta.title}
-                </p>
-              </div>
-            )}
+            <div className="mt-5 text-center animate-fade-in-up">
+              <p className="text-sm font-bold text-white/45">
+                الجولة {currentRound} • {gameMeta.icon} {gameMeta.title}
+              </p>
+            </div>
           </div>
         ) : (
           <div className="animate-fade-in-up mx-auto max-w-3xl rounded-[32px] border border-white/10 bg-black/20 p-8 text-center">
