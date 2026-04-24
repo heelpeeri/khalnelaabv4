@@ -87,7 +87,6 @@ export default function WheelGame({
 }) {
 
   const [turn, setTurn] = useState<Turn>("side1");
-  const [turn, setTurn] = useState<Turn>("side1");
   const [phase, setPhase] = useState<Phase>("spin");
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
