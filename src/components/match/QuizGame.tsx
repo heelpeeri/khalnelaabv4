@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import QuizCategorySelect from "@/components/match/QuizCategorySelect";
 import { quizQuestions, quizCategoryMeta } from "@/data/quiz";
 import type { QuizCategoryKey, QuizQuestion } from "@/data/quiz";
@@ -11,12 +11,14 @@ export default function QuizGame({
   side2Name,
   onRoundEnd,
   roundKey,
+  category: initialCategory,
   onProgressChange,
 }: {
   side1Name: string;
   side2Name: string;
   onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
+  category?: QuizCategoryKey | null;
   onProgressChange?: (current: number, total: number) => void;
 }) {
   const [category, setCategory] = useState<QuizCategoryKey | null>(null);
@@ -24,23 +26,26 @@ export default function QuizGame({
   const [index, setIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
 
-  function selectCategory(cat: QuizCategoryKey) {
+  function startCategory(cat: QuizCategoryKey) {
     const picked = quizQuestions[cat] ?? [];
+    const selected = picked.slice(0, 5);
 
     setCategory(cat);
-    setQuestions(picked.slice(0, 5));
+    setQuestions(selected);
     setIndex(0);
     setShowAnswer(false);
-    onProgressChange?.(1, picked.slice(0, 5).length);
+    onProgressChange?.(selected.length > 0 ? 1 : 0, selected.length);
   }
+
+  useEffect(() => {
+    if (!initialCategory) return;
+    startCategory(initialCategory);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialCategory, roundKey]);
 
   function nextQuestion() {
     if (index + 1 >= questions.length) {
-      setCategory(null);
-      setQuestions([]);
-      setIndex(0);
-      setShowAnswer(false);
-      onProgressChange?.(0, 0);
+      onRoundEnd("none");
       return;
     }
 
@@ -50,22 +55,19 @@ export default function QuizGame({
     onProgressChange?.(next + 1, questions.length);
   }
 
-  if (!category) {
-    return <QuizCategorySelect onSelect={selectCategory} />;
+  if (!category && !initialCategory) {
+    return <QuizCategorySelect onSelect={startCategory} />;
   }
 
   const current = questions[index];
-  const meta = quizCategoryMeta[category];
+  const meta = category ? quizCategoryMeta[category] : null;
 
   if (!current) {
     return (
       <div className="text-center text-white">
         <p>ما فيه أسئلة في هذه الفئة</p>
-        <button
-          className="btn-primary mt-4"
-          onClick={() => setCategory(null)}
-        >
-          رجوع للفئات
+        <button className="btn-primary mt-4" onClick={() => onRoundEnd("none")}>
+          إنهاء الجولة
         </button>
       </div>
     );
@@ -122,26 +124,10 @@ export default function QuizGame({
             إظهار الإجابة
           </button>
         ) : (
-          <button
-            className="btn-primary min-w-[180px]"
-            onClick={nextQuestion}
-          >
+          <button className="btn-primary min-w-[180px]" onClick={nextQuestion}>
             التالي
           </button>
         )}
-
-        <button
-          className="btn-secondary min-w-[180px]"
-          onClick={() => {
-            setCategory(null);
-            setQuestions([]);
-            setIndex(0);
-            setShowAnswer(false);
-            onProgressChange?.(0, 0);
-          }}
-        >
-          رجوع للفئات
-        </button>
 
         <button
           className="btn-secondary min-w-[180px]"
