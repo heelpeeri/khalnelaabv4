@@ -56,11 +56,7 @@ function FinalWinnerOverlay({
           {isDraw ? "الفريقين" : `الفائز: ${winnerName}`}
         </p>
 
-        <button
-          onClick={onClose}
-          className="arcade-button mt-8"
-          type="button"
-        >
+        <button onClick={onClose} className="arcade-button mt-8" type="button">
           ابدأ من جديد
         </button>
       </div>
@@ -206,6 +202,7 @@ export default function MatchPage() {
         if (prev.length === 1) return prev;
         return prev.filter((id) => id !== gameId);
       }
+
       return [...prev, gameId];
     });
   }
@@ -242,10 +239,16 @@ export default function MatchPage() {
   }
 
   function endRound(winner?: WinnerType) {
+    if (activeGame === "quiz" && winner === "none") {
+      setShowWinnerModal(true);
+      return;
+    }
+
     if (winner) {
       chooseWinner(winner);
       return;
     }
+
     setShowWinnerModal(true);
   }
 
@@ -342,10 +345,12 @@ export default function MatchPage() {
             <p className="text-sm font-black tracking-[0.18em] text-cyan-300/80">
               {sessionMode === "session" ? "SESSION MODE" : "QUICK MODE"}
             </p>
+
             <h1 className="mt-1 text-3xl font-black">
               {sessionMode === "session" ? "تحدي الجلسة" : "تحدي سريع"}
             </h1>
           </div>
+
           <Logo size={90} />
         </div>
 
