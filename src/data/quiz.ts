@@ -866,7 +866,7 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
     { 
      question: "وش كانت هديةالنجاخ اللي قدمها أبو عليان وسعيدان لعياله؟",
      answer: "حمار",
-     image: "/images/tash.gift.jgp",
+     image: "/images/tash-gift.jpg",
      options: ["حمار", "سيارة سواق الشيوخ", "عود", "سفره للرياض"],
     },
     {
