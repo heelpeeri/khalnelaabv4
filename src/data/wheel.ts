@@ -64,6 +64,7 @@ export const WHEEL_PUZZLES = [
   { answer: "الأمن السيبراني", category: "تخصص" },
   { answer: "تكنولوجيا المعلومات", category: "تخصص" },
   { answer: "هندسة الطيران", category: "تخصص" },
+  { answer: "موارد بشرية", category: "تخصص" },
 
   { answer: "أبو العصافير", category: "مسلسل سعودي" },
   { answer: "كلنا عيال قرية", category: "مسلسل سعودي" },
