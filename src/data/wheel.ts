@@ -36,6 +36,7 @@ export const WHEEL_PUZZLES = [
   { answer: "ريد بول", category: "مشروب" },
   { answer: "كينزا", category: "مشروب" },
   { answer: "دكتور بيبر", category: "مشروب" },
+  { answer: "سن كويك", category: "مشروب" },
 
   { answer: "روبرتو كارلوس", category: "لاعب" },
   { answer: "بنزيما", category: "لاعب" },
@@ -44,6 +45,7 @@ export const WHEEL_PUZZLES = [
   { answer: "هنقرستيشن", category: "تطبيق" },
   { answer: "اوتلوك", category: "تطبيق" },
   { answer: "المسافر", category: "تطبيق" },
+  { answer: "معروف", category: "تطبيق" },
 
   { answer: "وينديز", category: "مطعم" },
   { answer: "بوبايز", category: "مطعم" },
@@ -69,6 +71,7 @@ export const WHEEL_PUZZLES = [
   { answer: "أبو العصافير", category: "مسلسل سعودي" },
   { answer: "كلنا عيال قرية", category: "مسلسل سعودي" },
   { answer: "حارة الشيخ", category: "مسلسل سعودي" },
+  { answer: "شارع الأعشى", category: "مسلسل سعودي" },
 
   { answer: "دار الحكمة", category: "جامعة سعودية" },
   { answer: "دار العلوم", category: "جامعة سعودية" },
