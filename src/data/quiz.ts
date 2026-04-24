@@ -713,10 +713,10 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
   options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
   },
   {
-  question: "وش اسم المنطقة الواقعة جنوب غرب السعودية في الخريطة؟",
-  image: "/images/saudi-asir-region.jpg",
-  answer: "عسير",
-  options: ["عسير", "جازان", "نجران", "القصيم"],
+  question: "وش هذا المعلم الشهير؟",
+  image: "/images/taj-mahal.jpg",
+  answer: "تاج محل",
+  options: ["تاج محل", "مسجد الشيخ زايد", "آيا صوفيا", "ضريح همايون"]
   },
   {
     question: "وش المدينة من هذه اللقطة الجوية؟",
