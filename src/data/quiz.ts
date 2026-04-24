@@ -765,9 +765,6 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
     answer: "الكولوسيوم",
     options: ["الكولوسيوم", "الأهرامات", "تاج محل", "البارثينون"],
   },
-
-  // 🔥 بدون صور (40 سؤال متنوع)
-
   {
     question: "أي دولة تقع في قارتين؟",
     answer: "تركيا",
@@ -818,8 +815,6 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
     answer: "أستراليا",
     options: ["أستراليا", "كندا", "البرازيل", "جنوب أفريقيا"],
   },
-
-  // 🔥 صعبة شوي
   {
     question: "ما عاصمة كازاخستان؟",
     answer: "أستانا",
@@ -844,12 +839,6 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
     question: "لأي دولة هذه العاصمة: ليما؟",
     answer: "بيرو",
     options: ["بيرو", "تشيلي", "الأرجنتين", "كولومبيا"],
-  },
-
-  // 🔥 كذا كمل نفس النمط
-  // (تقدر تكرر نفس أسلوب التنويع لباقي الأسئلة)
-
-]
     },
   ],
     tash: [
