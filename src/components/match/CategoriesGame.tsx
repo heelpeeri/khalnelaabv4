@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { GlassCard } from "@/components/GlassCard";
+import RoundBadge from "@/components/match/RoundBadge"; // ✅ أضفناه
 import { CATEGORY_LETTERS as letters } from "@/data/categories";
 import type { WinnerType } from "@/types/game";
 
@@ -10,14 +11,19 @@ export default function CategoriesGame({
   side2Name,
   onRoundEnd,
   roundKey,
+  currentRound = 1, // ✅ أضفناه
 }: {
   side1Name: string;
   side2Name: string;
   onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
+  currentRound?: number;
 }) {
   const ROUND_TIME = 40;
-  const [letter, setLetter] = useState<string>(() => letters[Math.floor(Math.random() * letters.length)]);
+
+  const [letter, setLetter] = useState<string>(
+    () => letters[Math.floor(Math.random() * letters.length)]
+  );
 
   const [timeLeft, setTimeLeft] = useState(ROUND_TIME);
   const [revealed, setRevealed] = useState(false);
@@ -70,6 +76,10 @@ export default function CategoriesGame({
 
   return (
     <GlassCard className="relative min-h-[700px] overflow-hidden border border-pink-400/25 bg-[#10001f]/75 p-5 text-center shadow-[0_0_28px_rgba(255,0,153,0.15)] backdrop-blur-md md:p-7">
+
+      {/* 🔥 رقم الجولة */}
+      <RoundBadge currentRound={currentRound} />
+
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.06),_transparent_35%)]" />
 
       <div className="relative z-10 mx-auto max-w-4xl">
@@ -94,7 +104,9 @@ export default function CategoriesGame({
 
           <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-4 shadow-[0_0_18px_rgba(34,211,238,0.08)]">
             <p className="text-sm text-white/65">الوقت</p>
-            <p className={`mt-2 text-4xl ${timerTextClass}`}>{timeLeft}</p>
+            <p className={`mt-2 text-4xl ${timerTextClass}`}>
+              {timeLeft}
+            </p>
 
             <div className="mt-3 h-3 w-full overflow-hidden rounded-full border border-white/10 bg-white/10">
               <div
@@ -126,52 +138,7 @@ export default function CategoriesGame({
           <p className="mt-3 leading-8 text-white/80">{instructionText}</p>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
-          <div className="grid gap-3 md:grid-cols-2">
-            <button
-              type="button"
-              onClick={() => {
-                setSide1Ready(true);
-                setSide1Time(ROUND_TIME - timeLeft);
-              }}
-              disabled={side1Ready || revealed}
-              className="rounded-xl border border-pink-300/20 bg-pink-500/10 px-4 py-3 text-base font-bold text-white transition hover:bg-pink-500/20 disabled:opacity-50"
-            >
-              {side1Name} — خلصنا
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setSide2Ready(true);
-                setSide2Time(ROUND_TIME - timeLeft);
-              }}
-              disabled={side2Ready || revealed}
-              className="rounded-xl border border-cyan-300/20 bg-cyan-400/10 px-4 py-3 text-base font-bold text-white transition hover:bg-cyan-400/20 disabled:opacity-50"
-            >
-              {side2Name} — خلصنا
-            </button>
-          </div>
-
-          <div className="mt-3 grid gap-2 text-sm text-white/75 md:grid-cols-2">
-            <div>
-              {side1Ready ? `✅ ${side1Name} سجّل` : `⏳ ${side1Name} لم يسجل بعد`}
-            </div>
-            <div>
-              {side2Ready ? `✅ ${side2Name} سجّل` : `⏳ ${side2Name} لم يسجل بعد`}
-            </div>
-          </div>
-        </div>
-
-        {revealed && (
-          <div className="mt-6 rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-4 text-center shadow-[0_0_18px_rgba(250,204,21,0.12)]">
-            <p className="text-lg font-black text-yellow-100">
-              🚫 انتهى الوقت – وقت الإعلان
-            </p>
-          </div>
-        )}
-
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <div className="mt-6 flex justify-center gap-3">
           <button
             type="button"
             onClick={() => onRoundEnd()}
