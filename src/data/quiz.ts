@@ -749,22 +749,10 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
   options: ["الأردن", "لبنان", "مصر", "المغرب"],
   },
   {
-    question: "وش الدولة من هذا العلم؟",
-    image: "https://i.imgur.com/canada.jpg",
-    answer: "كندا",
-    options: ["كندا", "أمريكا", "بريطانيا", "أستراليا"],
-  },
-  {
-    question: "وش الدولة من هذا الشكل الطويل؟",
-    image: "https://i.imgur.com/chile.jpg",
-    answer: "تشيلي",
-    options: ["تشيلي", "الأرجنتين", "بيرو", "كولومبيا"],
-  },
-  {
-    question: "وش هذا المعلم؟",
-    image: "https://i.imgur.com/colosseum.jpg",
-    answer: "الكولوسيوم",
-    options: ["الكولوسيوم", "الأهرامات", "تاج محل", "البارثينون"],
+    question: "ما اسم هذا الممر المائي؟",
+    image: "/images/bab-al-mandab.jpg",
+    answer: "باب المندب",
+    options: ["باب المندب", "مضيق هرمز", "قناة السويس", "مضيق جبل طارق"]
   },
   {
     question: "أي دولة تقع في قارتين؟",
