@@ -7,7 +7,9 @@ const GAMES = [
   { id: "word", name: "خمن الكلمة", icon: "💬" },
   { id: "quiz", name: "الأسئلة", icon: "❓" },
   { id: "scramble", name: "حروف بالخلاط", icon: "🧩" },
-  { id: "wheel", name: "العجلة", icon: "🎡" },
+  { id: "wheel", name: "لف وخمن", icon: "🎡" },
+  { id: "categories", name: "إنسان حيوان نبات جماد بلاد", icon: "🌍" },
+  { id: "draw", name: "خمن المثل", icon: "✏️" },
 ];
 
 const ROUNDS = [1, 2, 3, 5];
