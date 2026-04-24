@@ -743,10 +743,10 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
   options: ["بلجيكا", "فرنسا", "ألمانيا", "رومانيا"],
   },
   {
-    question: "وش المدينة من هذه اللقطة الليلية؟",
-    image: "https://i.imgur.com/tokyo.jpg",
-    answer: "طوكيو",
-    options: ["طوكيو", "سيول", "شنغهاي", "بانكوك"],
+  question: "في أي دولة يقع هذا المعلم؟",
+  image: "/images/petra-monastery.jpg",
+  answer: "البتراء في الأردن",
+  options: ["الأردن", "لبنان", "مصر", "المغرب"],
   },
   {
     question: "وش الدولة من هذا العلم؟",
