@@ -77,7 +77,14 @@ export default function WheelGame({
   side2Name,
   onRoundEnd,
   roundKey,
+  currentRound = 1,
 }: {
+  side1Name: string;
+  side2Name: string;
+  onRoundEnd: (winner?: WinnerType) => void;
+  roundKey: number;
+  currentRound?: number;
+}) {
   side1Name: string;
   side2Name: string;
   onRoundEnd: (winner?: WinnerType) => void;
