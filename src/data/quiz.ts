@@ -707,7 +707,7 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
 
   // 🔥 صور (10 فقط)
   {
-   question: "وش الدولة من هذا العلم؟",
+   question: "علم اي دولة؟؟",
   image: "https://ba019b00-21fb-4f3a-8f88-366bb77be97c-00-2nfckiwvypbis.worf.replit.dev/api/images/file/z72kgcp3wi.jpg?w=1200&h=700&fit=cover",
   answer: "فيتنام",
   options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
@@ -731,16 +731,16 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
     options: ["برج إيفل", "برج بيزا", "بيغ بن", "تاج محل"],
   },
   {
-    question: "أي من هذه الدول علمها أحمر فوق وأبيض تحت؟",
+    question: "علم اي دولة؟؟",
   image: "https://ba019b00-21fb-4f3a-8f88-366bb77be97c-00-2nfckiwvypbis.worf.replit.dev/api/images/file/iwtustcdff.jpg?w=1200&h=700&fit=cover",
   answer: "إندونيسيا",
   options: ["إندونيسيا", "بولندا", "موناكو", "النمسا"],
   },
   {
-    question: "في أي دولة هذا المعلم؟",
-    image: "https://i.imgur.com/pyramids.jpg",
-    answer: "مصر",
-    options: ["مصر", "المغرب", "الأردن", "السودان"],
+   question: "علم اي دولة؟",
+  image: "PUT_YOUR_BELGIUM_IMAGE_LINK",
+  answer: "بلجيكا",
+  options: ["بلجيكا", "فرنسا", "ألمانيا", "رومانيا"],
   },
   {
     question: "وش المدينة من هذه اللقطة الليلية؟",
