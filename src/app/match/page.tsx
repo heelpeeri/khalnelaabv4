@@ -99,8 +99,10 @@ export default function MatchPage() {
     Record<GameType, number>
   >(DEFAULT_SESSION_GAME_ROUNDS);
 
-  const [selectedSessionQuizCategory, setSelectedSessionQuizCategory] =
-    useState<QuizCategoryKey | null>(quizCategoryList[0]?.key ?? null);
+  const [selectedSessionQuizCategories, setSelectedSessionQuizCategories] =
+    useState<QuizCategoryKey[]>(
+      quizCategoryList[0]?.key ? [quizCategoryList[0].key] : []
+    );
 
   const [sessionQueue, setSessionQueue] = useState<SessionRound[]>([]);
 
@@ -201,6 +203,17 @@ export default function MatchPage() {
     }));
   }
 
+  function toggleSessionQuizCategory(category: QuizCategoryKey) {
+    setSelectedSessionQuizCategories((prev) => {
+      if (prev.includes(category)) {
+        if (prev.length === 1) return prev;
+        return prev.filter((item) => item !== category);
+      }
+
+      return [...prev, category];
+    });
+  }
+
   function buildSessionQueue() {
     const queue: SessionRound[] = [];
 
@@ -208,12 +221,16 @@ export default function MatchPage() {
       const count = sessionGameRounds[game] ?? 1;
 
       for (let i = 0; i < count; i++) {
+        const quizCategory =
+          game === "quiz"
+            ? selectedSessionQuizCategories[
+                i % selectedSessionQuizCategories.length
+              ] ?? quizCategoryList[0]?.key ?? null
+            : null;
+
         queue.push({
           game,
-          quizCategory:
-            game === "quiz"
-              ? selectedSessionQuizCategory ?? quizCategoryList[0]?.key ?? null
-              : null,
+          quizCategory,
         });
       }
     });
@@ -378,14 +395,14 @@ export default function MatchPage() {
               selectedGame={selectedGame}
               selectedSessionGames={selectedSessionGames}
               sessionGameRounds={sessionGameRounds}
-              selectedSessionQuizCategory={selectedSessionQuizCategory}
+              selectedSessionQuizCategories={selectedSessionQuizCategories}
               onSide1Change={setSide1}
               onSide2Change={setSide2}
               onRoundsChange={setRounds}
               onSelectedGameChange={setSelectedGame}
               onToggleSessionGame={toggleSessionGame}
               onSessionGameRoundsChange={updateSessionGameRounds}
-              onSelectedSessionQuizCategoryChange={setSelectedSessionQuizCategory}
+              onToggleSessionQuizCategory={toggleSessionQuizCategory}
               onStart={startGame}
             />
           </div>
