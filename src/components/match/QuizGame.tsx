@@ -111,7 +111,10 @@ export default function QuizGame({
         </div>
       </div>
 
-      <div className="mt-7 rounded-3xl border border-white/15 bg-white/10 p-6">
+      <<div
+  key={index}
+  className="mt-7 rounded-3xl border border-white/15 bg-white/10 p-6"
+>
         {current.image && (
           <img
             src={current.image}
