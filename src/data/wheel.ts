@@ -9,10 +9,10 @@ export const WHEEL_SEGMENTS = [
 ];
 
 export const WHEEL_PUZZLES = [
-  { answer: "معصوب", category: "أكل" },
-  { answer: "مقشوش", category: "أكل" },
-  { answer: "قرصان", category: "أكل" },
-  { answer: "مثلوثة", category: "أكل" },
+  { answer: "مفتوت", category: "أكل نجدي" },
+  { answer: "مراصيع", category: "أكل نجدي" },
+  { answer: "هريس", category: "أكل نجدي" },
+  { answer: "مرقوق", category: "أكل نجدي" },
 
   { answer: "أسعد الزهراني", category: "ممثل سعودي" },
   { answer: "عبدالمحسن النمر", category: "ممثل سعودي" },
