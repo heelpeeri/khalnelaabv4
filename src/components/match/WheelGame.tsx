@@ -79,13 +79,14 @@ export default function WheelGame({
   roundKey,
   currentRound = 1,
 }: {
-  currentRound?: number;
-}) {
   side1Name: string;
   side2Name: string;
   onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
+  currentRound?: number;
 }) {
+
+  const [turn, setTurn] = useState<Turn>("side1");
   const [turn, setTurn] = useState<Turn>("side1");
   const [phase, setPhase] = useState<Phase>("spin");
   const [rotation, setRotation] = useState(0);
