@@ -10,6 +10,8 @@ import ScrambleGame from "@/components/match/ScrambleGame";
 import WheelGame from "@/components/match/WheelGame";
 import QuizGame from "@/components/match/QuizGame";
 
+import { quizCategoryMeta } from "@/data/quiz";
+import type { QuizCategoryKey } from "@/data/quiz";
 import type { GameType, SessionMode, WinnerType } from "@/types/game";
 
 const GAME_OPTIONS: {
@@ -92,6 +94,9 @@ export default function MatchPage() {
   const [rounds, setRounds] = useState(3);
 
   const [selectedGame, setSelectedGame] = useState<GameType>("word");
+  const [selectedQuizCategory, setSelectedQuizCategory] =
+    useState<QuizCategoryKey | null>(null);
+
   const [selectedSessionGames, setSelectedSessionGames] = useState<GameType[]>([
     "quiz",
     "word",
@@ -118,6 +123,7 @@ export default function MatchPage() {
     const params = new URLSearchParams(window.location.search);
     const modeParam = params.get("mode");
     const game = params.get("game");
+    const category = params.get("category");
 
     if (modeParam === "session") {
       setSessionMode("session");
@@ -134,6 +140,10 @@ export default function MatchPage() {
       game === "quiz"
     ) {
       setSelectedGame(game);
+    }
+
+    if (category && category in quizCategoryMeta) {
+      setSelectedQuizCategory(category as QuizCategoryKey);
     }
   }, []);
 
@@ -169,10 +179,19 @@ export default function MatchPage() {
       : selectedGame;
 
   const gameMeta = useMemo(() => {
-    return (
-      GAME_OPTIONS.find((game) => game.id === activeGame) ?? GAME_OPTIONS[1]
-    );
-  }, [activeGame]);
+    if (activeGame === "quiz" && selectedQuizCategory) {
+      const categoryMeta = quizCategoryMeta[selectedQuizCategory];
+
+      return {
+        id: "quiz" as GameType,
+        title: categoryMeta.title,
+        icon: categoryMeta.emoji,
+        hint: categoryMeta.desc,
+      };
+    }
+
+    return GAME_OPTIONS.find((game) => game.id === activeGame) ?? GAME_OPTIONS[1];
+  }, [activeGame, selectedQuizCategory]);
 
   const isDraw = side1Score === side2Score;
   const finalWinnerName = isDraw
@@ -266,13 +285,13 @@ export default function MatchPage() {
   const currentGameBoard =
     activeGame === "word" ? (
       <WordGame
-  onRoundEnd={endRound}
-  roundKey={roundSeed}
-  side1Name={side1}
-  side2Name={side2}
-  side1Score={side1Score}
-  side2Score={side2Score}
-/>
+        onRoundEnd={endRound}
+        roundKey={roundSeed}
+        side1Name={side1}
+        side2Name={side2}
+        side1Score={side1Score}
+        side2Score={side2Score}
+      />
     ) : activeGame === "draw" ? (
       <ProverbGame
         side1Name={side1}
@@ -300,6 +319,7 @@ export default function MatchPage() {
         side2Name={side2}
         onRoundEnd={endRound}
         roundKey={roundSeed}
+        category={selectedQuizCategory}
         onProgressChange={(current: number, total: number) => {
           setQuizQuestionIndex(current);
           setQuizQuestionTotal(total);
