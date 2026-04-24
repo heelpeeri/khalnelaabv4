@@ -850,8 +850,9 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
       options: ["روتانا خليجية", "القناة الرياضية", "السعودية الأولى", "MBC"],
     },
     {
-     question: "وش اسم الشخصية التي كانت مع أبو مساعد في حلقة طارة أبو مساعد؟",
-     answer: "أبو عرادة",
+      question: "وش اسم الشخصية التي كانت مع أبو مساعد في حلقة طارة أبو مساعد؟",
+      image: "/images/tash.abuaradah.jpg",
+      answer: "أبو عرادة",
     },
     {
      question: "ما اسم الشخصية السودانية التي قدمها ناصر القصبي في حلقة (ألو يا مرور)؟",
