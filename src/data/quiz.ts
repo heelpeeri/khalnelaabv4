@@ -714,7 +714,7 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
   },
   {
   question: "وش اسم المنطقة الواقعة جنوب غرب السعودية في الخريطة؟",
-  image: "/images/asir-region.jpg",
+  image: "/images/saudi-asir-region.jpg",
   answer: "عسير",
   options: ["عسير", "جازان", "نجران", "القصيم"],
   },
