@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { GlassCard } from "@/components/GlassCard";
+import RoundBadge from "@/components/match/RoundBadge";
 import { SCRAMBLE_QUESTIONS as QUESTIONS } from "@/data/scramble";
 import type { WinnerType } from "@/types/game";
 
@@ -10,11 +11,13 @@ export default function ScrambleGame({
   side2Name,
   onRoundEnd,
   roundKey,
+  currentRound = 1,
 }: {
   side1Name: string;
   side2Name: string;
   onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
+  currentRound?: number;
 }) {
   function shuffleWord(word: string) {
     let shuffled = word;
@@ -91,6 +94,8 @@ export default function ScrambleGame({
   return (
     <>
       <GlassCard className="relative min-h-[720px] overflow-hidden border border-pink-400/25 bg-[#10001f]/75 p-5 text-center shadow-[0_0_28px_rgba(255,0,153,0.15)] backdrop-blur-md md:p-7">
+        <RoundBadge currentRound={currentRound} />
+
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.06),_transparent_35%)]" />
 
         <div className="relative z-10 mx-auto max-w-4xl">
@@ -110,7 +115,9 @@ export default function ScrambleGame({
               <p className="mt-2 text-4xl font-black text-pink-200">0</p>
             </div>
 
-            <div className={`rounded-2xl border p-4 shadow-[0_0_18px_rgba(34,211,238,0.08)] ${timerBoxClass}`}>
+            <div
+              className={`rounded-2xl border p-4 shadow-[0_0_18px_rgba(34,211,238,0.08)] ${timerBoxClass}`}
+            >
               <p className="text-sm text-white/65">الوقت المتبقي</p>
               <p className="mt-2 text-4xl font-black">{timeLeft}</p>
 
@@ -145,13 +152,16 @@ export default function ScrambleGame({
           </div>
 
           <div className="mt-6 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4 text-white/80">
-            إذا أحد عرفها، اضغط <span className="font-black text-white">إنهاء الجولة</span>
+            إذا أحد عرفها، اضغط{" "}
+            <span className="font-black text-white">إنهاء الجولة</span>
           </div>
 
           {revealed && (
             <div className="winner-animated mt-6 rounded-2xl border border-white/15 bg-white/10 p-5">
               <p className="text-sm text-white/70">الإجابة الصحيحة</p>
-              <p className="mt-2 text-4xl font-black text-white">{current.answer}</p>
+              <p className="mt-2 text-4xl font-black text-white">
+                {current.answer}
+              </p>
             </div>
           )}
 
