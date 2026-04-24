@@ -6,6 +6,17 @@ import { quizQuestions, quizCategoryMeta } from "@/data/quiz";
 import type { QuizCategoryKey, QuizQuestion } from "@/data/quiz";
 import type { WinnerType } from "@/types/game";
 
+function shuffleArray<T>(items: T[]) {
+  const array = [...items];
+
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+
+  return array;
+}
+
 export default function QuizGame({
   side1Name,
   side2Name,
@@ -28,7 +39,7 @@ export default function QuizGame({
 
   function startCategory(cat: QuizCategoryKey) {
     const picked = quizQuestions[cat] ?? [];
-    const selected = picked.slice(0, 5);
+    const selected = shuffleArray(picked).slice(0, 5);
 
     setCategory(cat);
     setQuestions(selected);
@@ -104,6 +115,19 @@ export default function QuizGame({
         <p className="text-2xl font-black leading-relaxed">
           {current.question}
         </p>
+
+        {current.options && current.options.length > 0 && (
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {current.options.map((option) => (
+              <div
+                key={option}
+                className="rounded-2xl border border-white/10 bg-white/10 p-4 text-lg font-bold"
+              >
+                {option}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {showAnswer && (
@@ -125,7 +149,7 @@ export default function QuizGame({
           </button>
         ) : (
           <button className="btn-primary min-w-[180px]" onClick={nextQuestion}>
-            التالي
+            {index + 1 >= questions.length ? "إنهاء الجولة" : "التالي"}
           </button>
         )}
 
