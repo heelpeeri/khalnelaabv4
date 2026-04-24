@@ -9,6 +9,7 @@ export type QuizQuestion = {
   question: string;
   answer: string;
   options?: string[];
+  image?: string;
 };
 
 export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
