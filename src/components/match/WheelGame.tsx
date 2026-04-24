@@ -404,7 +404,8 @@ setCurrentValue(value);
 
   return (
     <>
-      <GlassCard className="min-h-[760px] p-4 text-center md:p-6">
+      <GlassCard className="relative min-h-[760px] p-4 text-center md:p-6">
+       <RoundBadge currentRound={currentRound} />
         <div className="mx-auto max-w-5xl">
           <div className="rounded-[28px] border border-white/10 bg-[#091039]/55 p-4 shadow-[0_0_30px_rgba(0,0,0,0.35)] md:p-6">
             <div className="mb-5 text-center">
