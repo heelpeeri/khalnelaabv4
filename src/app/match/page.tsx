@@ -1,22 +1,62 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SetupGame from "@/components/SetupGame";
 
 import WordGame from "@/components/match/WordGame";
 import QuizGame from "@/components/match/QuizGame";
+import ScrambleGame from "@/components/match/ScrambleGame";
+import WheelGame from "@/components/match/WheelGame";
+import CategoriesGame from "@/components/match/CategoriesGame";
+import ProverbGame from "@/components/match/ProverbGame";
 
 import type { QuizCategoryKey } from "@/data/quiz";
+import type { WinnerType } from "@/types/game";
 
-type GameType = "word" | "quiz";
+type GameType = "word" | "quiz" | "scramble" | "wheel" | "categories" | "draw";
 
 type Round = {
   game: GameType;
   category: QuizCategoryKey | null;
 };
 
-export default function MatchPage() {
+function WinnerOverlay({
+  show,
+  winnerName,
+  isDraw,
+  onRestart,
+}: {
+  show: boolean;
+  winnerName: string;
+  isDraw: boolean;
+  onRestart: () => void;
+}) {
+  if (!show) return null;
 
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
+      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
+        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
+          انتهت الجلسة
+        </p>
+
+        <h1 className="arcade-title mt-6">
+          {isDraw ? "تعادل!" : "كفووو!"}
+        </h1>
+
+        <p className="arcade-winner mt-6">
+          {isDraw ? "الفريقين قدّها" : `الفائز: ${winnerName}`}
+        </p>
+
+        <button onClick={onRestart} className="arcade-button mt-8">
+          العب من جديد
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default function MatchPage() {
   const [side1, setSide1] = useState("");
   const [side2, setSide2] = useState("");
 
@@ -28,7 +68,11 @@ export default function MatchPage() {
   const [started, setStarted] = useState(false);
   const [index, setIndex] = useState(0);
 
-  // 🧠 بناء الجولات
+  const [side1Score, setSide1Score] = useState(0);
+  const [side2Score, setSide2Score] = useState(0);
+
+  const [showWinner, setShowWinner] = useState(false);
+
   function buildQueue(): Round[] {
     const q: Round[] = [];
 
@@ -36,14 +80,12 @@ export default function MatchPage() {
       const count = gameRounds[game] || 1;
 
       for (let i = 0; i < count; i++) {
-        const cat =
-          game === "quiz"
-            ? quizCategories[i % quizCategories.length]
-            : null;
-
         q.push({
           game,
-          category: cat,
+          category:
+            game === "quiz"
+              ? quizCategories[i % quizCategories.length] ?? null
+              : null,
         });
       }
     });
@@ -51,7 +93,6 @@ export default function MatchPage() {
     return q;
   }
 
-  // ▶️ بدء
   function start() {
     if (selectedGames.length === 0) {
       alert("اختر لعبة");
@@ -63,26 +104,99 @@ export default function MatchPage() {
       return;
     }
 
-    setQueue(buildQueue());
+    const builtQueue = buildQueue();
+
+    setQueue(builtQueue);
     setStarted(true);
     setIndex(0);
+    setSide1(side1.trim() || "فريق 1");
+    setSide2(side2.trim() || "فريق 2");
+    setSide1Score(0);
+    setSide2Score(0);
+    setShowWinner(false);
   }
 
-  // ➡️ الجولة التالية
-  function next() {
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const game = params.get("game") as GameType | null;
+    const category = params.get("category") as QuizCategoryKey | null;
+
+    const validGames: GameType[] = [
+      "word",
+      "quiz",
+      "scramble",
+      "wheel",
+      "categories",
+      "draw",
+    ];
+
+    if (!game || !validGames.includes(game)) return;
+
+    setQueue([
+      {
+        game,
+        category: game === "quiz" ? category : null,
+      },
+    ]);
+
+    setSide1("فريق 1");
+    setSide2("فريق 2");
+    setStarted(true);
+    setIndex(0);
+    setSide1Score(0);
+    setSide2Score(0);
+    setShowWinner(false);
+  }, []);
+
+  function finishSession(finalSide1Score: number, finalSide2Score: number) {
+    setSide1Score(finalSide1Score);
+    setSide2Score(finalSide2Score);
+    setStarted(false);
+    setShowWinner(true);
+  }
+
+  function endRound(winner?: WinnerType) {
+    const nextSide1Score = side1Score + (winner === "side1" ? 1 : 0);
+    const nextSide2Score = side2Score + (winner === "side2" ? 1 : 0);
+
+    setSide1Score(nextSide1Score);
+    setSide2Score(nextSide2Score);
+
     if (index + 1 >= queue.length) {
-      alert("انتهت اللعبة");
-      setStarted(false);
+      finishSession(nextSide1Score, nextSide2Score);
       return;
     }
 
     setIndex((i) => i + 1);
   }
 
+  function restart() {
+    setStarted(false);
+    setShowWinner(false);
+    setIndex(0);
+    setQueue([]);
+    setSide1Score(0);
+    setSide2Score(0);
+  }
+
   const current = queue[index];
 
+  const finalWinnerName = useMemo(() => {
+    if (side1Score > side2Score) return side1 || "فريق 1";
+    if (side2Score > side1Score) return side2 || "فريق 2";
+    return "تعادل";
+  }, [side1Score, side2Score, side1, side2]);
+
+  const isDraw = side1Score === side2Score;
+
   return (
-    <main className="p-6 text-white">
+    <main className="min-h-screen p-6 text-white">
+      <WinnerOverlay
+        show={showWinner}
+        winnerName={finalWinnerName}
+        isDraw={isDraw}
+        onRestart={restart}
+      />
 
       {!started ? (
         <SetupGame
@@ -99,22 +213,22 @@ export default function MatchPage() {
           onStart={start}
         />
       ) : (
-        <div className="max-w-4xl mx-auto">
-
-          {/* 🎮 خمن الكلمة */}
+        <div className="mx-auto max-w-5xl">
           {current?.game === "word" && (
             <WordGame
-              onRoundEnd={next}
+              onRoundEnd={endRound}
               roundKey={index}
               side1Name={side1}
               side2Name={side2}
+              side1Score={side1Score}
+              side2Score={side2Score}
+              currentRound={index + 1}
             />
           )}
 
-          {/* ❓ Quiz */}
           {current?.game === "quiz" && (
             <QuizGame
-              onRoundEnd={next}
+              onRoundEnd={endRound}
               roundKey={index}
               category={current.category}
               side1Name={side1}
@@ -122,11 +236,49 @@ export default function MatchPage() {
             />
           )}
 
-          {/* 📊 الجولة */}
-          <p className="text-center mt-4 text-white/60">
+          {current?.game === "scramble" && (
+            <ScrambleGame
+              onRoundEnd={endRound}
+              roundKey={index}
+              side1Name={side1}
+              side2Name={side2}
+              currentRound={index + 1}
+            />
+          )}
+
+          {current?.game === "wheel" && (
+            <WheelGame
+              onRoundEnd={endRound}
+              roundKey={index}
+              side1Name={side1}
+              side2Name={side2}
+              currentRound={index + 1}
+            />
+          )}
+
+          {current?.game === "categories" && (
+            <CategoriesGame
+              onRoundEnd={endRound}
+              roundKey={index}
+              side1Name={side1}
+              side2Name={side2}
+              currentRound={index + 1}
+            />
+          )}
+
+          {current?.game === "draw" && (
+            <ProverbGame
+              onRoundEnd={endRound}
+              roundKey={index}
+              side1Name={side1}
+              side2Name={side2}
+              currentRound={index + 1}
+            />
+          )}
+
+          <p className="mt-5 text-center text-sm font-bold text-white/50">
             الجولة {index + 1} من {queue.length}
           </p>
-
         </div>
       )}
     </main>
