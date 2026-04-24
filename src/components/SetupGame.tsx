@@ -1,6 +1,8 @@
 'use client';
 
 import Link from "next/link";
+import { quizCategoryList } from "@/data/quiz";
+import type { QuizCategoryKey } from "@/data/quiz";
 
 type GameType = "word" | "draw" | "categories" | "scramble" | "wheel" | "quiz";
 type SessionMode = "quick" | "session";
@@ -18,7 +20,7 @@ const GAME_OPTIONS: {
   { id: "draw", title: "خمن المثل", icon: "✏️" },
 ];
 
-const ROUND_OPTIONS = [1, 3, 5];
+const ROUND_OPTIONS = [1, 2, 3, 5];
 
 export default function SetupGame({
   sessionMode,
@@ -27,11 +29,15 @@ export default function SetupGame({
   rounds,
   selectedGame,
   selectedSessionGames,
+  sessionGameRounds,
+  selectedSessionQuizCategory,
   onSide1Change,
   onSide2Change,
   onRoundsChange,
   onSelectedGameChange,
   onToggleSessionGame,
+  onSessionGameRoundsChange,
+  onSelectedSessionQuizCategoryChange,
   onStart,
 }: {
   sessionMode: SessionMode;
@@ -40,15 +46,23 @@ export default function SetupGame({
   rounds: number;
   selectedGame: GameType;
   selectedSessionGames: GameType[];
+  sessionGameRounds: Record<GameType, number>;
+  selectedSessionQuizCategory: QuizCategoryKey | null;
   onSide1Change: (value: string) => void;
   onSide2Change: (value: string) => void;
   onRoundsChange: (value: number) => void;
   onSelectedGameChange: (value: GameType) => void;
   onToggleSessionGame: (value: GameType) => void;
+  onSessionGameRoundsChange: (game: GameType, rounds: number) => void;
+  onSelectedSessionQuizCategoryChange: (category: QuizCategoryKey) => void;
   onStart: () => void;
 }) {
   const selectedGameMeta =
     GAME_OPTIONS.find((g) => g.id === selectedGame) ?? GAME_OPTIONS[1];
+
+  const totalSessionRounds = selectedSessionGames.reduce((total, game) => {
+    return total + (sessionGameRounds[game] ?? 1);
+  }, 0);
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -104,7 +118,7 @@ export default function SetupGame({
 
               <div className="mx-auto mt-5 w-full max-w-[280px] rounded-full border border-white/10 bg-white/[0.05] p-1.5 shadow-[inset_0_0_10px_rgba(255,255,255,0.03)]">
                 <div className="grid grid-cols-3 gap-1.5">
-                  {ROUND_OPTIONS.map((value) => {
+                  {[1, 3, 5].map((value) => {
                     const active = rounds === value;
 
                     return (
@@ -138,31 +152,103 @@ export default function SetupGame({
               <div className="grid gap-3 sm:grid-cols-2">
                 {GAME_OPTIONS.map((game) => {
                   const isSelected = selectedSessionGames.includes(game.id);
+                  const gameRoundCount = sessionGameRounds[game.id] ?? 1;
 
                   return (
-                    <button
+                    <div
                       key={game.id}
-                      type="button"
-                      onClick={() => onToggleSessionGame(game.id)}
                       className={`rounded-2xl border p-4 text-right transition ${
                         isSelected
                           ? "border-cyan-300/40 bg-cyan-400/15 shadow-[0_0_18px_rgba(34,211,238,0.08)]"
                           : "border-white/10 bg-white/5 hover:bg-white/10"
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="text-lg font-black">
-                          {game.icon} {game.title}
-                        </span>
-                        <span className="text-sm">{isSelected ? "✅" : "⬜"}</span>
-                      </div>
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => onToggleSessionGame(game.id)}
+                        className="w-full text-right"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-lg font-black">
+                            {game.icon} {game.title}
+                          </span>
+                          <span className="text-sm">
+                            {isSelected ? "✅" : "⬜"}
+                          </span>
+                        </div>
+                      </button>
+
+                      {isSelected && (
+                        <div className="mt-4">
+                          <p className="mb-2 text-right text-xs font-bold text-white/55">
+                            عدد جولات هذه اللعبة
+                          </p>
+
+                          <div className="grid grid-cols-4 gap-2">
+                            {ROUND_OPTIONS.map((value) => {
+                              const active = gameRoundCount === value;
+
+                              return (
+                                <button
+                                  key={value}
+                                  type="button"
+                                  onClick={() =>
+                                    onSessionGameRoundsChange(game.id, value)
+                                  }
+                                  className={`h-9 rounded-xl text-sm font-black transition ${
+                                    active
+                                      ? "bg-white text-[#120022]"
+                                      : "bg-white/10 text-white hover:bg-white/15"
+                                  }`}
+                                >
+                                  {value}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {game.id === "quiz" && isSelected && (
+                        <div className="mt-4 rounded-2xl border border-white/10 bg-black/15 p-3">
+                          <p className="mb-2 text-right text-xs font-bold text-white/55">
+                            اختر فئة الأسئلة
+                          </p>
+
+                          <div className="grid gap-2">
+                            {quizCategoryList.map((category) => {
+                              const active =
+                                selectedSessionQuizCategory === category.key;
+
+                              return (
+                                <button
+                                  key={category.key}
+                                  type="button"
+                                  onClick={() =>
+                                    onSelectedSessionQuizCategoryChange(
+                                      category.key
+                                    )
+                                  }
+                                  className={`rounded-xl border px-3 py-2 text-right text-sm font-bold transition ${
+                                    active
+                                      ? "border-yellow-300/40 bg-yellow-300/15 text-yellow-100"
+                                      : "border-white/10 bg-white/5 text-white/75 hover:bg-white/10"
+                                  }`}
+                                >
+                                  {category.emoji} {category.title}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </div>
 
               <p className="mt-4 text-right text-sm text-white/65">
-                عدد الجولات: {selectedSessionGames.length}
+                عدد الجولات: {totalSessionRounds}
               </p>
             </div>
           )}
