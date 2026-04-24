@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { GlassCard } from "@/components/GlassCard";
+import RoundBadge from "@/components/match/RoundBadge"; // ✅ أضفناه
 import { PROVERB_PUZZLES as puzzles } from "@/data/proverbs";
 import type { WinnerType } from "@/types/game";
 
@@ -10,11 +11,13 @@ export default function ProverbGame({
   side2Name,
   onRoundEnd,
   roundKey,
+  currentRound = 1, // ✅ أضفناه
 }: {
   side1Name: string;
   side2Name: string;
   onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
+  currentRound?: number;
 }) {
   const ROUND_TIME = 20;
 
@@ -66,6 +69,10 @@ export default function ProverbGame({
 
   return (
     <GlassCard className="relative min-h-[680px] overflow-hidden border border-pink-400/25 bg-[#10001f]/75 p-5 text-center shadow-[0_0_28px_rgba(255,0,153,0.15)] backdrop-blur-md md:p-7">
+      
+      {/* 🔥 رقم الجولة */}
+      <RoundBadge currentRound={currentRound} />
+
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.06),_transparent_35%)]" />
 
       <div className="relative z-10 mx-auto max-w-4xl">
@@ -77,7 +84,6 @@ export default function ProverbGame({
           خمن المثل
         </h2>
 
-        {/* 🔥 SCORE + TIMER */}
         <div className="mt-5 grid gap-3 md:grid-cols-3">
           <div className="rounded-2xl border border-pink-300/20 bg-pink-500/10 p-4">
             <p className="text-sm text-white/65">{side1Name}</p>
@@ -101,7 +107,6 @@ export default function ProverbGame({
           </div>
         </div>
 
-        {/* 🔥 EMOJI */}
         <div className="mt-6 rounded-3xl border border-white/10 bg-white/10 px-6 py-8">
           <div className="text-6xl md:text-7xl">
             {current.emoji}
@@ -114,7 +119,6 @@ export default function ProverbGame({
           </div>
         )}
 
-        {/* 🔥 BUTTONS (بدون كروت كبيرة) */}
         <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
           <div className="grid gap-3 md:grid-cols-2">
             <button
@@ -141,7 +145,6 @@ export default function ProverbGame({
           </div>
         </div>
 
-        {/* 🔥 ACTIONS */}
         <div className="mt-6 flex justify-center gap-3">
           <button onClick={() => setRevealed(true)} className="btn-secondary">
             إظهار المثل
