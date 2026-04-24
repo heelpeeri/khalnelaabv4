@@ -12,23 +12,24 @@ export default function MatchPage() {
   const [side2, setSide2] = useState("");
 
   const [selectedGames, setSelectedGames] = useState<string[]>([]);
-  const [gameRounds, setGameRounds] = useState<any>({});
+  const [gameRounds, setGameRounds] = useState<Record<string, number>>({});
   const [quizCategories, setQuizCategories] = useState<string[]>([]);
 
-  const [queue, setQueue] = useState<any[]>([]);
+  const [queue, setQueue] = useState<{ game: string; category: string | null }[]>([]);
   const [started, setStarted] = useState(false);
   const [index, setIndex] = useState(0);
 
+  // 🔥 بناء الجولات
   function buildQueue() {
-    let q: any[] = [];
+    const q: { game: string; category: string | null }[] = [];
 
-    selectedGames.forEach(game => {
+    selectedGames.forEach((game) => {
       const count = gameRounds[game] || 1;
 
       for (let i = 0; i < count; i++) {
         const cat =
           game === "quiz"
-            ? quizCategories[i % quizCategories.length]
+            ? quizCategories[i % quizCategories.length] || null
             : null;
 
         q.push({ game, category: cat });
@@ -38,11 +39,16 @@ export default function MatchPage() {
     return q;
   }
 
+  // ▶️ بدء اللعبة
   function start() {
-    if (selectedGames.length === 0) return alert("اختر لعبة");
+    if (selectedGames.length === 0) {
+      alert("اختر لعبة");
+      return;
+    }
 
     if (selectedGames.includes("quiz") && quizCategories.length === 0) {
-      return alert("اختر فئة");
+      alert("اختر فئة للأسئلة");
+      return;
     }
 
     setQueue(buildQueue());
@@ -50,13 +56,15 @@ export default function MatchPage() {
     setIndex(0);
   }
 
+  // ➡️ الجولة التالية
   function next() {
     if (index + 1 >= queue.length) {
       alert("انتهت اللعبة");
       setStarted(false);
       return;
     }
-    setIndex(index + 1);
+
+    setIndex((i) => i + 1);
   }
 
   const current = queue[index];
@@ -81,15 +89,29 @@ export default function MatchPage() {
       ) : (
         <div className="max-w-4xl mx-auto">
 
+          {/* 🎮 خمن الكلمة */}
           {current?.game === "word" && (
-            <WordGame onRoundEnd={next} roundKey={index} />
+            <WordGame
+              onRoundEnd={next}
+              roundKey={index}
+              side1Name={side1}
+              side2Name={side2}
+            />
           )}
 
+          {/* ❓ Quiz */}
           {current?.game === "quiz" && (
-            <QuizGame onRoundEnd={next} roundKey={index} category={current.category} />
+            <QuizGame
+              onRoundEnd={next}
+              roundKey={index}
+              category={current.category ?? null}
+              side1Name={side1}
+              side2Name={side2}
+            />
           )}
 
-          <p className="text-center mt-4">
+          {/* 📊 الجولة */}
+          <p className="text-center mt-4 text-white/60">
             الجولة {index + 1} من {queue.length}
           </p>
 
