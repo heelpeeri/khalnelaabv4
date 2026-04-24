@@ -792,7 +792,6 @@ export const quizCategoryMeta: Record<
     desc: "أسئلة عن طاش وشخصياته",
   },
 };
-};
 
 export const quizCategoryList = (Object.keys(quizCategoryMeta) as QuizCategoryKey[]).map((key) => ({
   key,
