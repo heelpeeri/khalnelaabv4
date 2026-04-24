@@ -111,7 +111,7 @@ export default function QuizGame({
         </div>
       </div>
 
-      <<div
+      <div
   key={index}
   className="mt-7 rounded-3xl border border-white/15 bg-white/10 p-6"
 >
