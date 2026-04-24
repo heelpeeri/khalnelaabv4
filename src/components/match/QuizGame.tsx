@@ -37,6 +37,9 @@ export default function QuizGame({
   const [index, setIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
 
+  const [side1QuizScore, setSide1QuizScore] = useState(0);
+  const [side2QuizScore, setSide2QuizScore] = useState(0);
+
   function startCategory(cat: QuizCategoryKey) {
     const picked = quizQuestions[cat] ?? [];
     const selected = shuffleArray(picked).slice(0, 5);
@@ -45,6 +48,9 @@ export default function QuizGame({
     setQuestions(selected);
     setIndex(0);
     setShowAnswer(false);
+    setSide1QuizScore(0);
+    setSide2QuizScore(0);
+
     onProgressChange?.(selected.length > 0 ? 1 : 0, selected.length);
   }
 
@@ -54,9 +60,23 @@ export default function QuizGame({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialCategory, roundKey]);
 
-  function nextQuestion() {
+  function finishQuiz(finalSide1Score: number, finalSide2Score: number) {
+    if (finalSide1Score > finalSide2Score) {
+      onRoundEnd("side1");
+      return;
+    }
+
+    if (finalSide2Score > finalSide1Score) {
+      onRoundEnd("side2");
+      return;
+    }
+
+    onRoundEnd("none");
+  }
+
+  function goNextQuestion(finalSide1Score: number, finalSide2Score: number) {
     if (index + 1 >= questions.length) {
-      onRoundEnd("none");
+      finishQuiz(finalSide1Score, finalSide2Score);
       return;
     }
 
@@ -64,6 +84,16 @@ export default function QuizGame({
     setIndex(next);
     setShowAnswer(false);
     onProgressChange?.(next + 1, questions.length);
+  }
+
+  function chooseQuestionWinner(winner: "side1" | "side2" | "none") {
+    const nextSide1Score = side1QuizScore + (winner === "side1" ? 1 : 0);
+    const nextSide2Score = side2QuizScore + (winner === "side2" ? 1 : 0);
+
+    setSide1QuizScore(nextSide1Score);
+    setSide2QuizScore(nextSide2Score);
+
+    goNextQuestion(nextSide1Score, nextSide2Score);
   }
 
   if (!category && !initialCategory) {
@@ -97,6 +127,9 @@ export default function QuizGame({
       <div className="mt-6 grid gap-3 md:grid-cols-3">
         <div className="rounded-2xl border border-pink-300/20 bg-pink-500/10 p-4">
           <p>{side1Name}</p>
+          <p className="mt-1 text-3xl font-black text-pink-200">
+            {side1QuizScore}
+          </p>
         </div>
 
         <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-4">
@@ -108,15 +141,19 @@ export default function QuizGame({
 
         <div className="rounded-2xl border border-cyan-300/20 bg-white/10 p-4">
           <p>{side2Name}</p>
+          <p className="mt-1 text-3xl font-black text-cyan-200">
+            {side2QuizScore}
+          </p>
         </div>
       </div>
 
       <div
-  key={index}
-  className="mt-7 rounded-3xl border border-white/15 bg-white/10 p-6"
->
+        key={`${index}-${current.question}`}
+        className="mt-7 rounded-3xl border border-white/15 bg-white/10 p-6"
+      >
         {current.image && (
           <img
+            key={current.image}
             src={current.image}
             alt={current.question}
             className="mx-auto mb-5 max-h-[260px] w-full rounded-2xl object-cover"
@@ -159,9 +196,28 @@ export default function QuizGame({
             إظهار الإجابة
           </button>
         ) : (
-          <button className="btn-primary min-w-[180px]" onClick={nextQuestion}>
-            {index + 1 >= questions.length ? "إنهاء الجولة" : "التالي"}
-          </button>
+          <>
+            <button
+              className="btn-primary min-w-[180px]"
+              onClick={() => chooseQuestionWinner("side1")}
+            >
+              فاز {side1Name}
+            </button>
+
+            <button
+              className="btn-primary min-w-[180px]"
+              onClick={() => chooseQuestionWinner("side2")}
+            >
+              فاز {side2Name}
+            </button>
+
+            <button
+              className="btn-secondary min-w-[180px]"
+              onClick={() => chooseQuestionWinner("none")}
+            >
+              لا أحد
+            </button>
+          </>
         )}
 
         <button
