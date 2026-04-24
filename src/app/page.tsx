@@ -17,7 +17,7 @@ const quickGames = [
     title: "لف وخمن",
   },
   {
-    href: "/match?game=quiz",
+    href: "/quiz",
     emoji: "❓",
     title: "الأسئلة",
   },
