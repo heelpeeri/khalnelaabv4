@@ -876,7 +876,7 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
     },
     {
     question: "ولد عم سعيدان وعليان اللي جاي من الديرة ما يحب الحمام، اجل وش يحب؟",
-    image: "/images/tash-fish.jpg",
+    image: "/images/tash-fish.jgp.png",
     answer: "السمك",
     },
     {
