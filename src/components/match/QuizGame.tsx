@@ -1,80 +1,154 @@
 'use client';
 
 import { useState } from "react";
-import { quizCategoryMeta, QuizCategoryKey } from "@/data/quiz";
+import QuizCategorySelect from "@/components/match/QuizCategorySelect";
+import { quizQuestions, quizCategoryMeta } from "@/data/quiz";
+import type { QuizCategoryKey, QuizQuestion } from "@/data/quiz";
+import type { WinnerType } from "@/types/game";
 
-export default function QuizCategorySelect({
-  onSelect,
+export default function QuizGame({
+  side1Name,
+  side2Name,
+  onRoundEnd,
+  roundKey,
+  onProgressChange,
 }: {
-  onSelect: (category: QuizCategoryKey) => void;
+  side1Name: string;
+  side2Name: string;
+  onRoundEnd: (winner?: WinnerType) => void;
+  roundKey: number;
+  onProgressChange?: (current: number, total: number) => void;
 }) {
-  const [open, setOpen] = useState(false);
+  const [category, setCategory] = useState<QuizCategoryKey | null>(null);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [index, setIndex] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
 
-  const categories = Object.entries(quizCategoryMeta) as [
-    QuizCategoryKey,
-    {
-      title: string;
-      emoji: string;
-      desc?: string;
+  function selectCategory(cat: QuizCategoryKey) {
+    const picked = quizQuestions[cat] ?? [];
+
+    setCategory(cat);
+    setQuestions(picked.slice(0, 5));
+    setIndex(0);
+    setShowAnswer(false);
+    onProgressChange?.(1, picked.slice(0, 5).length);
+  }
+
+  function nextQuestion() {
+    if (index + 1 >= questions.length) {
+      setCategory(null);
+      setQuestions([]);
+      setIndex(0);
+      setShowAnswer(false);
+      onProgressChange?.(0, 0);
+      return;
     }
-  ][];
+
+    const next = index + 1;
+    setIndex(next);
+    setShowAnswer(false);
+    onProgressChange?.(next + 1, questions.length);
+  }
+
+  if (!category) {
+    return <QuizCategorySelect onSelect={selectCategory} />;
+  }
+
+  const current = questions[index];
+  const meta = quizCategoryMeta[category];
+
+  if (!current) {
+    return (
+      <div className="text-center text-white">
+        <p>ما فيه أسئلة في هذه الفئة</p>
+        <button
+          className="btn-primary mt-4"
+          onClick={() => setCategory(null)}
+        >
+          رجوع للفئات
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <div className="rounded-[28px] border border-white/10 bg-black/20 p-5 text-center shadow-[0_0_24px_rgba(255,255,255,0.04)]">
-        <p className="text-sm font-black tracking-[0.18em] text-cyan-300/80">
-          اختر الفئة
+    <div className="mx-auto max-w-4xl rounded-[28px] border border-white/10 bg-black/20 p-6 text-center text-white">
+      <p className="text-sm font-black tracking-[0.18em] text-cyan-300/80">
+        QUIZ
+      </p>
+
+      <h2 className="mt-2 text-3xl font-black">
+        {meta?.emoji} {meta?.title}
+      </h2>
+
+      <div className="mt-6 grid gap-3 md:grid-cols-3">
+        <div className="rounded-2xl border border-pink-300/20 bg-pink-500/10 p-4">
+          <p>{side1Name}</p>
+        </div>
+
+        <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-4">
+          <p>السؤال</p>
+          <p className="text-2xl font-black">
+            {index + 1} / {questions.length}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-cyan-300/20 bg-white/10 p-4">
+          <p>{side2Name}</p>
+        </div>
+      </div>
+
+      <div className="mt-7 rounded-3xl border border-white/15 bg-white/10 p-6">
+        <p className="text-2xl font-black leading-relaxed">
+          {current.question}
         </p>
+      </div>
+
+      {showAnswer && (
+        <div className="mt-5 rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5">
+          <p className="text-sm text-white/70">الإجابة الصحيحة</p>
+          <p className="mt-2 text-2xl font-black text-yellow-100">
+            {current.answer}
+          </p>
+        </div>
+      )}
+
+      <div className="mt-6 flex flex-wrap justify-center gap-3">
+        {!showAnswer ? (
+          <button
+            className="btn-primary min-w-[180px]"
+            onClick={() => setShowAnswer(true)}
+          >
+            إظهار الإجابة
+          </button>
+        ) : (
+          <button
+            className="btn-primary min-w-[180px]"
+            onClick={nextQuestion}
+          >
+            التالي
+          </button>
+        )}
 
         <button
-          type="button"
-          onClick={() => setOpen((prev) => !prev)}
-          className="btn-primary mt-4 min-w-[240px] transition duration-200 hover:scale-[1.03]"
+          className="btn-secondary min-w-[180px]"
+          onClick={() => {
+            setCategory(null);
+            setQuestions([]);
+            setIndex(0);
+            setShowAnswer(false);
+            onProgressChange?.(0, 0);
+          }}
         >
-          {open ? "إخفاء الفئات" : "عرض الفئات"}
+          رجوع للفئات
         </button>
 
-        <div
-          className={`grid overflow-hidden transition-all duration-500 ${
-            open
-              ? "mt-6 max-h-[700px] opacity-100"
-              : "mt-0 max-h-0 opacity-0"
-          }`}
+        <button
+          className="btn-secondary min-w-[180px]"
+          onClick={() => onRoundEnd("none")}
         >
-          <div className="grid gap-4 sm:grid-cols-2">
-            {categories.map(([key, meta], index) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => onSelect(key)}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-5 text-right transition duration-300 hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/10 hover:shadow-[0_0_20px_rgba(34,211,238,0.10)] active:scale-[0.98]"
-                style={{
-                  animation: open
-                    ? `fade-in-up 0.35s ease ${index * 60}ms both`
-                    : "none",
-                }}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-3xl transition duration-300 group-hover:scale-110">
-                    {meta.emoji}
-                  </span>
-
-                  <div className="text-right">
-                    <h3 className="text-lg font-black text-white">
-                      {meta.title}
-                    </h3>
-
-                    {meta.desc && (
-                      <p className="mt-1 text-sm text-white/55">
-                        {meta.desc}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
+          إنهاء الجولة
+        </button>
       </div>
     </div>
   );
