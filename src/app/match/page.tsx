@@ -236,6 +236,7 @@ export default function MatchPage() {
         side2Name={side2}
         side1Score={side1Score}
         side2Score={side2Score}
+        currentRound={currentRound}
       />
     ) : activeGame === "draw" ? (
       <ProverbGame
@@ -243,6 +244,7 @@ export default function MatchPage() {
         side2Name={side2}
         onRoundEnd={endRound}
         roundKey={roundSeed}
+        currentRound={currentRound}
       />
     ) : activeGame === "scramble" ? (
       <ScrambleGame
@@ -250,6 +252,7 @@ export default function MatchPage() {
         side2Name={side2}
         onRoundEnd={endRound}
         roundKey={roundSeed}
+        currentRound={currentRound}
       />
     ) : activeGame === "wheel" ? (
       <WheelGame
@@ -257,6 +260,7 @@ export default function MatchPage() {
         side2Name={side2}
         onRoundEnd={endRound}
         roundKey={roundSeed}
+        currentRound={currentRound}
       />
     ) : activeGame === "quiz" ? (
       <QuizGame
@@ -276,6 +280,7 @@ export default function MatchPage() {
         side2Name={side2}
         onRoundEnd={endRound}
         roundKey={roundSeed}
+        currentRound={currentRound}
       />
     );
 
