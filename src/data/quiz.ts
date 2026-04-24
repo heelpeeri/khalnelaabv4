@@ -725,10 +725,10 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
     options: ["نيويورك", "شيكاغو", "تورونتو", "بوسطن"],
   },
   {
-    question: "وش هذا المعلم؟",
-    image: "https://i.imgur.com/eiffel.jpg",
-    answer: "برج إيفل",
-    options: ["برج إيفل", "برج بيزا", "بيغ بن", "تاج محل"],
+  question: "وش هذا المعلم الشهير؟",
+  image: "https://ba019b00-21fb-4f3a-8f88-366bb77be97c-00-2nfckiwvypbis.worf.replit.dev/api/images/file/fp297z55ph.jpg?w=1200&h=700&fit=cover",
+  answer: "جبل راشمور",
+  options: ["جبل راشمور", "تماثيل جزيرة الفصح", "نقوش لونغمِن الصخرية", "تماثيل باميان"],
   },
   {
     question: "علم اي دولة؟؟",
