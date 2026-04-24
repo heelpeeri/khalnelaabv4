@@ -708,7 +708,7 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
   // 🔥 صور (10 فقط)
   {
    question: "علم اي دولة؟؟",
-  image: "https://ba019b00-21fb-4f3a-8f88-366bb77be97c-00-2nfckiwvypbis.worf.replit.dev/api/images/file/z72kgcp3wi.jpg?w=1200&h=700&fit=cover",
+  image: "/public/images/vietnam-flag.jpg",
   answer: "فيتنام",
   options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
   },
@@ -726,19 +726,19 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
   },
   {
   question: "وش هذا المعلم الشهير؟",
-  image: "https://ba019b00-21fb-4f3a-8f88-366bb77be97c-00-2nfckiwvypbis.worf.replit.dev/api/images/file/fp297z55ph.jpg?w=1200&h=700&fit=cover",
+  image: "/public/images/mount-rushmore.jpg",
   answer: "جبل راشمور",
   options: ["جبل راشمور", "تماثيل جزيرة الفصح", "نقوش لونغمِن الصخرية", "تماثيل باميان"],
   },
   {
     question: "علم اي دولة؟؟",
-  image: "https://ba019b00-21fb-4f3a-8f88-366bb77be97c-00-2nfckiwvypbis.worf.replit.dev/api/images/file/iwtustcdff.jpg?w=1200&h=700&fit=cover",
+  image: "/public/images/indonesia-flag.jpg",
   answer: "إندونيسيا",
   options: ["إندونيسيا", "بولندا", "موناكو", "النمسا"],
   },
   {
    question: "علم اي دولة؟",
-  image: "PUT_YOUR_BELGIUM_IMAGE_LINK",
+  image: "/public/images/belgium-flag.jpg",
   answer: "بلجيكا",
   options: ["بلجيكا", "فرنسا", "ألمانيا", "رومانيا"],
   },
