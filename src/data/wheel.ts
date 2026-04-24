@@ -22,7 +22,7 @@ export const WHEEL_PUZZLES = [
   { answer: "سويسرا", category: "دولة" },
   { answer: "كولومبيا", category: "دولة" },
   { answer: "المكسيك", category: "دولة" },
-  { answer: "جمهورية تشيلي", category: "دولة" },
+  { answer: "جمهورية موريشيوس", category: "دولة" },
 
   { answer: "قوتشي", category: "براند عالمي" },
   { answer: "كارتير", category: "براند عالمي" },
