@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { GlassCard } from "@/components/GlassCard";
+import RoundBadge from "@/components/match/RoundBadge";
 import { WHEEL_SEGMENTS as SEGMENTS, WHEEL_PUZZLES as PUZZLES, WHEEL_LETTER_ROWS as LETTER_ROWS } from "@/data/wheel";
 import type { TeamTurn as Turn, WinnerType } from "@/types/game";
 import type { WheelValue as Value } from "@/data/wheel";
