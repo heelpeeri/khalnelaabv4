@@ -7,6 +7,7 @@ export default function GameLayout({
   side1Score,
   side2Score,
   turn,
+  currentRound = 1,
   children,
 }: {
   title: string;
@@ -15,6 +16,7 @@ export default function GameLayout({
   side1Score: number;
   side2Score: number;
   turn: string;
+  currentRound?: number;
   children: React.ReactNode;
 }) {
   return (
@@ -22,7 +24,7 @@ export default function GameLayout({
       <div className="glass rounded-[24px] border border-white/10 bg-[#121028]/80 p-3 text-center shadow-[0_0_30px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:rounded-[28px] sm:p-4 lg:p-6">
         <div className="mb-3 flex items-start justify-between gap-3">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-b from-[#8b5cf6] to-[#6d28d9] text-2xl font-black text-white shadow-[0_0_18px_rgba(139,92,246,0.35)]">
-            1
+            {currentRound}
           </div>
 
           <div className="min-w-0 flex-1 text-center">
