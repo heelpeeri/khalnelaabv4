@@ -10,9 +10,14 @@ import ScrambleGame from "@/components/match/ScrambleGame";
 import WheelGame from "@/components/match/WheelGame";
 import QuizGame from "@/components/match/QuizGame";
 
-import { quizCategoryMeta } from "@/data/quiz";
+import { quizCategoryList, quizCategoryMeta } from "@/data/quiz";
 import type { QuizCategoryKey } from "@/data/quiz";
 import type { GameType, SessionMode, WinnerType } from "@/types/game";
+
+type SessionRound = {
+  game: GameType;
+  quizCategory?: QuizCategoryKey | null;
+};
 
 const GAME_OPTIONS: {
   id: GameType;
@@ -27,6 +32,15 @@ const GAME_OPTIONS: {
   { id: "categories", title: "إنسان حيوان نبات جماد بلاد", icon: "🌍", hint: "كل الإجابات بنفس الحرف." },
   { id: "draw", title: "خمن المثل", icon: "✏️", hint: "خمن المثل من الإيموجي." },
 ];
+
+const DEFAULT_SESSION_GAME_ROUNDS: Record<GameType, number> = {
+  quiz: 1,
+  word: 1,
+  scramble: 1,
+  wheel: 1,
+  categories: 1,
+  draw: 1,
+};
 
 function FinalWinnerOverlay({
   show,
@@ -81,6 +95,15 @@ export default function MatchPage() {
     "scramble",
   ]);
 
+  const [sessionGameRounds, setSessionGameRounds] = useState<
+    Record<GameType, number>
+  >(DEFAULT_SESSION_GAME_ROUNDS);
+
+  const [selectedSessionQuizCategory, setSelectedSessionQuizCategory] =
+    useState<QuizCategoryKey | null>(quizCategoryList[0]?.key ?? null);
+
+  const [sessionQueue, setSessionQueue] = useState<SessionRound[]>([]);
+
   const [started, setStarted] = useState(false);
   const [currentRound, setCurrentRound] = useState(1);
   const [side1Score, setSide1Score] = useState(0);
@@ -125,14 +148,22 @@ export default function MatchPage() {
     }
   }, [gameEnded]);
 
+  const activeQueueItem =
+    sessionMode === "session" ? sessionQueue[currentRound - 1] : null;
+
   const activeGame =
     sessionMode === "session"
-      ? selectedSessionGames[currentRound - 1] ?? selectedSessionGames[0] ?? "word"
+      ? activeQueueItem?.game ?? selectedSessionGames[0] ?? "word"
       : selectedGame;
 
+  const activeQuizCategory =
+    sessionMode === "session"
+      ? activeQueueItem?.quizCategory ?? null
+      : selectedQuizCategory;
+
   const gameMeta = useMemo(() => {
-    if (activeGame === "quiz" && selectedQuizCategory) {
-      const categoryMeta = quizCategoryMeta[selectedQuizCategory];
+    if (activeGame === "quiz" && activeQuizCategory) {
+      const categoryMeta = quizCategoryMeta[activeQuizCategory];
 
       return {
         id: "quiz" as GameType,
@@ -143,7 +174,7 @@ export default function MatchPage() {
     }
 
     return GAME_OPTIONS.find((game) => game.id === activeGame) ?? GAME_OPTIONS[1];
-  }, [activeGame, selectedQuizCategory]);
+  }, [activeGame, activeQuizCategory]);
 
   const isDraw = side1Score === side2Score;
   const finalWinnerName = isDraw
@@ -163,15 +194,50 @@ export default function MatchPage() {
     });
   }
 
+  function updateSessionGameRounds(gameId: GameType, value: number) {
+    setSessionGameRounds((prev) => ({
+      ...prev,
+      [gameId]: value,
+    }));
+  }
+
+  function buildSessionQueue() {
+    const queue: SessionRound[] = [];
+
+    selectedSessionGames.forEach((game) => {
+      const count = sessionGameRounds[game] ?? 1;
+
+      for (let i = 0; i < count; i++) {
+        queue.push({
+          game,
+          quizCategory:
+            game === "quiz"
+              ? selectedSessionQuizCategory ?? quizCategoryList[0]?.key ?? null
+              : null,
+        });
+      }
+    });
+
+    return queue;
+  }
+
   function startGame() {
     if (sessionMode === "session" && selectedSessionGames.length === 0) return;
 
     const finalSide1 = side1.trim() || "فريق 1";
     const finalSide2 = side2.trim() || "فريق 2";
 
-    const nextRounds =
-      sessionMode === "session" ? selectedSessionGames.length : rounds;
+    const queue =
+      sessionMode === "session"
+        ? buildSessionQueue()
+        : Array.from({ length: rounds }, () => ({
+            game: selectedGame,
+            quizCategory: selectedQuizCategory,
+          }));
 
+    const nextRounds = queue.length || 1;
+
+    setSessionQueue(queue);
     setSide1(finalSide1);
     setSide2(finalSide2);
 
@@ -224,7 +290,8 @@ export default function MatchPage() {
     setRoundSeed((s) => s + 1);
     setQuizQuestionIndex(0);
     setQuizQuestionTotal(0);
-    setRounds(sessionMode === "session" ? selectedSessionGames.length || 1 : 3);
+    setSessionQueue([]);
+    setRounds(sessionMode === "session" ? buildSessionQueue().length || 1 : 3);
   }
 
   const currentGameBoard =
@@ -268,7 +335,7 @@ export default function MatchPage() {
         side2Name={side2}
         onRoundEnd={endRound}
         roundKey={roundSeed}
-        category={selectedQuizCategory}
+        category={activeQuizCategory}
         onProgressChange={(current: number, total: number) => {
           setQuizQuestionIndex(current);
           setQuizQuestionTotal(total);
@@ -310,11 +377,15 @@ export default function MatchPage() {
               rounds={rounds}
               selectedGame={selectedGame}
               selectedSessionGames={selectedSessionGames}
+              sessionGameRounds={sessionGameRounds}
+              selectedSessionQuizCategory={selectedSessionQuizCategory}
               onSide1Change={setSide1}
               onSide2Change={setSide2}
               onRoundsChange={setRounds}
               onSelectedGameChange={setSelectedGame}
               onToggleSessionGame={toggleSessionGame}
+              onSessionGameRoundsChange={updateSessionGameRounds}
+              onSelectedSessionQuizCategoryChange={setSelectedSessionQuizCategory}
               onStart={startGame}
             />
           </div>
@@ -329,7 +400,8 @@ export default function MatchPage() {
 
             <div className="mt-5 text-center animate-fade-in-up">
               <p className="text-sm font-bold text-white/45">
-                الجولة {currentRound} • {gameMeta.icon} {gameMeta.title}
+                الجولة {currentRound} من {rounds} • {gameMeta.icon}{" "}
+                {gameMeta.title}
               </p>
             </div>
           </div>
