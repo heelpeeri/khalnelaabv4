@@ -720,7 +720,7 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
   },
   {
     question: "وش المدينة من هذه اللقطة الجوية؟",
-    image: "https://ba019b00-21fb-4f3a-8f88-366bb77be97c-00-2nfckiwvypbis.worf.replit.dev/api/images/file/8y2aeud3ym.jpg?w=1200&h=700&fit=cover",
+    image: "/public/images/new-york-skyline.jpg",
     answer: "نيويورك",
     options: ["نيويورك", "شيكاغو", "تورونتو", "بوسطن"],
   },
