@@ -707,10 +707,10 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
 
   // 🔥 صور (10 فقط)
   {
-    question: "وش الدولة من هذا العلم؟",
-    image: "https://i.imgur.com/BRazil.jpg",
-    answer: "البرازيل",
-    options: ["البرازيل", "الأرجنتين", "المكسيك", "كولومبيا"],
+   question: "وش الدولة من هذا العلم؟",
+  image: "https://ba019b00-21fb-4f3a-8f88-366bb77be97c-00-2nfckiwvypbis.worf.replit.dev/api/images/file/z72kgcp3wi.jpg?w=1200&h=700&fit=cover",
+  answer: "فيتنام",
+  options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
   },
   {
     question: "وش الدولة من شكل الخريطة؟",
@@ -731,10 +731,10 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
     options: ["برج إيفل", "برج بيزا", "بيغ بن", "تاج محل"],
   },
   {
-    question: "وش الدولة من هذا العلم؟",
-    image: "https://i.imgur.com/japan.jpg",
-    answer: "اليابان",
-    options: ["اليابان", "كوريا", "الصين", "فيتنام"],
+    question: "أي من هذه الدول علمها أحمر فوق وأبيض تحت؟",
+  image: "https://ba019b00-21fb-4f3a-8f88-366bb77be97c-00-2nfckiwvypbis.worf.replit.dev/api/images/file/iwtustcdff.jpg?w=1200&h=700&fit=cover",
+  answer: "إندونيسيا",
+  options: ["إندونيسيا", "بولندا", "موناكو", "النمسا"],
   },
   {
     question: "في أي دولة هذا المعلم؟",
