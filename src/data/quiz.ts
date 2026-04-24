@@ -708,7 +708,7 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
   // 🔥 صور (10 فقط)
   {
    question: "علم اي دولة؟؟",
-  image: "/public/images/vietnam-flag.jpg",
+  image: "/images/vietnam-flag.jpg",
   answer: "فيتنام",
   options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
   },
@@ -720,25 +720,25 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
   },
   {
     question: "وش المدينة من هذه اللقطة الجوية؟",
-    image: "/public/images/new-york-skyline.jpg",
+    image: "/images/new-york-skyline.jpg",
     answer: "نيويورك",
     options: ["نيويورك", "شيكاغو", "تورونتو", "بوسطن"],
   },
   {
   question: "وش هذا المعلم الشهير؟",
-  image: "/public/images/mount-rushmore.jpg",
+  image: "/images/mount-rushmore.jpg",
   answer: "جبل راشمور",
   options: ["جبل راشمور", "تماثيل جزيرة الفصح", "نقوش لونغمِن الصخرية", "تماثيل باميان"],
   },
   {
     question: "علم اي دولة؟؟",
-  image: "/public/images/indonesia-flag.jpg",
+  image: "/images/indonesia-flag.jpg",
   answer: "إندونيسيا",
   options: ["إندونيسيا", "بولندا", "موناكو", "النمسا"],
   },
   {
    question: "علم اي دولة؟",
-  image: "/public/images/belgium-flag.jpg",
+  image: "/images/belgium-flag.jpg",
   answer: "بلجيكا",
   options: ["بلجيكا", "فرنسا", "ألمانيا", "رومانيا"],
   },
