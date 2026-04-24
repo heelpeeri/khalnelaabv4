@@ -1,4 +1,9 @@
-export type QuizCategoryKey = "seerah" | "saudi" | "football" | "geography";
+export type QuizCategoryKey =
+  | "seerah"
+  | "saudi"
+  | "football"
+  | "geography"
+  | "tash";
 
 export type QuizQuestion = {
   question: string;
@@ -733,14 +738,60 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
       options: ["هراري", "لوساكا", "كينشاسا", "مابوتو"],
     },
   ],
+    tash: [
+    {
+      question: "من أشهر ثنائي في طاش ما طاش؟",
+      answer: "ناصر القصبي وعبدالله السدحان",
+    },
+    {
+      question: "ما اسم الشخصية الشهيرة التي قدمها ناصر القصبي؟",
+      answer: "فؤاد",
+    },
+    {
+      question: "ما اسم الشخصية الشهيرة التي قدمها عبدالله السدحان؟",
+      answer: "أبو مساعد",
+    },
+    {
+      question: "في أي شهر كان يعرض طاش غالبًا؟",
+      answer: "رمضان",
+    },
+    {
+      question: "على أي قناة اشتهر عرض طاش؟",
+      answer: "MBC",
+    },
+  ],
 };
 
-
-export const quizCategoryMeta: Record<QuizCategoryKey, { title: string; emoji: string; desc: string }> = {
-  seerah: { title: "السيرة والأنبياء", emoji: "🕌", desc: "أسئلة عن الأنبياء والسيرة" },
-  saudi: { title: "تاريخ السعودية", emoji: "🇸🇦", desc: "أسئلة عن تاريخ المملكة" },
-  football: { title: "كرة القدم السعودية", emoji: "⚽", desc: "أسئلة عن الكرة السعودية" },
-  geography: { title: "الجغرافيا", emoji: "🌍", desc: "أسئلة عن الدول والعواصم والمعالم" },
+export const quizCategoryMeta: Record<
+  QuizCategoryKey,
+  { title: string; emoji: string; desc: string }
+> = {
+  seerah: {
+    title: "السيرة والأنبياء",
+    emoji: "🕌",
+    desc: "أسئلة عن الأنبياء والسيرة",
+  },
+  saudi: {
+    title: "تاريخ السعودية",
+    emoji: "🇸🇦",
+    desc: "أسئلة عن تاريخ المملكة",
+  },
+  football: {
+    title: "كرة القدم السعودية",
+    emoji: "⚽",
+    desc: "أسئلة عن الكرة السعودية",
+  },
+  geography: {
+    title: "الجغرافيا",
+    emoji: "🌍",
+    desc: "أسئلة عن الدول والعواصم والمعالم",
+  },
+  tash: {
+    title: "طاش ما طاش",
+    emoji: "📺",
+    desc: "أسئلة عن طاش وشخصياته",
+  },
+};
 };
 
 export const quizCategoryList = (Object.keys(quizCategoryMeta) as QuizCategoryKey[]).map((key) => ({
