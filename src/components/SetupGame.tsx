@@ -4,10 +4,10 @@ import { useRef } from "react";
 import { quizCategoryList } from "@/data/quiz";
 
 const GAMES = [
-  { id: "word", name: "خمن الكلمة", icon: "💬", desc: "خمن الكلمة قبل الفريق الثاني" },
-  { id: "quiz", name: "الأسئلة", icon: "❓", desc: "أسئلة سريعة من فئات مختلفة" },
-  { id: "scramble", name: "حروف بالخلاط", icon: "🧩", desc: "رتب الحروف بسرعة" },
-  { id: "wheel", name: "العجلة", icon: "🎡", desc: "لف العجلة وخمن" },
+  { id: "word", name: "خمن الكلمة", icon: "💬" },
+  { id: "quiz", name: "الأسئلة", icon: "❓" },
+  { id: "scramble", name: "حروف بالخلاط", icon: "🧩" },
+  { id: "wheel", name: "العجلة", icon: "🎡" },
 ];
 
 const ROUNDS = [1, 2, 3, 5];
@@ -35,7 +35,6 @@ export default function SetupGame({
 
   function toggleGame(id: string) {
     playClick();
-
     if (selectedGames.includes(id)) {
       setSelectedGames(selectedGames.filter((g: string) => g !== id));
     } else {
@@ -45,7 +44,6 @@ export default function SetupGame({
 
   function toggleCategory(cat: string) {
     playClick();
-
     if (quizCategories.includes(cat)) {
       if (quizCategories.length === 1) return;
       setQuizCategories(quizCategories.filter((c: string) => c !== cat));
@@ -55,10 +53,17 @@ export default function SetupGame({
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 text-white animate-fade-in">
+    <div className="max-w-5xl mx-auto space-y-6 text-white intro">
 
-      {/* 🔊 sound */}
       <audio ref={clickSound} src="/click.mp3" />
+
+      {/* 🔥 العنوان */}
+      <div className="text-center">
+        <h1 className="arcade-title">تحدي الجلسة</h1>
+        <p className="arcade-subtitle mt-2">
+          اختر الألعاب وحدد الجولات
+        </p>
+      </div>
 
       {/* الفرق */}
       <div className="grid grid-cols-2 gap-4">
@@ -66,13 +71,13 @@ export default function SetupGame({
           value={side1}
           onChange={e => setSide1(e.target.value)}
           placeholder="الفريق 1"
-          className="input text-center text-lg font-bold"
+          className="input text-center"
         />
         <input
           value={side2}
           onChange={e => setSide2(e.target.value)}
           placeholder="الفريق 2"
-          className="input text-center text-lg font-bold"
+          className="input text-center"
         />
       </div>
 
@@ -86,29 +91,16 @@ export default function SetupGame({
             <div
               key={game.id}
               onClick={() => toggleGame(game.id)}
-              className={`group cursor-pointer rounded-3xl p-5 border transition-all duration-300
-              ${
-                active
-                  ? "bg-gradient-to-br from-cyan-400/20 to-purple-500/20 border-cyan-300/40 scale-[1.03] shadow-[0_0_25px_rgba(0,255,255,0.2)]"
-                  : "bg-white/5 border-white/10 hover:bg-white/10 hover:scale-[1.02]"
-              }`}
+              className={`arcade-card p-5 cursor-pointer transition
+              ${active ? "scale-[1.03]" : "hover:scale-[1.02]"}`}
             >
 
-              <div className="flex items-center justify-between">
-                <span className="text-3xl group-hover:scale-110 transition">
-                  {game.icon}
-                </span>
-
-                <span className="text-xl">
-                  {active ? "✓" : ""}
-                </span>
+              <div className="flex justify-between items-center">
+                <span className="text-3xl">{game.icon}</span>
+                <span>{active ? "✓" : ""}</span>
               </div>
 
               <h3 className="mt-3 text-lg font-black">{game.name}</h3>
-
-              <p className="mt-1 text-sm text-white/60">
-                {game.desc}
-              </p>
 
               {/* الجولات */}
               {active && (
@@ -121,11 +113,10 @@ export default function SetupGame({
                         playClick();
                         setGameRounds({ ...gameRounds, [game.id]: r });
                       }}
-                      className={`px-3 py-1 rounded-full text-sm transition
-                      ${
+                      className={`px-3 py-1 rounded-full ${
                         gameRounds[game.id] === r
-                          ? "bg-white text-black scale-110"
-                          : "bg-white/10 hover:bg-white/20"
+                          ? "arcade-button"
+                          : "btn-secondary"
                       }`}
                     >
                       {r}
@@ -147,12 +138,7 @@ export default function SetupGame({
                           e.stopPropagation();
                           toggleCategory(cat.key);
                         }}
-                        className={`px-3 py-2 rounded-xl text-sm transition
-                        ${
-                          selected
-                            ? "bg-yellow-300 text-black scale-105 shadow"
-                            : "bg-white/10 hover:bg-white/20"
-                        }`}
+                        className={selected ? "arcade-button" : "btn-secondary"}
                       >
                         {cat.emoji} {cat.title}
                       </button>
@@ -167,18 +153,17 @@ export default function SetupGame({
       </div>
 
       {/* زر */}
-      <button
-        onClick={() => {
-          playClick();
-          onStart();
-        }}
-        className="w-full py-4 rounded-2xl font-black text-lg
-        bg-gradient-to-r from-orange-400 to-pink-500
-        hover:scale-[1.03] active:scale-[0.97]
-        transition-all duration-200 shadow-[0_0_20px_rgba(255,100,200,0.4)]"
-      >
-        🚀 ابدأ اللعب
-      </button>
+      <div className="text-center">
+        <button
+          onClick={() => {
+            playClick();
+            onStart();
+          }}
+          className="arcade-button text-lg"
+        >
+          🚀 ابدأ اللعب
+        </button>
+      </div>
 
     </div>
   );
