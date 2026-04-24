@@ -713,10 +713,10 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
   options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
   },
   {
-    question: "وش الدولة من شكل الخريطة؟",
-    image: "https://i.imgur.com/italy.jpg",
-    answer: "إيطاليا",
-    options: ["إيطاليا", "إسبانيا", "اليونان", "تركيا"],
+  question: "وش اسم المنطقة الواقعة جنوب غرب السعودية في الخريطة؟",
+  image: "/images/asir-region.jpg",
+  answer: "عسير",
+  options: ["عسير", "جازان", "نجران", "القصيم"],
   },
   {
     question: "وش المدينة من هذه اللقطة الجوية؟",
