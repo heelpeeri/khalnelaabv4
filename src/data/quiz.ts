@@ -719,10 +719,10 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
     options: ["إيطاليا", "إسبانيا", "اليونان", "تركيا"],
   },
   {
-    question: "وش المدينة من الأفق؟",
-    image: "https://i.imgur.com/nyc.jpg",
+    question: "وش المدينة من هذه اللقطة الجوية؟",
+    image: "https://ba019b00-21fb-4f3a-8f88-366bb77be97c-00-2nfckiwvypbis.worf.replit.dev/api/images/file/8y2aeud3ym.jpg?w=1200&h=700&fit=cover",
     answer: "نيويورك",
-    options: ["نيويورك", "شيكاغو", "تورونتو", "لوس أنجلوس"],
+    options: ["نيويورك", "شيكاغو", "تورونتو", "بوسطن"],
   },
   {
     question: "وش هذا المعلم؟",
