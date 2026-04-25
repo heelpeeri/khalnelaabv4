@@ -10,9 +10,9 @@ type CellState = "correct" | "present" | "absent";
 const MAX_TRIES = 5;
 
 const keyboardRows = [
-  "ضصثقفغعهخحج",
-  "شسيبلاتنمكط",
-  "ئءؤرىةوزظ",
+  "جحخهعغفقثصض",
+  "كمنتالبيسش",
+   "ورزدذطظ",
 ];
 
 export default function WordGame({
