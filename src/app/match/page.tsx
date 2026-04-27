@@ -23,6 +23,8 @@ type Round = {
   category: QuizCategoryKey | null;
 };
 
+const SELF_JUDGED_GAMES: GameType[] = ["word", "wheel"];
+
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
 }
@@ -102,11 +104,7 @@ function WinnerOverlay({
   );
 }
 
-function CountdownOverlay({
-  countdown,
-}: {
-  countdown: number;
-}) {
+function CountdownOverlay({ countdown }: { countdown: number }) {
   return (
     <div className="fixed inset-0 z-[998] flex items-center justify-center bg-black/80 px-4 backdrop-blur-md">
       <div className="arcade-card w-full max-w-xl p-8 text-center animate-fade-in-up">
@@ -120,11 +118,7 @@ function CountdownOverlay({
   );
 }
 
-function TransitionOverlay({
-  nextRound,
-}: {
-  nextRound: Round;
-}) {
+function TransitionOverlay({ nextRound }: { nextRound: Round }) {
   return (
     <div className="fixed inset-0 z-[998] flex items-center justify-center bg-black/80 px-4 backdrop-blur-md">
       <div className="arcade-card w-full max-w-xl p-8 text-center animate-fade-in-up">
@@ -136,9 +130,60 @@ function TransitionOverlay({
           {getGameName(nextRound.game)}
         </h1>
 
-        <p className="mt-5 text-white/60">
-          استعدوا للتحدي القادم
+        <p className="mt-5 text-white/60">استعدوا للتحدي القادم</p>
+      </div>
+    </div>
+  );
+}
+
+function RoundWinnerPicker({
+  show,
+  side1Name,
+  side2Name,
+  onPick,
+}: {
+  show: boolean;
+  side1Name: string;
+  side2Name: string;
+  onPick: (winner: WinnerType) => void;
+}) {
+  if (!show) return null;
+
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
+      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
+        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
+          نهاية الجولة
         </p>
+
+        <h1 className="arcade-title mt-5">من فاز؟ 🏆</h1>
+
+        <p className="mt-3 text-lg font-bold text-white/70">
+          اختر الفائز في هذه الجولة
+        </p>
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <button
+            onClick={() => onPick("side1")}
+            className="arcade-button px-6 py-4 text-lg"
+          >
+            {side1Name || "فريق 1"}
+          </button>
+
+          <button
+            onClick={() => onPick("side2")}
+            className="arcade-button px-6 py-4 text-lg"
+          >
+            {side2Name || "فريق 2"}
+          </button>
+        </div>
+
+        <button
+          onClick={() => onPick("none")}
+          className="btn-secondary mt-4 w-full px-6 py-4 text-lg"
+        >
+          لا أحد
+        </button>
       </div>
     </div>
   );
@@ -166,6 +211,7 @@ export default function MatchPage() {
   const [side2Score, setSide2Score] = useState(0);
 
   const [showWinner, setShowWinner] = useState(false);
+  const [showRoundWinnerPicker, setShowRoundWinnerPicker] = useState(false);
 
   function buildQueue(): Round[] {
     const q: Round[] = [];
@@ -209,6 +255,7 @@ export default function MatchPage() {
     setSide1Score(0);
     setSide2Score(0);
     setShowWinner(false);
+    setShowRoundWinnerPicker(false);
 
     setCountdown(3);
     setPhase("countdown");
@@ -254,6 +301,7 @@ export default function MatchPage() {
       setStarted(false);
       setPhase("setup");
       setShowWinner(false);
+      setShowRoundWinnerPicker(false);
       return;
     }
 
@@ -280,6 +328,7 @@ export default function MatchPage() {
     setSide1Score(0);
     setSide2Score(0);
     setShowWinner(false);
+    setShowRoundWinnerPicker(false);
   }, []);
 
   function finishSession(finalSide1Score: number, finalSide2Score: number) {
@@ -290,12 +339,13 @@ export default function MatchPage() {
     setShowWinner(true);
   }
 
-  function endRound(winner?: WinnerType) {
+  function applyRoundWinner(winner?: WinnerType) {
     const nextSide1Score = side1Score + (winner === "side1" ? 1 : 0);
     const nextSide2Score = side2Score + (winner === "side2" ? 1 : 0);
 
     setSide1Score(nextSide1Score);
     setSide2Score(nextSide2Score);
+    setShowRoundWinnerPicker(false);
 
     if (index + 1 >= queue.length) {
       finishSession(nextSide1Score, nextSide2Score);
@@ -310,9 +360,23 @@ export default function MatchPage() {
     }, 1500);
   }
 
+  function endRound(winner?: WinnerType) {
+    if (!current) return;
+
+    const gameJudgesItself = SELF_JUDGED_GAMES.includes(current.game);
+
+    if (!gameJudgesItself) {
+      setShowRoundWinnerPicker(true);
+      return;
+    }
+
+    applyRoundWinner(winner);
+  }
+
   function restart() {
     setStarted(false);
     setShowWinner(false);
+    setShowRoundWinnerPicker(false);
     setIndex(0);
     setQueue([]);
     setSide1Score(0);
@@ -343,9 +407,7 @@ export default function MatchPage() {
 
   return (
     <main className="min-h-screen p-6 text-white">
-      {phase === "countdown" && (
-        <CountdownOverlay countdown={countdown} />
-      )}
+      {phase === "countdown" && <CountdownOverlay countdown={countdown} />}
 
       {phase === "transition" && nextRound && (
         <TransitionOverlay nextRound={nextRound} />
@@ -358,6 +420,13 @@ export default function MatchPage() {
         mode={mode}
         onRestart={restart}
         onGoHome={goHome}
+      />
+
+      <RoundWinnerPicker
+        show={showRoundWinnerPicker}
+        side1Name={side1}
+        side2Name={side2}
+        onPick={applyRoundWinner}
       />
 
       {!started ? (
