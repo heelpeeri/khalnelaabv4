@@ -78,14 +78,6 @@ export default function SetupGame({
             ? "حدد أسماء الفرق وعدد الجولات"
             : "اختر الألعاب وحدد الجولات"}
         </p>
-
-        <p className="mt-2 text-sm text-white/60">
-          {selectedGames.length > 0
-            ? isQuickMode
-              ? "اللعبة جاهزة، عدّل الجولات وابدأ"
-              : `تم اختيار ${selectedGames.length} لعبة`
-            : "اختر لعبة للبدء"}
-        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -134,7 +126,7 @@ export default function SetupGame({
 
               <h3 className="mt-3 text-lg font-black">{game.name}</h3>
 
-              {active && (
+              {active && game.id !== "quiz" && (
                 <div className="mt-4 flex justify-center gap-2">
                   {ROUNDS.map((r) => (
                     <button
