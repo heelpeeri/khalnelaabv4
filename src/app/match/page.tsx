@@ -69,9 +69,15 @@ function WinnerOverlay({
             </button>
           </div>
         ) : (
-          <button onClick={onRestart} className="arcade-button mt-8">
-            العب من جديد
-          </button>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <button onClick={onRestart} className="arcade-button">
+              تحدي جديد
+            </button>
+
+            <button onClick={onGoHome} className="btn-secondary">
+              القائمة الرئيسية
+            </button>
+          </div>
         )}
       </div>
     </div>
@@ -104,7 +110,7 @@ export default function MatchPage() {
     const shuffledCategories = shuffle(quizCategories);
 
     selectedGames.forEach((game) => {
-      const count = gameRounds[game] || 1;
+      const count = game === "quiz" ? 1 : gameRounds[game] || 1;
 
       for (let i = 0; i < count; i++) {
         q.push({
