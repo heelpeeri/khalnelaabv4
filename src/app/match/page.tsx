@@ -23,7 +23,7 @@ type Round = {
   category: QuizCategoryKey | null;
 };
 
-const SELF_JUDGED_GAMES: GameType[] = ["word", "wheel"];
+const SELF_JUDGED_GAMES: GameType[] = ["word", "wheel", "quiz"];
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
