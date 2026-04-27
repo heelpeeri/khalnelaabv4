@@ -28,7 +28,6 @@ export default function SetupGame({
   setQuizCategories,
   onStart,
 }: any) {
-
   const clickSound = useRef<HTMLAudioElement | null>(null);
   const isQuickMode = mode === "quick";
 
@@ -66,11 +65,9 @@ export default function SetupGame({
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 text-white intro">
-
+    <div className="mx-auto max-w-5xl space-y-6 text-white intro">
       <audio ref={clickSound} src="/click.mp3" />
 
-      {/* العنوان */}
       <div className="text-center">
         <h1 className="arcade-title">
           {isQuickMode ? "لعبة سريعة" : "تحدي الجلسة"}
@@ -82,7 +79,7 @@ export default function SetupGame({
             : "اختر الألعاب وحدد الجولات"}
         </p>
 
-        <p className="text-sm text-white/60 mt-2">
+        <p className="mt-2 text-sm text-white/60">
           {selectedGames.length > 0
             ? isQuickMode
               ? "اللعبة جاهزة، عدّل الجولات وابدأ"
@@ -91,7 +88,6 @@ export default function SetupGame({
         </p>
       </div>
 
-      {/* الفرق */}
       <div className="grid grid-cols-2 gap-4">
         <input
           value={side1}
@@ -99,6 +95,7 @@ export default function SetupGame({
           placeholder="اختر اسم الفريق"
           className="input text-center text-lg font-bold"
         />
+
         <input
           value={side2}
           onChange={(e) => setSide2(e.target.value)}
@@ -107,9 +104,14 @@ export default function SetupGame({
         />
       </div>
 
-      {/* الألعاب */}
-      <div className="grid gap-4 sm:grid-cols-2">
-        {GAMES.map(game => {
+      <div
+        className={
+          isQuickMode
+            ? "mx-auto grid w-full max-w-2xl grid-cols-1 place-items-center gap-4"
+            : "grid gap-4 sm:grid-cols-2"
+        }
+      >
+        {GAMES.map((game) => {
           const active = selectedGames.includes(game.id);
 
           if (isQuickMode && !active) return null;
@@ -118,25 +120,23 @@ export default function SetupGame({
             <div
               key={game.id}
               onClick={() => toggleGame(game.id)}
-              className={`arcade-card p-5 transition-all duration-300
-              ${
+              className={`arcade-card p-5 transition-all duration-300 ${
                 isQuickMode
-                  ? "mx-auto w-full max-w-xl cursor-default scale-[1.03]"
-                  : "cursor-pointer " + (active ? "scale-[1.03]" : "hover:scale-[1.02]")
+                  ? "w-full cursor-default scale-[1.03]"
+                  : "cursor-pointer " +
+                    (active ? "scale-[1.03]" : "hover:scale-[1.02]")
               }`}
             >
-
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <span className="text-3xl">{game.icon}</span>
                 <span className="text-lg">{active ? "✓" : ""}</span>
               </div>
 
               <h3 className="mt-3 text-lg font-black">{game.name}</h3>
 
-              {/* الجولات */}
               {active && (
-                <div className="flex gap-2 mt-4 justify-center">
-                  {ROUNDS.map(r => (
+                <div className="mt-4 flex justify-center gap-2">
+                  {ROUNDS.map((r) => (
                     <button
                       key={r}
                       onClick={(e) => {
@@ -144,8 +144,7 @@ export default function SetupGame({
                         playClick();
                         setGameRounds({ ...gameRounds, [game.id]: r });
                       }}
-                      className={`px-3 py-1 rounded-full text-sm transition
-                      ${
+                      className={`rounded-full px-3 py-1 text-sm transition ${
                         gameRounds[game.id] === r
                           ? "arcade-button"
                           : "btn-secondary"
@@ -157,10 +156,9 @@ export default function SetupGame({
                 </div>
               )}
 
-              {/* فئات الأسئلة */}
               {game.id === "quiz" && active && (
-                <div className="flex flex-wrap gap-2 mt-4 justify-center">
-                  {quizCategoryList.map(cat => {
+                <div className="mt-4 flex flex-wrap justify-center gap-2">
+                  {quizCategoryList.map((cat) => {
                     const selected = quizCategories.includes(cat.key);
 
                     return (
@@ -171,9 +169,7 @@ export default function SetupGame({
                           toggleCategory(cat.key);
                         }}
                         className={`transition ${
-                          selected
-                            ? "arcade-button"
-                            : "btn-secondary"
+                          selected ? "arcade-button" : "btn-secondary"
                         }`}
                       >
                         {cat.emoji} {cat.title}
@@ -182,25 +178,22 @@ export default function SetupGame({
                   })}
                 </div>
               )}
-
             </div>
           );
         })}
       </div>
 
-      {/* زر البداية */}
       <div className="text-center">
         <button
           onClick={() => {
             playClick();
             onStart();
           }}
-          className="arcade-button text-lg px-8 py-4"
+          className="arcade-button px-8 py-4 text-lg"
         >
           🚀 ابدأ اللعب
         </button>
       </div>
-
     </div>
   );
 }
