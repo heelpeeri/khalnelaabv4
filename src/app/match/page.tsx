@@ -26,6 +26,24 @@ function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
 }
 
+// 🔥 اسم اللعبة
+function getGameName(game: GameType) {
+  switch (game) {
+    case "word":
+      return "💬 خمن الكلمة";
+    case "quiz":
+      return "❓ الأسئلة";
+    case "scramble":
+      return "🧩 حروف بالخلاط";
+    case "wheel":
+      return "🎡 لف وخمن";
+    case "categories":
+      return "🌍 فئات";
+    case "draw":
+      return "✏️ خمن المثل";
+  }
+}
+
 function WinnerOverlay({
   show,
   winnerName,
@@ -33,52 +51,28 @@ function WinnerOverlay({
   mode,
   onRestart,
   onGoHome,
-}: {
-  show: boolean;
-  winnerName: string;
-  isDraw: boolean;
-  mode: ModeType;
-  onRestart: () => void;
-  onGoHome: () => void;
-}) {
+}: any) {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
-      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
-        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
-          {mode === "quick" ? "انتهت اللعبة" : "انتهت الجلسة"}
-        </p>
-
-        <h1 className="arcade-title mt-6">
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 backdrop-blur-md">
+      <div className="arcade-card p-8 text-center">
+        <h1 className="text-4xl font-black">
           {isDraw ? "تعادل!" : "كفووو!"}
         </h1>
 
-        <p className="arcade-winner mt-6">
+        <p className="mt-4">
           {isDraw ? "الفريقين قدّها" : `الفائز: ${winnerName}`}
         </p>
 
-        {mode === "quick" ? (
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <button onClick={onRestart} className="arcade-button">
-              جرّب نفس اللعبة
-            </button>
-
-            <button onClick={onGoHome} className="btn-secondary">
-              القائمة الرئيسية
-            </button>
-          </div>
-        ) : (
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <button onClick={onRestart} className="arcade-button">
-              تحدي جديد
-            </button>
-
-            <button onClick={onGoHome} className="btn-secondary">
-              القائمة الرئيسية
-            </button>
-          </div>
-        )}
+        <div className="mt-6 flex gap-3 justify-center">
+          <button onClick={onRestart} className="btn-primary">
+            تحدي جديد
+          </button>
+          <button onClick={onGoHome} className="btn-secondary">
+            الرئيسية
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -105,6 +99,10 @@ export default function MatchPage() {
 
   const [showWinner, setShowWinner] = useState(false);
 
+  // 🔥 الجديد
+  const [phase, setPhase] = useState<"setup" | "countdown" | "playing" | "transition">("setup");
+  const [countdown, setCountdown] = useState(3);
+
   function buildQueue(): Round[] {
     const q: Round[] = [];
     const shuffledCategories = shuffle(quizCategories);
@@ -127,92 +125,52 @@ export default function MatchPage() {
   }
 
   function start() {
-    if (selectedGames.length === 0) {
-      alert("اختر لعبة");
-      return;
-    }
-
-    if (selectedGames.includes("quiz") && quizCategories.length === 0) {
-      alert("اختر فئة للأسئلة");
-      return;
-    }
-
     const builtQueue = buildQueue();
 
     setQueue(builtQueue);
-    setStarted(true);
     setIndex(0);
-    setSide1(side1.trim() || "فريق 1");
-    setSide2(side2.trim() || "فريق 2");
-    setSide1Score(0);
-    setSide2Score(0);
-    setShowWinner(false);
+    setSide1(side1 || "فريق 1");
+    setSide2(side2 || "فريق 2");
+
+    setPhase("countdown"); // 🔥 بدل started
+    setCountdown(3);
   }
 
+  // 🔥 countdown
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    if (phase !== "countdown") return;
 
-    const urlMode = params.get("mode");
-    const game = params.get("game") as GameType | null;
-    const category = params.get("category") as QuizCategoryKey | null;
-
-    const validGames: GameType[] = [
-      "word",
-      "quiz",
-      "scramble",
-      "wheel",
-      "categories",
-      "draw",
-    ];
-
-    if (urlMode === "session") {
-      setMode("session");
-      setStarted(false);
+    if (countdown === 0) {
+      setPhase("playing");
+      setStarted(true);
       return;
     }
 
-    if (!game || !validGames.includes(game)) {
-      setMode("session");
-      return;
-    }
+    const t = setTimeout(() => {
+      setCountdown((c) => c - 1);
+    }, 800);
 
-    setMode("quick");
-    setSelectedGames([game]);
-    setGameRounds({ [game]: 1 });
-
-    if (game === "quiz" && category) {
-      setQuizCategories([category]);
-    }
-
-    setSide1("");
-    setSide2("");
-    setStarted(false);
-    setIndex(0);
-    setSide1Score(0);
-    setSide2Score(0);
-    setShowWinner(false);
-  }, []);
-
-  function finishSession(finalSide1Score: number, finalSide2Score: number) {
-    setSide1Score(finalSide1Score);
-    setSide2Score(finalSide2Score);
-    setStarted(false);
-    setShowWinner(true);
-  }
+    return () => clearTimeout(t);
+  }, [phase, countdown]);
 
   function endRound(winner?: WinnerType) {
-    const nextSide1Score = side1Score + (winner === "side1" ? 1 : 0);
-    const nextSide2Score = side2Score + (winner === "side2" ? 1 : 0);
+    const next1 = side1Score + (winner === "side1" ? 1 : 0);
+    const next2 = side2Score + (winner === "side2" ? 1 : 0);
 
-    setSide1Score(nextSide1Score);
-    setSide2Score(nextSide2Score);
+    setSide1Score(next1);
+    setSide2Score(next2);
 
     if (index + 1 >= queue.length) {
-      finishSession(nextSide1Score, nextSide2Score);
+      setShowWinner(true);
       return;
     }
 
-    setIndex((i) => i + 1);
+    setPhase("transition");
+
+    setTimeout(() => {
+      setIndex((i) => i + 1);
+      setPhase("playing");
+    }, 1500);
   }
 
   function restart() {
@@ -220,14 +178,7 @@ export default function MatchPage() {
     setShowWinner(false);
     setIndex(0);
     setQueue([]);
-    setSide1Score(0);
-    setSide2Score(0);
-
-    if (mode === "session") {
-      setSelectedGames([]);
-      setGameRounds({});
-      setQuizCategories([]);
-    }
+    setPhase("setup");
   }
 
   function goHome() {
@@ -236,20 +187,37 @@ export default function MatchPage() {
 
   const current = queue[index];
 
-  const finalWinnerName = useMemo(() => {
-    if (side1Score > side2Score) return side1 || "فريق 1";
-    if (side2Score > side1Score) return side2 || "فريق 2";
-    return "تعادل";
-  }, [side1Score, side2Score, side1, side2]);
-
-  const isDraw = side1Score === side2Score;
-
   return (
     <main className="min-h-screen p-6 text-white">
+
+      {/* 🔥 countdown */}
+      {phase === "countdown" && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/80 z-[999]">
+          <div className="text-center">
+            <p className="mb-4">استعدوا</p>
+            <p className="text-7xl font-black">
+              {countdown === 0 ? "يلا!" : countdown}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* 🔥 transition */}
+      {phase === "transition" && queue[index + 1] && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/80 z-[999]">
+          <div className="text-center">
+            <p className="mb-3">الجولة الجاية</p>
+            <p className="text-3xl font-black">
+              {getGameName(queue[index + 1].game)}
+            </p>
+          </div>
+        </div>
+      )}
+
       <WinnerOverlay
         show={showWinner}
-        winnerName={finalWinnerName}
-        isDraw={isDraw}
+        winnerName={side1Score > side2Score ? side1 : side2}
+        isDraw={side1Score === side2Score}
         mode={mode}
         onRestart={restart}
         onGoHome={goHome}
@@ -273,70 +241,28 @@ export default function MatchPage() {
       ) : (
         <div className="mx-auto max-w-5xl">
           {current?.game === "word" && (
-            <WordGame
-              onRoundEnd={endRound}
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
-              side1Score={side1Score}
-              side2Score={side2Score}
-              currentRound={index + 1}
-            />
+            <WordGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
           )}
 
           {current?.game === "quiz" && (
-            <QuizGame
-              onRoundEnd={endRound}
-              roundKey={index}
-              category={current.category}
-              side1Name={side1}
-              side2Name={side2}
-            />
+            <QuizGame onRoundEnd={endRound} roundKey={index} category={current.category} side1Name={side1} side2Name={side2} />
           )}
 
           {current?.game === "scramble" && (
-            <ScrambleGame
-              onRoundEnd={endRound}
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
-              currentRound={index + 1}
-            />
+            <ScrambleGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
           )}
 
           {current?.game === "wheel" && (
-            <WheelGame
-              onRoundEnd={endRound}
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
-              currentRound={index + 1}
-            />
+            <WheelGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
           )}
 
           {current?.game === "categories" && (
-            <CategoriesGame
-              onRoundEnd={endRound}
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
-              currentRound={index + 1}
-            />
+            <CategoriesGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
           )}
 
           {current?.game === "draw" && (
-            <ProverbGame
-              onRoundEnd={endRound}
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
-              currentRound={index + 1}
-            />
+            <ProverbGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
           )}
-
-          <p className="mt-5 text-center text-sm font-bold text-white/50">
-            الجولة {index + 1} من {queue.length}
-          </p>
         </div>
       )}
     </main>
