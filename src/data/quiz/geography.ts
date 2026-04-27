@@ -2,52 +2,52 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
-   question: "علم اي دولة؟؟",
-  image: "/images/vietnam-flag.jpg",
-  answer: "فيتنام",
-  options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
+    question: "علم أي دولة؟",
+    image: "/images/vietnam-flag.jpg",
+    answer: "فيتنام",
+    options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
   },
   {
-  question: "وش هذا المعلم الشهير؟",
-  image: "/images/taj-mahal.jpg",
-  answer: "تاج محل",
-  options: ["تاج محل", "مسجد الشيخ زايد", "آيا صوفيا", "ضريح همايون"]
+    question: "ما اسم هذا المعلم الشهير؟",
+    image: "/images/taj-mahal.jpg",
+    answer: "تاج محل",
+    options: ["تاج محل", "مسجد الشيخ زايد", "آيا صوفيا", "ضريح همايون"],
   },
   {
-    question: "وش المدينة من هذه اللقطة الجوية؟",
+    question: "ما المدينة الظاهرة في هذه اللقطة الجوية؟",
     image: "/images/new-york-skyline.jpg",
     answer: "نيويورك",
     options: ["نيويورك", "شيكاغو", "تورونتو", "بوسطن"],
   },
   {
-  question: "وش هذا المعلم الشهير؟",
-  image: "/images/mount-rushmore.jpg",
-  answer: "جبل راشمور",
-  options: ["جبل راشمور", "تماثيل جزيرة الفصح", "نقوش لونغمِن الصخرية", "تماثيل باميان"],
+    question: "ما اسم هذا المعلم الشهير؟",
+    image: "/images/mount-rushmore.jpg",
+    answer: "جبل راشمور",
+    options: ["جبل راشمور", "تماثيل جزيرة الفصح", "نقوش لونغمِن الصخرية", "تماثيل باميان"],
   },
   {
-    question: "علم اي دولة؟؟",
-  image: "/images/indonesia-flag.jpg",
-  answer: "إندونيسيا",
-  options: ["إندونيسيا", "بولندا", "موناكو", "النمسا"],
+    question: "علم أي دولة؟",
+    image: "/images/indonesia-flag.jpg",
+    answer: "إندونيسيا",
+    options: ["إندونيسيا", "بولندا", "موناكو", "النمسا"],
   },
   {
-   question: "علم اي دولة؟",
-  image: "/images/belgium-flag.jpg",
-  answer: "بلجيكا",
-  options: ["بلجيكا", "فرنسا", "ألمانيا", "رومانيا"],
+    question: "علم أي دولة؟",
+    image: "/images/belgium-flag.jpg",
+    answer: "بلجيكا",
+    options: ["بلجيكا", "فرنسا", "ألمانيا", "رومانيا"],
   },
   {
-  question: "في أي دولة يقع هذا المعلم؟",
-  image: "/images/petra-monastery.jpg",
-  answer: "البتراء في الأردن",
-  options: ["الأردن", "لبنان", "مصر", "المغرب"],
+    question: "في أي دولة يقع هذا المعلم؟",
+    image: "/images/petra-monastery.jpg",
+    answer: "الأردن",
+    options: ["الأردن", "لبنان", "مصر", "المغرب"],
   },
   {
     question: "ما اسم هذا الممر المائي؟",
     image: "/images/bab-al-mandab.jpg",
     answer: "باب المندب",
-    options: ["باب المندب", "مضيق هرمز", "قناة السويس", "مضيق جبل طارق"]
+    options: ["باب المندب", "مضيق هرمز", "قناة السويس", "مضيق جبل طارق"],
   },
   {
     question: "أي دولة تقع في قارتين؟",
@@ -60,7 +60,7 @@ export const geographyQuestions: QuizQuestion[] = [
     options: ["سيدني", "أوتاوا", "أوسلو", "برن"],
   },
   {
-    question: "وش العاصمة الفعلية لأستراليا؟",
+    question: "ما العاصمة الفعلية لأستراليا؟",
     answer: "كانبيرا",
     options: ["سيدني", "ملبورن", "كانبيرا", "بيرث"],
   },
@@ -71,13 +71,13 @@ export const geographyQuestions: QuizQuestion[] = [
   },
   {
     question: "ما أطول نهر في العالم؟",
-    answer: "الأمازون",
+    answer: "النيل",
     options: ["الأمازون", "النيل", "اليانغتسي", "المسيسيبي"],
   },
   {
     question: "ما أكبر محيط في العالم؟",
     answer: "الهادئ",
-    options: ["الهادئ", "الأطلسي", "الهندي", "المتجمد"],
+    options: ["الهادئ", "الأطلسي", "الهندي", "المتجمد الشمالي"],
   },
   {
     question: "أي دولة ليس لها عاصمة رسمية؟",
@@ -90,7 +90,7 @@ export const geographyQuestions: QuizQuestion[] = [
     options: ["الجزائر", "مصر", "نيجيريا", "السودان"],
   },
   {
-    question: "أي قارة تقع فيها البرازيل؟",
+    question: "في أي قارة تقع البرازيل؟",
     answer: "أمريكا الجنوبية",
     options: ["أمريكا الجنوبية", "أوروبا", "آسيا", "أفريقيا"],
   },
@@ -123,6 +123,5 @@ export const geographyQuestions: QuizQuestion[] = [
     question: "لأي دولة هذه العاصمة: ليما؟",
     answer: "بيرو",
     options: ["بيرو", "تشيلي", "الأرجنتين", "كولومبيا"],
-    },
-  ],
+  },
 ];
