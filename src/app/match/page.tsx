@@ -14,6 +14,7 @@ import type { QuizCategoryKey } from "@/data/quiz";
 import type { WinnerType } from "@/types/game";
 
 type GameType = "word" | "quiz" | "scramble" | "wheel" | "categories" | "draw";
+type ModeType = "session" | "quick";
 
 type Round = {
   game: GameType;
@@ -28,19 +29,23 @@ function WinnerOverlay({
   show,
   winnerName,
   isDraw,
+  mode,
   onRestart,
 }: {
   show: boolean;
   winnerName: string;
   isDraw: boolean;
+  mode: ModeType;
   onRestart: () => void;
 }) {
   if (!show) return null;
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
-      <div className="arcade-card w-full max-w-2xl p-8 text-center">
-        <p className="text-sm font-black text-cyan-300/80">انتهت الجولة</p>
+      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
+        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
+          {mode === "quick" ? "انتهت اللعبة" : "انتهت الجلسة"}
+        </p>
 
         <h1 className="arcade-title mt-6">
           {isDraw ? "تعادل!" : "كفووو!"}
@@ -59,6 +64,8 @@ function WinnerOverlay({
 }
 
 export default function MatchPage() {
+  const [mode, setMode] = useState<ModeType>("session");
+
   const [side1, setSide1] = useState("");
   const [side2, setSide2] = useState("");
 
@@ -119,9 +126,10 @@ export default function MatchPage() {
     setShowWinner(false);
   }
 
-  // ✅ إصلاح quick game
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+
+    const urlMode = params.get("mode");
     const game = params.get("game") as GameType | null;
     const category = params.get("category") as QuizCategoryKey | null;
 
@@ -134,25 +142,36 @@ export default function MatchPage() {
       "draw",
     ];
 
-    if (!game || !validGames.includes(game)) return;
+    if (urlMode === "session") {
+      setMode("session");
+      setStarted(false);
+      return;
+    }
 
-    if (game === "quiz" && !category) return;
+    if (!game || !validGames.includes(game)) {
+      setMode("session");
+      return;
+    }
 
-    // 🔥 مهم
+    if (game === "quiz" && !category) {
+      setMode("quick");
+      setSelectedGames([game]);
+      setGameRounds({ [game]: 1 });
+      setStarted(false);
+      return;
+    }
+
+    setMode("quick");
     setSelectedGames([game]);
     setGameRounds({ [game]: 1 });
 
-    setQueue([
-      {
-        game,
-        category: game === "quiz" ? category : null,
-      },
-    ]);
+    if (game === "quiz" && category) {
+      setQuizCategories([category]);
+    }
 
     setSide1("");
     setSide2("");
-
-    setStarted(false); // 👈 أهم سطر
+    setStarted(false);
     setIndex(0);
     setSide1Score(0);
     setSide2Score(0);
@@ -188,9 +207,12 @@ export default function MatchPage() {
     setQueue([]);
     setSide1Score(0);
     setSide2Score(0);
-    setSelectedGames([]);
-    setGameRounds({});
-    setQuizCategories([]);
+
+    if (mode === "session") {
+      setSelectedGames([]);
+      setGameRounds({});
+      setQuizCategories([]);
+    }
   }
 
   const current = queue[index];
@@ -209,11 +231,13 @@ export default function MatchPage() {
         show={showWinner}
         winnerName={finalWinnerName}
         isDraw={isDraw}
+        mode={mode}
         onRestart={restart}
       />
 
       {!started ? (
         <SetupGame
+          mode={mode}
           side1={side1}
           side2={side2}
           setSide1={setSide1}
@@ -229,30 +253,68 @@ export default function MatchPage() {
       ) : (
         <div className="mx-auto max-w-5xl">
           {current?.game === "word" && (
-            <WordGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
+            <WordGame
+              onRoundEnd={endRound}
+              roundKey={index}
+              side1Name={side1}
+              side2Name={side2}
+              side1Score={side1Score}
+              side2Score={side2Score}
+              currentRound={index + 1}
+            />
           )}
 
           {current?.game === "quiz" && (
-            <QuizGame onRoundEnd={endRound} roundKey={index} category={current.category} side1Name={side1} side2Name={side2} />
+            <QuizGame
+              onRoundEnd={endRound}
+              roundKey={index}
+              category={current.category}
+              side1Name={side1}
+              side2Name={side2}
+            />
           )}
 
           {current?.game === "scramble" && (
-            <ScrambleGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
+            <ScrambleGame
+              onRoundEnd={endRound}
+              roundKey={index}
+              side1Name={side1}
+              side2Name={side2}
+              currentRound={index + 1}
+            />
           )}
 
           {current?.game === "wheel" && (
-            <WheelGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
+            <WheelGame
+              onRoundEnd={endRound}
+              roundKey={index}
+              side1Name={side1}
+              side2Name={side2}
+              currentRound={index + 1}
+            />
           )}
 
           {current?.game === "categories" && (
-            <CategoriesGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
+            <CategoriesGame
+              onRoundEnd={endRound}
+              roundKey={index}
+              side1Name={side1}
+              side2Name={side2}
+              currentRound={index + 1}
+            />
           )}
 
           {current?.game === "draw" && (
-            <ProverbGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
+            <ProverbGame
+              onRoundEnd={endRound}
+              roundKey={index}
+              side1Name={side1}
+              side2Name={side2}
+              currentRound={index + 1}
+            />
           )}
 
-          <p className="mt-5 text-center text-sm text-white/50">
+          <p className="mt-5 text-center text-sm font-bold text-white/50">
             الجولة {index + 1} من {queue.length}
           </p>
         </div>
