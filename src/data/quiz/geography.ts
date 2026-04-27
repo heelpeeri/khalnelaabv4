@@ -8,6 +8,12 @@ export const geographyQuestions: QuizQuestion[] = [
     options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
   },
   {
+  question: "ما اسم هذا الجبل؟",
+  image: "/images/mount-fuji.jpg",
+  answer: "جبل فوجي",
+  options: ["جبل فوجي", "إيفرست", "كي2", "كليمنجارو"],
+  },
+  {
     question: "ما اسم هذا المعلم الشهير؟",
     image: "/images/taj-mahal.jpg",
     answer: "تاج محل",
