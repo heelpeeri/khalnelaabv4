@@ -8,6 +8,11 @@ export const geographyQuestions: QuizQuestion[] = [
     options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
   },
   {
+  question: "أي قارة تحتوي على أكبر عدد من الدول؟",
+  answer: "أفريقيا",
+  options: ["أفريقيا", "آسيا", "أوروبا", "أمريكا الجنوبية"],
+  },
+  {
   question: "ما اسم هذا الجبل؟",
   image: "/images/mount-fuji.jpg",
   answer: "جبل فوجي",
