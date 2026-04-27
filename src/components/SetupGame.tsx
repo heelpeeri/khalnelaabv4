@@ -30,7 +30,6 @@ export default function SetupGame({
 
   const clickSound = useRef<HTMLAudioElement | null>(null);
 
-  // ✅ حل خطأ TypeScript هنا
   function playClick() {
     if (clickSound.current) {
       clickSound.current.currentTime = 0;
@@ -45,6 +44,11 @@ export default function SetupGame({
       setSelectedGames(selectedGames.filter((g: string) => g !== id));
     } else {
       setSelectedGames([...selectedGames, id]);
+
+      // ✅ default rounds
+      if (!gameRounds[id]) {
+        setGameRounds({ ...gameRounds, [id]: 1 });
+      }
     }
   }
 
@@ -52,7 +56,6 @@ export default function SetupGame({
     playClick();
 
     if (quizCategories.includes(cat)) {
-      if (quizCategories.length === 1) return;
       setQuizCategories(quizCategories.filter((c: string) => c !== cat));
     } else {
       setQuizCategories([...quizCategories, cat]);
@@ -68,8 +71,16 @@ export default function SetupGame({
       {/* العنوان */}
       <div className="text-center">
         <h1 className="arcade-title">تحدي الجلسة</h1>
+
         <p className="arcade-subtitle mt-2">
           اختر الألعاب وحدد الجولات
+        </p>
+
+        {/* ✅ عدد الألعاب المختارة */}
+        <p className="text-sm text-white/60 mt-2">
+          {selectedGames.length > 0
+            ? `تم اختيار ${selectedGames.length} لعبة`
+            : "اختر لعبة للبدء"}
         </p>
       </div>
 
@@ -78,20 +89,19 @@ export default function SetupGame({
         <input
           value={side1}
           onChange={e => setSide1(e.target.value)}
-          placeholder="الفريق 1"
+          placeholder="اختر اسم الفريق"
           className="input text-center text-lg font-bold"
         />
         <input
           value={side2}
           onChange={e => setSide2(e.target.value)}
-          placeholder="الفريق 2"
+          placeholder="اختر اسم الفريق"
           className="input text-center text-lg font-bold"
         />
       </div>
 
       {/* الألعاب */}
       <div className="grid gap-4 sm:grid-cols-2">
-
         {GAMES.map(game => {
           const active = selectedGames.includes(game.id);
 
