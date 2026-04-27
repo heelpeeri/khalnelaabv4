@@ -1,8 +1,8 @@
 import type { QuizQuestion } from "./index";
 
-export const seerahQuestions: QuizQuestion[] = [
-
-   question: "من قائل: لا إله إلا أنت سبحانك إني كنت من الظالمين؟",
+export const seerahQuestions: QuizQuestion[] = [  
+   {
+    question: "من قائل: لا إله إلا أنت سبحانك إني كنت من الظالمين؟",
     answer: "يونس",
     },
     {
