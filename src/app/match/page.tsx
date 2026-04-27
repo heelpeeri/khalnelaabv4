@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import SetupGame from "@/components/SetupGame";
 
 import WordGame from "@/components/match/WordGame";
@@ -31,12 +32,14 @@ function WinnerOverlay({
   isDraw,
   mode,
   onRestart,
+  onGoHome,
 }: {
   show: boolean;
   winnerName: string;
   isDraw: boolean;
   mode: ModeType;
   onRestart: () => void;
+  onGoHome: () => void;
 }) {
   if (!show) return null;
 
@@ -55,15 +58,29 @@ function WinnerOverlay({
           {isDraw ? "الفريقين قدّها" : `الفائز: ${winnerName}`}
         </p>
 
-        <button onClick={onRestart} className="arcade-button mt-8">
-          العب من جديد
-        </button>
+        {mode === "quick" ? (
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <button onClick={onRestart} className="arcade-button">
+              جرّب نفس اللعبة
+            </button>
+
+            <button onClick={onGoHome} className="btn-secondary">
+              القائمة الرئيسية
+            </button>
+          </div>
+        ) : (
+          <button onClick={onRestart} className="arcade-button mt-8">
+            العب من جديد
+          </button>
+        )}
       </div>
     </div>
   );
 }
 
 export default function MatchPage() {
+  const router = useRouter();
+
   const [mode, setMode] = useState<ModeType>("session");
 
   const [side1, setSide1] = useState("");
@@ -153,14 +170,6 @@ export default function MatchPage() {
       return;
     }
 
-    if (game === "quiz" && !category) {
-      setMode("quick");
-      setSelectedGames([game]);
-      setGameRounds({ [game]: 1 });
-      setStarted(false);
-      return;
-    }
-
     setMode("quick");
     setSelectedGames([game]);
     setGameRounds({ [game]: 1 });
@@ -215,6 +224,10 @@ export default function MatchPage() {
     }
   }
 
+  function goHome() {
+    router.push("/");
+  }
+
   const current = queue[index];
 
   const finalWinnerName = useMemo(() => {
@@ -233,6 +246,7 @@ export default function MatchPage() {
         isDraw={isDraw}
         mode={mode}
         onRestart={restart}
+        onGoHome={goHome}
       />
 
       {!started ? (
