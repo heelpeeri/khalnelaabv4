@@ -20,6 +20,10 @@ type Round = {
   category: QuizCategoryKey | null;
 };
 
+function shuffle<T>(arr: T[]): T[] {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
 function WinnerOverlay({
   show,
   winnerName,
@@ -76,6 +80,8 @@ export default function MatchPage() {
   function buildQueue(): Round[] {
     const q: Round[] = [];
 
+    const shuffledCategories = shuffle(quizCategories);
+
     selectedGames.forEach((game) => {
       const count = gameRounds[game] || 1;
 
@@ -84,7 +90,7 @@ export default function MatchPage() {
           game,
           category:
             game === "quiz"
-              ? quizCategories[i % quizCategories.length] ?? null
+              ? shuffledCategories[i % shuffledCategories.length] ?? null
               : null,
         });
       }
@@ -132,6 +138,11 @@ export default function MatchPage() {
 
     if (!game || !validGames.includes(game)) return;
 
+    // إصلاح: لا تبدأ quiz بدون فئة
+    if (game === "quiz" && !category) {
+      return;
+    }
+
     setQueue([
       {
         game,
@@ -177,6 +188,11 @@ export default function MatchPage() {
     setQueue([]);
     setSide1Score(0);
     setSide2Score(0);
+
+    // تنظيف الإعدادات
+    setSelectedGames([]);
+    setGameRounds({});
+    setQuizCategories([]);
   }
 
   const current = queue[index];
@@ -277,7 +293,7 @@ export default function MatchPage() {
           )}
 
           <p className="mt-5 text-center text-sm font-bold text-white/50">
-            الجولة {index + 1} من {queue.length}
+            {current?.game} - الجولة {index + 1} من {queue.length}
           </p>
         </div>
       )}
