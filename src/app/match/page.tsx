@@ -39,10 +39,8 @@ function WinnerOverlay({
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
-      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
-        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
-          انتهت الجلسة
-        </p>
+      <div className="arcade-card w-full max-w-2xl p-8 text-center">
+        <p className="text-sm font-black text-cyan-300/80">انتهت الجولة</p>
 
         <h1 className="arcade-title mt-6">
           {isDraw ? "تعادل!" : "كفووو!"}
@@ -79,7 +77,6 @@ export default function MatchPage() {
 
   function buildQueue(): Round[] {
     const q: Round[] = [];
-
     const shuffledCategories = shuffle(quizCategories);
 
     selectedGames.forEach((game) => {
@@ -122,6 +119,7 @@ export default function MatchPage() {
     setShowWinner(false);
   }
 
+  // ✅ إصلاح quick game
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const game = params.get("game") as GameType | null;
@@ -138,10 +136,11 @@ export default function MatchPage() {
 
     if (!game || !validGames.includes(game)) return;
 
-    // إصلاح: لا تبدأ quiz بدون فئة
-    if (game === "quiz" && !category) {
-      return;
-    }
+    if (game === "quiz" && !category) return;
+
+    // 🔥 مهم
+    setSelectedGames([game]);
+    setGameRounds({ [game]: 1 });
 
     setQueue([
       {
@@ -150,9 +149,10 @@ export default function MatchPage() {
       },
     ]);
 
-    setSide1("فريق 1");
-    setSide2("فريق 2");
-    setStarted(true);
+    setSide1("");
+    setSide2("");
+
+    setStarted(false); // 👈 أهم سطر
     setIndex(0);
     setSide1Score(0);
     setSide2Score(0);
@@ -188,8 +188,6 @@ export default function MatchPage() {
     setQueue([]);
     setSide1Score(0);
     setSide2Score(0);
-
-    // تنظيف الإعدادات
     setSelectedGames([]);
     setGameRounds({});
     setQuizCategories([]);
@@ -231,69 +229,31 @@ export default function MatchPage() {
       ) : (
         <div className="mx-auto max-w-5xl">
           {current?.game === "word" && (
-            <WordGame
-              onRoundEnd={endRound}
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
-              side1Score={side1Score}
-              side2Score={side2Score}
-              currentRound={index + 1}
-            />
+            <WordGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
           )}
 
           {current?.game === "quiz" && (
-            <QuizGame
-              onRoundEnd={endRound}
-              roundKey={index}
-              category={current.category}
-              side1Name={side1}
-              side2Name={side2}
-            />
+            <QuizGame onRoundEnd={endRound} roundKey={index} category={current.category} side1Name={side1} side2Name={side2} />
           )}
 
           {current?.game === "scramble" && (
-            <ScrambleGame
-              onRoundEnd={endRound}
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
-              currentRound={index + 1}
-            />
+            <ScrambleGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
           )}
 
           {current?.game === "wheel" && (
-            <WheelGame
-              onRoundEnd={endRound}
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
-              currentRound={index + 1}
-            />
+            <WheelGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
           )}
 
           {current?.game === "categories" && (
-            <CategoriesGame
-              onRoundEnd={endRound}
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
-              currentRound={index + 1}
-            />
+            <CategoriesGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
           )}
 
           {current?.game === "draw" && (
-            <ProverbGame
-              onRoundEnd={endRound}
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
-              currentRound={index + 1}
-            />
+            <ProverbGame onRoundEnd={endRound} roundKey={index} side1Name={side1} side2Name={side2} />
           )}
 
-          <p className="mt-5 text-center text-sm font-bold text-white/50">
-            {current?.game} - الجولة {index + 1} من {queue.length}
+          <p className="mt-5 text-center text-sm text-white/50">
+            الجولة {index + 1} من {queue.length}
           </p>
         </div>
       )}
