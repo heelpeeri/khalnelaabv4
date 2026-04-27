@@ -7,10 +7,12 @@ import type { WinnerType } from "@/types/game";
 
 function shuffleArray<T>(items: T[]) {
   const array = [...items];
+
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+
   return array;
 }
 
@@ -34,7 +36,6 @@ export default function QuizGame({
   const [side1QuizScore, setSide1QuizScore] = useState(0);
   const [side2QuizScore, setSide2QuizScore] = useState(0);
 
-  // 🔥 بداية الجولة
   useEffect(() => {
     if (!category) return;
 
@@ -125,18 +126,39 @@ export default function QuizGame({
         </div>
       </div>
 
-      <div className="mt-7 p-6">
+      <div className="mt-7 rounded-3xl border border-white/10 bg-white/10 p-6">
         {current.image && (
-          <img src={current.image} className="mx-auto mb-5 max-h-[260px]" />
+          <img
+            src={current.image}
+            alt={current.question}
+            className="mx-auto mb-5 max-h-[260px] w-full rounded-2xl object-contain"
+          />
         )}
 
-        <p className="text-2xl font-black">{current.question}</p>
+        <p className="text-2xl font-black leading-relaxed">
+          {current.question}
+        </p>
+
+        {current.options && current.options.length > 0 && (
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            {current.options.map((option) => (
+              <div
+                key={option}
+                className="rounded-2xl border border-white/10 bg-black/20 p-4 text-center text-lg font-bold"
+              >
+                {option}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {showAnswer && (
-        <div className="mt-5">
-          <p>الإجابة:</p>
-          <p className="text-xl font-bold">{current.answer}</p>
+        <div className="mt-5 rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5">
+          <p className="text-sm text-white/70">الإجابة:</p>
+          <p className="mt-2 text-xl font-bold text-yellow-100">
+            {current.answer}
+          </p>
         </div>
       )}
 
@@ -150,9 +172,11 @@ export default function QuizGame({
             <button onClick={() => chooseWinner("side1")} className="btn-primary">
               {side1Name}
             </button>
+
             <button onClick={() => chooseWinner("side2")} className="btn-primary">
               {side2Name}
             </button>
+
             <button onClick={() => chooseWinner("none")} className="btn-secondary">
               لا أحد
             </button>
