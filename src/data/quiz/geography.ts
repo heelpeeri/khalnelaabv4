@@ -8,6 +8,12 @@ export const geographyQuestions: QuizQuestion[] = [
     options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
   },
   {
+  question: "في أي ولاية أمريكية يقع هذا المعلم الطبيعي؟",
+  image: "/images/grand-canyon.jpg",
+  answer: "أريزونا",
+  options: ["أريزونا", "كاليفورنيا", "نيفادا", "يوتا"],
+  },
+  {
   question: "أي قارة تحتوي على أكبر عدد من الدول؟",
   answer: "أفريقيا",
   options: ["أفريقيا", "آسيا", "أوروبا", "أمريكا الجنوبية"],
