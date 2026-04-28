@@ -8,6 +8,12 @@ export const geographyQuestions: QuizQuestion[] = [
     options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
   },
   {
+  question: "في أي مدينة يقع هذا البرج الشهير؟",
+  image: "/images/willis-tower.jpg",
+  answer: "شيكاغو",
+  options: ["شيكاغو", "نيويورك", "لوس أنجلوس", "هيوستن"],
+  },
+  {
   question: "في أي ولاية أمريكية يقع هذا المعلم الطبيعي؟",
   image: "/images/grand-canyon.jpg",
   answer: "أريزونا",
