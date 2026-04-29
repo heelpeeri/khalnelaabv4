@@ -7,6 +7,12 @@ export const geographyQuestions: QuizQuestion[] = [
     options: ["الصحراء الكبرى", "أنتاركتيكا", "الربع الخالي", "صحراء جوبي"],
   },
   {
+    question: "في أي مدينة يقع هذا المعلم؟",
+    image: "/images/colosseum.jpg",
+    answer: "روما",
+    options: ["روما", "ميلان", "فينيسيا", "نابولي"],
+  },
+  {
     question: "ما أطول سلسلة جبال في العالم؟",
     answer: "الأنديز",
     options: ["الأنديز", "الهيمالايا", "الألب", "روكي"],
