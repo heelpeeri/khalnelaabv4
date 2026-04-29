@@ -70,6 +70,11 @@ export const geographyQuestions: QuizQuestion[] = [
     options: ["جبل راشمور", "تماثيل جزيرة الفصح", "نقوش لونغمِن الصخرية", "تماثيل باميان"],
   },
   {
+    question: "أي دولة تحد الأردن من الغرب؟",
+    answer: "فلسطين",
+    options: ["فلسطين", "سوريا", "العراق", "السعودية"],
+  },
+  {
     question: "علم أي دولة؟",
     image: "/images/indonesia-flag.jpg",
     answer: "إندونيسيا",
