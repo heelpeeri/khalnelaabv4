@@ -15,9 +15,9 @@ export const geographyQuestions: QuizQuestion[] = [
     question: "أي دولة تُعرف ببلاد الألف بحيرة؟",
     answer: "فنلندا",
     options: ["فنلندا", "السويد", "النرويج", "كندا"],
-    question: "علم أي دولة؟",
   },
   {
+    question: "علم أي دولة؟",
     image: "/images/vietnam-flag.jpg",
     answer: "فيتنام",
     options: ["فيتنام", "الصين", "كوريا الشمالية", "تركيا"],
