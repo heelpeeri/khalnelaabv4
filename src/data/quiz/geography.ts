@@ -2,6 +2,12 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "أي من هذه الدول تقع في القارة الظاهرة في الصورة؟",
+    image: "/images/south-america-map.jpg",
+    answer: "الأرجنتين",
+    options: ["الأرجنتين", "المكسيك", "كندا", "الولايات المتحدة"],
+  },
+  {
     question: "ما أكبر صحراء في العالم؟",
     answer: "أنتاركتيكا",
     options: ["الصحراء الكبرى", "أنتاركتيكا", "الربع الخالي", "صحراء جوبي"],
