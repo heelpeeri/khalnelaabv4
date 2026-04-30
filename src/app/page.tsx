@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { GlassCard } from "@/components/GlassCard";
-import { Logo } from "@/components/Logo";
 
 const quickGames = [
   {
@@ -44,17 +43,27 @@ export default function Home() {
   return (
     <main className="min-h-screen px-4 py-8 text-white">
       <div className="mx-auto max-w-7xl">
+        
+        {/* Logo */}
         <div className="flex justify-center">
-          <Logo size={210} />
+          <img
+            src="/logo.png"
+            alt="خل نلعب"
+            className="h-auto w-[210px]"
+          />
         </div>
 
+        {/* Description */}
         <section className="mx-auto mt-6 max-w-3xl text-center">
           <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-white/80 md:text-2xl">
             منصة ألعاب عائلية سعودية بتجربة سريعة، واضحة، وممتعة داخل البيت.
           </p>
         </section>
 
+        {/* Modes */}
         <section className="mt-14 grid gap-8 xl:grid-cols-2">
+
+          {/* Session Mode */}
           <GlassCard className="rounded-[32px] border border-white/15 bg-black/20 p-7 md:p-8">
             <div className="text-right">
               <p className="text-sm font-bold text-white/60">الوضع الرئيسي</p>
@@ -77,6 +86,7 @@ export default function Home() {
             </div>
           </GlassCard>
 
+          {/* Quick Mode */}
           <GlassCard className="rounded-[32px] border border-white/15 bg-black/20 p-7 md:p-8">
             <div className="text-right">
               <p className="text-sm font-bold text-white/60">الوضع السريع</p>
@@ -119,6 +129,7 @@ export default function Home() {
               </div>
             )}
           </GlassCard>
+
         </section>
       </div>
     </main>
