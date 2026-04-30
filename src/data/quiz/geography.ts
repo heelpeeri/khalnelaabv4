@@ -2,6 +2,12 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+
+    question: "في أي قارة يقع مقر منظمة أوبك؟",
+    answer: "أوروبا",
+    options: ["أوروبا", "آسيا", "أفريقيا", "أمريكا"],
+  },
+  {
     question: "أي من هذه الدول تقع في القارة الظاهرة في الصورة؟",
     image: "/images/south-america-map.jpg",
     answer: "الأرجنتين",
