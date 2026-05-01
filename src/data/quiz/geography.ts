@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "ما هي الدولة التي تمتلك أكبر عدد من الأهرامات في العالم؟",
+    answer: "السودان",
+    options: ["مصر", "المكسيك", "السودان", "بيرو"],
+    },
+    {
     question: "ما هي أصغر قارة في العالم من حيث المساحة؟",
     answer: "أستراليا",
     options: ["أوروبا", "أنتاركتيكا", "أستراليا", "أمريكا الجنوبية"],
@@ -16,13 +21,13 @@ export const geographyQuestions: QuizQuestion[] = [
     image: "/images/gibraltar-strait.jpg",
     answer: "مضيق جبل طارق",
     options: ["مضيق البوسفور", "قناة السويس", "مضيق تيران", "مضيق جبل طارق"],
-  },
-  {
+    },
+    {
     question: "ما النهر الذي يمر في جمهورية السودان؟",
     answer: "النيل",
     options: ["دجلة", "الفرات", "نهر أم الربيع", "النيل"],
-  },
-  {
+    },
+    {
     question: "في أي دولة تقع صخرة الروشة؟",
     image: "/images/raouche-rock.jpg",
     answer: "لبنان",
