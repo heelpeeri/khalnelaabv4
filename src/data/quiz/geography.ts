@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "ما هي أصغر قارة في العالم من حيث المساحة؟",
+    answer: "أستراليا",
+    options: ["أوروبا", "أنتاركتيكا", "أستراليا", "أمريكا الجنوبية"],
+    },
+    {
     question: "ما هي الدولة التي تمتلك أطول حدود برية مع الولايات المتحدة ؟",
     answer: "كندا",
     options: ["المكسيك", "روسيا", "الصين", "كندا"],
