@@ -2,6 +2,12 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "ما اسم المضيق الظاهر في هذه الخريطة، والذي يفصل بين المغرب وإسبانيا؟",
+    image: "/images/gibraltar-strait.jpg",
+    answer: "مضيق جبل طارق",
+    options: ["مضيق البوسفور", "قناة السويس", "مضيق تيران", "مضيق جبل طارق"],
+    },
+    {
     question: "أي من هذه الأنهار يمر في جمهورية السودان؟",
     answer: "النيل",
     options: ["دجلة", "الفرات", "نهر أم الربيع", "النيل"],
