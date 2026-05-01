@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "ما هي الدولة التي تمتلك أطول حدود برية مع الولايات المتحدة ؟",
+    answer: "كندا",
+    options: ["المكسيك", "روسيا", "الصين", "كندا"],
+     },
+     {
     question: "ما اسم المضيق الظاهر في هذه الخريطة، والذي يفصل بين المغرب وإسبانيا؟",
     image: "/images/gibraltar-strait.jpg",
     answer: "مضيق جبل طارق",
