@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "أي من هذه الأنهار يمر في جمهورية السودان؟",
+    answer: "النيل",
+    options: ["دجلة", "الفرات", "نهر أم الربيع", "النيل"],
+    },
+    {
     question: "في أي دولة يقع هذا المعلم الطبيعي (صخرة الروشة)؟",
     image: "/images/raouche-rock.jpg",
     answer: "لبنان",
