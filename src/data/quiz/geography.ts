@@ -2,6 +2,12 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "في أي دولة يقع هذا المعلم الطبيعي (صخرة الروشة)؟",
+    image: "/images/raouche-rock.jpg",
+    answer: "لبنان",
+    options: ["سوريا", "لبنان", "تونس", "المغرب"],
+    },
+    {
     question: "يمر نهر الفرات بدولتين عربيتين، ما هما؟",
     answer: "سوريا والعراق",
     options: ["سوريا والعراق", "الأردن وفلسطين", "مصر والسودان", "لبنان وسوريا"],
