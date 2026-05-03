@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "ما هو المسطح المائي الأكثر ملوحة في العالم والذي تنعدم فيه الحياة البحرية؟",
+    answer: "البحر الميت",
+    options: ["البحر الأحمر", "البحر الميت", "بحر قزوين", "البحر الأسود"],
+     },
+    {
     question: "في أي قارة تقع سلسلة جبال الألب؟",
     answer: "أوروبا",
     options: ["آسيا", "أفريقيا", "أوروبا", "أمريكا الشمالية"],
