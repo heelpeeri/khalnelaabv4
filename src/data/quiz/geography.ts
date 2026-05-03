@@ -2,6 +2,12 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "ما اسم المعلم التاريخي الشهير الظاهر في الصورة؟",
+    image: "/images/hagia-sophia.jpg",
+    answer: "آيا صوفيا",
+    options: ["آيا صوفيا", "المسجد الأزرق", "مسجد الفاتح", "قصر طوب قابي"],
+    },
+    {
     question: "ما هي أصغر دولة في العالم من حيث المساحة؟",
     answer: "الفاتيكان",
     options: ["موناكو", "سان مارينو", "الفاتيكان", "ناورو"],
