@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "ما هي أصغر دولة في العالم من حيث المساحة؟",
+    answer: "الفاتيكان",
+    options: ["موناكو", "سان مارينو", "الفاتيكان", "ناورو"],
+     },
+    {
     question: "ما اسم الدولة المظللة في خريطة قارة أفريقيا؟",
     image: "/images/sudan-in-africa-map.jpg",
     answer: "السودان",
