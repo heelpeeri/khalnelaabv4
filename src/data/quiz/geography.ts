@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "في أي قارة تقع سلسلة جبال الألب؟",
+    answer: "أوروبا",
+    options: ["آسيا", "أفريقيا", "أوروبا", "أمريكا الشمالية"],
+    },
+    {
     question: "ما هي الدولة التي تمتلك أكبر عدد من الأهرامات في العالم؟",
     answer: "السودان",
     options: ["مصر", "المكسيك", "السودان", "بيرو"],
