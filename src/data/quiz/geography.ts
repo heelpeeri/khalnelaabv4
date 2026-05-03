@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "ما هو النهر الذي يمتلك أكبر حوض تصريف في العالم وأكبر حجم لتدفق المياه؟",
+    answer: "نهر الأمازون",
+    options: ["نهر النيل", "نهر الأمازون", "نهر المسيسيبي", "نهر اليانغتسي"],
+    },
+    {
     question: "ما اسم المعلم التاريخي الشهير الظاهر في الصورة؟",
     image: "/images/hagia-sophia.jpg",
     answer: "آيا صوفيا",
