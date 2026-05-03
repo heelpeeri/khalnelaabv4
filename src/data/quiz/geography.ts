@@ -2,10 +2,16 @@ import type { QuizQuestion } from "./index";
 
 export const geographyQuestions: QuizQuestion[] = [
   {
+    question: "ما اسم الدولة المظللة في خريطة قارة أفريقيا؟",
+    image: "/images/sudan-in-africa-map.jpg",
+    answer: "السودان",
+    options: ["مصر", "السودان", "تشاد", "إثيوبيا"],
+    },
+    {
     question: "ما هو المسطح المائي الأكثر ملوحة في العالم والذي تنعدم فيه الحياة البحرية؟",
     answer: "البحر الميت",
     options: ["البحر الأحمر", "البحر الميت", "بحر قزوين", "البحر الأسود"],
-     },
+    },
     {
     question: "في أي قارة تقع سلسلة جبال الألب؟",
     answer: "أوروبا",
