@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const footballQuestions: QuizQuestion[] = [
   {
+    question: "ما هو النادي السعودي الذي حقق لقب دوري أبطال آسيا مرتين متتاليتين (2004 و 2005)؟",
+    answer: "الاتحاد",
+    options: ["الاتحاد", "الهلال", "النصر", "الأهلي"],
+     },
+     {
     question: "كم عدد المرات التي فاز فيها المنتخب السعودي بلقب كأس أمم آسيا؟",
     answer: "3",
     options: ["3", "2", "4", "1"],
