@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const footballQuestions: QuizQuestion[] = [
   {
+    question: "من هو النادي الذي حقق لقب الدوري لثلاث مرات متتالية في حقبة مسمى دوري MBS؟",
+    answer: "الهلال",
+    options: ["الهلال", "النصر", "الاتحاد", "الأهلي"],
+    },
+     {
     question: "ما هو النادي السعودي الذي حقق لقب دوري أبطال آسيا مرتين متتاليتين (2004 و 2005)؟",
     answer: "الاتحاد",
     options: ["الاتحاد", "الهلال", "النصر", "الأهلي"],
