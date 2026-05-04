@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const footballQuestions: QuizQuestion[] = [
   {
+    question: "في أي مدينة سعودية يقع استاد الأمير محمد بن فهد؟",
+    answer: "الدمام",
+    options: ["الخبر", "الدمام", "الأحساء", "الجبيل"],
+    },
+     {
     question: "في أي عام ميلادي تأسس نادي النصر السعودي في مدينة الرياض؟",
     answer: "1955",
     options: ["1955", "1950", "1960", "1945"],
