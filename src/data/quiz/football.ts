@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const footballQuestions: QuizQuestion[] = [
   {
+    question: "في أي عام ميلادي تأسس نادي النصر السعودي في مدينة الرياض؟",
+    answer: "1955",
+    options: ["1955", "1950", "1960", "1945"],
+     },
+     {
     question: "من هو النادي الذي حقق لقب الدوري لثلاث مرات متتالية في حقبة مسمى دوري MBS؟",
     answer: "الهلال",
     options: ["الهلال", "النصر", "الاتحاد", "الأهلي"],
