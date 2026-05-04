@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const footballQuestions: QuizQuestion[] = [
   {
+    question: "ما هو النادي الذي يمتلك أطول سلسلة مباريات دون خسارة في تاريخ الدوري السعودي؟",
+    answer: "الأهلي",
+    options: ["الهلال", "الاتحاد", "الأهلي", "النصر"],
+     },
+     {
     question: "في أي مدينة سعودية يقع استاد الأمير محمد بن فهد؟",
     answer: "الدمام",
     options: ["الخبر", "الدمام", "الأحساء", "الجبيل"],
