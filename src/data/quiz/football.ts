@@ -2,6 +2,11 @@ import type { QuizQuestion } from "./index";
 
 export const footballQuestions: QuizQuestion[] = [
   {
+    question: "كم عدد المرات التي فاز فيها المنتخب السعودي بلقب كأس أمم آسيا؟",
+    answer: "3",
+    options: ["3", "2", "4", "1"],
+     },
+     {
     question: "من هو أول فريق سعودي شارك في بطولة كأس العالم للأندية؟",
     answer: "النصر",
     options: ["النصر", "الهلال", "الاتحاد", "الأهلي"],
@@ -17,7 +22,7 @@ export const footballQuestions: QuizQuestion[] = [
     options: ["الاتحاد", "الهلال", "الأهلي", "النصر"],
   },
   {
-    question: "كم عدد مرات فوز نادي الهلال بلقب دوري أبطال آسيا (بمسمياته المختلفة)؟",
+    question: "كم عدد مرات فوز نادي الهلال بلقب دوري أبطال آسيا؟",
     answer: "4",
     options: ["4", "3", "5", "2"],
   },
