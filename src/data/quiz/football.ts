@@ -52,7 +52,7 @@ export const footballQuestions: QuizQuestion[] = [
     options: ["الاتحاد", "الهلال", "الأهلي", "النصر"],
   },
   {
-    question: "كم مرة فاز الهلال بدوري أبطال آسيا؟",
+    question: "كم مرة فاز الهلال بدوري أبطال آسيا حتى نسخة 2021",
     answer: "4",
     options: ["4", "3", "5", "2"],
   },
