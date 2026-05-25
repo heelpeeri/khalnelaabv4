@@ -12,7 +12,66 @@ const GAMES = [
   { id: "draw", name: "خمن المثل", icon: "✏️" },
 ];
 
-const ROUNDS = [1, 3, 5];
+function getRoundOptions(gameId: string) {
+  switch (gameId) {
+    case "wheel":
+      return [1, 3, 5];
+
+    case "categories":
+      return [1, 2];
+
+    case "quiz":
+      return [];
+
+    case "word":
+    case "scramble":
+    case "draw":
+    default:
+      return [2, 4, 6];
+  }
+}
+
+function getDefaultRounds(gameId: string) {
+  switch (gameId) {
+    case "quiz":
+      return 6;
+
+    case "wheel":
+    case "categories":
+      return 1;
+
+    case "word":
+    case "scramble":
+    case "draw":
+    default:
+      return 2;
+  }
+}
+
+function getGameDescription(gameId: string) {
+  switch (gameId) {
+    case "word":
+      return "نسخة عربية من Wordle — يتبدل الفريق اللي يبدأ كل راوند";
+
+    case "wheel":
+      return "نسخة مبسطة من Wheel of Fortune — البداية ما تفرق";
+
+    case "quiz":
+      return "ثابتة: 6 أسئلة فقط — 3 لكل فريق";
+
+    case "draw":
+      return "خمن المثل من الإيموجي";
+
+    case "scramble":
+      return "رتب الحروف واكتشف الكلمة";
+
+    case "categories":
+      return "الكل يلعب بنفس الوقت";
+
+    default:
+      return "";
+  }
+}
 
 export default function SetupGame({
   mode = "session",
@@ -49,7 +108,10 @@ export default function SetupGame({
       setSelectedGames([...selectedGames, id]);
 
       if (!gameRounds[id]) {
-        setGameRounds({ ...gameRounds, [id]: 1 });
+        setGameRounds({
+          ...gameRounds,
+          [id]: getDefaultRounds(id),
+        });
       }
     }
   }
@@ -105,6 +167,7 @@ export default function SetupGame({
       >
         {GAMES.map((game) => {
           const active = selectedGames.includes(game.id);
+          const roundOptions = getRoundOptions(game.id);
 
           if (isQuickMode && !active) return null;
 
@@ -126,9 +189,19 @@ export default function SetupGame({
 
               <h3 className="mt-3 text-lg font-black">{game.name}</h3>
 
+              <p className="mt-2 text-sm leading-6 text-white/60">
+                {getGameDescription(game.id)}
+              </p>
+
+              {active && game.id === "quiz" && (
+                <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-sm font-bold text-cyan-200">
+                  6 أسئلة ثابتة — 3 لكل فريق
+                </div>
+              )}
+
               {active && game.id !== "quiz" && (
                 <div className="mt-4 flex justify-center gap-2">
-                  {ROUNDS.map((r) => (
+                  {roundOptions.map((r) => (
                     <button
                       key={r}
                       onClick={(e) => {
