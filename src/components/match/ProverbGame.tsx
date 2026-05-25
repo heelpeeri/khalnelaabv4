@@ -110,14 +110,17 @@ export default function ProverbGame({
   }
 
   function handleWrong() {
-    if (!stealMode) {
-      setStealMode(true);
-      setTimeLeft(ROUND_TIME);
-      return;
-    }
+  if (!stealMode) {
+    setStealMode(true);
 
-    setRevealed(true);
+    // وقت أقل للسرقة
+    setTimeLeft(STEAL_TIME);
+
+    return;
   }
+
+  setRevealed(true);
+}
 
   function revealAnswer() {
     setRevealed(true);
