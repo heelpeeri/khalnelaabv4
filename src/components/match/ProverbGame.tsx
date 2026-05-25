@@ -7,6 +7,7 @@ import type { WinnerType } from "@/types/game";
 
 const TOTAL_ROUNDS = 6;
 const ROUND_TIME = 20;
+const STEAL_TIME = 7;
 
 function shuffleArray<T>(items: T[]) {
   const array = [...items];
