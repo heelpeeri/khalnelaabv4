@@ -29,6 +29,13 @@ function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
 }
 
+function getDefaultRounds(game: GameType) {
+  if (game === "wheel") return 1;
+  if (game === "categories") return 1;
+  if (game === "quiz") return 1;
+  return 2;
+}
+
 function getGameName(game: GameType) {
   switch (game) {
     case "word":
@@ -78,27 +85,15 @@ function WinnerOverlay({
           {isDraw ? "الفريقين قدّها" : `الفائز: ${winnerName}`}
         </p>
 
-        {mode === "quick" ? (
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <button onClick={onRestart} className="arcade-button">
-              جرّب نفس اللعبة
-            </button>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <button onClick={onRestart} className="arcade-button">
+            {mode === "quick" ? "جرّب نفس اللعبة" : "تحدي جديد"}
+          </button>
 
-            <button onClick={onGoHome} className="btn-secondary">
-              القائمة الرئيسية
-            </button>
-          </div>
-        ) : (
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <button onClick={onRestart} className="arcade-button">
-              تحدي جديد
-            </button>
-
-            <button onClick={onGoHome} className="btn-secondary">
-              القائمة الرئيسية
-            </button>
-          </div>
-        )}
+          <button onClick={onGoHome} className="btn-secondary">
+            القائمة الرئيسية
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -213,19 +208,22 @@ export default function MatchPage() {
   const [showWinner, setShowWinner] = useState(false);
   const [showRoundWinnerPicker, setShowRoundWinnerPicker] = useState(false);
 
+  const current = queue[index];
+  const nextRound = queue[index + 1];
+
   function buildQueue(): Round[] {
     const q: Round[] = [];
     const shuffledCategories = shuffle(quizCategories);
 
     selectedGames.forEach((game) => {
-      const count = game === "quiz" ? 1 : gameRounds[game] || 1;
+      const count = game === "quiz" ? 1 : gameRounds[game] || getDefaultRounds(game);
 
       for (let i = 0; i < count; i++) {
         q.push({
           game,
           category:
             game === "quiz"
-              ? shuffledCategories[i % shuffledCategories.length] ?? null
+              ? shuffledCategories[0] ?? null
               : null,
         });
       }
@@ -314,7 +312,7 @@ export default function MatchPage() {
 
     setMode("quick");
     setSelectedGames([game]);
-    setGameRounds({ [game]: 1 });
+    setGameRounds({ [game]: getDefaultRounds(game) });
 
     if (game === "quiz" && category) {
       setQuizCategories([category]);
@@ -339,14 +337,7 @@ export default function MatchPage() {
     setShowWinner(true);
   }
 
-  function applyRoundWinner(winner?: WinnerType) {
-    const nextSide1Score = side1Score + (winner === "side1" ? 1 : 0);
-    const nextSide2Score = side2Score + (winner === "side2" ? 1 : 0);
-
-    setSide1Score(nextSide1Score);
-    setSide2Score(nextSide2Score);
-    setShowRoundWinnerPicker(false);
-
+  function goToNextRound(nextSide1Score: number, nextSide2Score: number) {
     if (index + 1 >= queue.length) {
       finishSession(nextSide1Score, nextSide2Score);
       return;
@@ -358,6 +349,17 @@ export default function MatchPage() {
       setIndex((i) => i + 1);
       setPhase("playing");
     }, 1500);
+  }
+
+  function applyRoundWinner(winner?: WinnerType) {
+    const nextSide1Score = side1Score + (winner === "side1" ? 1 : 0);
+    const nextSide2Score = side2Score + (winner === "side2" ? 1 : 0);
+
+    setSide1Score(nextSide1Score);
+    setSide2Score(nextSide2Score);
+    setShowRoundWinnerPicker(false);
+
+    goToNextRound(nextSide1Score, nextSide2Score);
   }
 
   function endRound(winner?: WinnerType) {
@@ -393,9 +395,6 @@ export default function MatchPage() {
   function goHome() {
     router.push("/");
   }
-
-  const current = queue[index];
-  const nextRound = queue[index + 1];
 
   const finalWinnerName = useMemo(() => {
     if (side1Score > side2Score) return side1 || "فريق 1";
