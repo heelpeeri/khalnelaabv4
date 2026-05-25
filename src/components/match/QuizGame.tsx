@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { quizQuestions, quizCategoryMeta } from "@/data/quiz";
 import type { QuizCategoryKey, QuizQuestion } from "@/data/quiz";
 import type { WinnerType } from "@/types/game";
+
+const TOTAL_QUESTIONS = 6;
 
 function shuffleArray<T>(items: T[]) {
   const array = [...items];
@@ -32,6 +34,7 @@ export default function QuizGame({
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [index, setIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
 
   const [side1QuizScore, setSide1QuizScore] = useState(0);
   const [side2QuizScore, setSide2QuizScore] = useState(0);
@@ -40,14 +43,25 @@ export default function QuizGame({
     if (!category) return;
 
     const picked = quizQuestions[category] ?? [];
-    const selected = shuffleArray(picked).slice(0, 5);
+    const selected = shuffleArray(picked).slice(0, TOTAL_QUESTIONS);
 
     setQuestions(selected);
     setIndex(0);
     setShowAnswer(false);
+    setShowOptions(false);
     setSide1QuizScore(0);
     setSide2QuizScore(0);
   }, [category, roundKey]);
+
+  const current = questions[index];
+  const meta = category ? quizCategoryMeta[category] : null;
+
+  const currentTurn: "side1" | "side2" = useMemo(() => {
+    return index % 2 === 0 ? "side1" : "side2";
+  }, [index]);
+
+  const currentTeamName =
+    currentTurn === "side1" ? side1Name || "فريق 1" : side2Name || "فريق 2";
 
   function finishQuiz(final1: number, final2: number) {
     if (final1 > final2) return onRoundEnd("side1");
@@ -63,16 +77,21 @@ export default function QuizGame({
 
     setIndex((i) => i + 1);
     setShowAnswer(false);
+    setShowOptions(false);
   }
 
-  function chooseWinner(winner: "side1" | "side2" | "none") {
-    const next1 = side1QuizScore + (winner === "side1" ? 1 : 0);
-    const next2 = side2QuizScore + (winner === "side2" ? 1 : 0);
+  function markCorrect() {
+    const next1 = side1QuizScore + (currentTurn === "side1" ? 1 : 0);
+    const next2 = side2QuizScore + (currentTurn === "side2" ? 1 : 0);
 
     setSide1QuizScore(next1);
     setSide2QuizScore(next2);
 
     goNextQuestion(next1, next2);
+  }
+
+  function markWrongOrSkip() {
+    goNextQuestion(side1QuizScore, side2QuizScore);
   }
 
   if (!category) {
@@ -83,13 +102,10 @@ export default function QuizGame({
     );
   }
 
-  const current = questions[index];
-  const meta = quizCategoryMeta[category];
-
   if (!current) {
     return (
       <div className="text-center text-white">
-        <p>ما فيه أسئلة</p>
+        <p>ما فيه أسئلة كافية</p>
         <button onClick={() => onRoundEnd("none")} className="btn-primary mt-4">
           إنهاء الجولة
         </button>
@@ -108,20 +124,35 @@ export default function QuizGame({
       </h2>
 
       <div className="mt-6 grid gap-3 md:grid-cols-3">
-        <div className="rounded-2xl bg-pink-500/10 p-4">
-          <p>{side1Name}</p>
+        <div
+          className={`rounded-2xl p-4 ${
+            currentTurn === "side1"
+              ? "border border-pink-300/40 bg-pink-500/20"
+              : "bg-pink-500/10"
+          }`}
+        >
+          <p>{side1Name || "فريق 1"}</p>
           <p className="text-3xl font-black">{side1QuizScore}</p>
         </div>
 
         <div className="rounded-2xl bg-white/10 p-4">
           <p>السؤال</p>
           <p className="text-2xl font-black">
-            {index + 1} / {questions.length}
+            {index + 1} / {TOTAL_QUESTIONS}
+          </p>
+          <p className="mt-1 text-sm font-bold text-cyan-200">
+            الدور: {currentTeamName}
           </p>
         </div>
 
-        <div className="rounded-2xl bg-cyan-400/10 p-4">
-          <p>{side2Name}</p>
+        <div
+          className={`rounded-2xl p-4 ${
+            currentTurn === "side2"
+              ? "border border-cyan-300/40 bg-cyan-400/20"
+              : "bg-cyan-400/10"
+          }`}
+        >
+          <p>{side2Name || "فريق 2"}</p>
           <p className="text-3xl font-black">{side2QuizScore}</p>
         </div>
       </div>
@@ -139,7 +170,7 @@ export default function QuizGame({
           {current.question}
         </p>
 
-        {current.options && current.options.length > 0 && (
+        {showOptions && current.options && current.options.length > 0 && (
           <div className="mt-6 grid grid-cols-2 gap-3">
             {current.options.map((option) => (
               <div
@@ -164,21 +195,28 @@ export default function QuizGame({
 
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         {!showAnswer ? (
-          <button onClick={() => setShowAnswer(true)} className="btn-primary">
-            إظهار الإجابة
-          </button>
+          <>
+            {current.options && current.options.length > 0 && !showOptions && (
+              <button
+                onClick={() => setShowOptions(true)}
+                className="btn-secondary"
+              >
+                إظهار الخيارات
+              </button>
+            )}
+
+            <button onClick={() => setShowAnswer(true)} className="btn-primary">
+              إظهار الإجابة
+            </button>
+          </>
         ) : (
           <>
-            <button onClick={() => chooseWinner("side1")} className="btn-primary">
-              {side1Name}
+            <button onClick={markCorrect} className="btn-primary">
+              إجابة صحيحة
             </button>
 
-            <button onClick={() => chooseWinner("side2")} className="btn-primary">
-              {side2Name}
-            </button>
-
-            <button onClick={() => chooseWinner("none")} className="btn-secondary">
-              لا أحد
+            <button onClick={markWrongOrSkip} className="btn-secondary">
+              خطأ / تخطي
             </button>
           </>
         )}
