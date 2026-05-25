@@ -52,9 +52,10 @@ export default function ProverbGame({
 
   const current = rounds[index];
 
-  const originalTurn: "side1" | "side2" = useMemo(() => {
-    return index % 2 === 0 ? "side1" : "side2";
-  }, [index]);
+  const originalTurn: "side1" | "side2" = useMemo(
+    () => (index % 2 === 0 ? "side1" : "side2"),
+    [index]
+  );
 
   const currentTurn: "side1" | "side2" = stealMode
     ? originalTurn === "side1"
@@ -69,12 +70,7 @@ export default function ProverbGame({
     if (revealed || !current) return;
 
     if (timeLeft <= 0) {
-      if (!stealMode) {
-        setStealMode(true);
-        setTimeLeft(ROUND_TIME);
-      } else {
-        setRevealed(true);
-      }
+      handleWrong();
       return;
     }
 
@@ -103,17 +99,16 @@ export default function ProverbGame({
     setStealMode(false);
   }
 
-  function markCorrect() {
+  function handleCorrect() {
     const next1 = side1Score + (currentTurn === "side1" ? 1 : 0);
     const next2 = side2Score + (currentTurn === "side2" ? 1 : 0);
 
     setSide1Score(next1);
     setSide2Score(next2);
-
     goNext(next1, next2);
   }
 
-  function markWrong() {
+  function handleWrong() {
     if (!stealMode) {
       setStealMode(true);
       setTimeLeft(ROUND_TIME);
@@ -123,7 +118,11 @@ export default function ProverbGame({
     setRevealed(true);
   }
 
-  function skipAfterReveal() {
+  function revealAnswer() {
+    setRevealed(true);
+  }
+
+  function nextAfterReveal() {
     goNext(side1Score, side2Score);
   }
 
@@ -224,20 +223,22 @@ export default function ProverbGame({
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           {!revealed ? (
             <>
-              <button onClick={markCorrect} className="btn-primary">
+              <button onClick={handleCorrect} className="btn-primary">
                 إجابة صحيحة
               </button>
 
-              <button onClick={markWrong} className="btn-secondary">
+              <button onClick={handleWrong} className="btn-secondary">
                 خطأ / ما جاوب
               </button>
 
-              <button onClick={() => setRevealed(true)} className="btn-secondary">
-                إظهار المثل
-              </button>
+              {stealMode && (
+                <button onClick={revealAnswer} className="btn-secondary">
+                  إظهار المثل
+                </button>
+              )}
             </>
           ) : (
-            <button onClick={skipAfterReveal} className="btn-primary">
+            <button onClick={nextAfterReveal} className="btn-primary">
               التالي
             </button>
           )}
