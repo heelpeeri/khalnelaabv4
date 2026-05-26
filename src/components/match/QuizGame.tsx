@@ -5,7 +5,7 @@ import { quizQuestions, quizCategoryMeta } from "@/data/quiz";
 import type { QuizCategoryKey, QuizQuestion } from "@/data/quiz";
 import type { WinnerType } from "@/types/game";
 
-const TOTAL_ROUNDS = 6;
+const TOTAL_QUESTIONS = 6;
 const ROUND_TIME = 30;
 const STEAL_TIME = 10;
 
