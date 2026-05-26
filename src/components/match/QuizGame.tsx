@@ -66,6 +66,7 @@ export default function QuizGame({
 
   const current = questions[index];
   const meta = category ? quizCategoryMeta[category] : null;
+  const currentOptions = current?.options ?? [];
 
   const mainTurn: "side1" | "side2" = useMemo(
     () => (index % 2 === 0 ? "side1" : "side2"),
@@ -85,7 +86,7 @@ export default function QuizGame({
     activeTurn === "side1" ? side1HintUsed : side2HintUsed;
 
   const canUseHint =
-    (current.options?.length ?? 0) > 0 && !showOptions && !activeTeamUsedHint;
+    currentOptions.length > 0 && !showOptions && !activeTeamUsedHint;
 
   useEffect(() => {
     if (showAnswer || !current) return;
@@ -109,6 +110,8 @@ export default function QuizGame({
   }, [timeLeft, showAnswer, secondTurn, current]);
 
   function useHint() {
+    if (!canUseHint) return;
+
     setShowOptions(true);
 
     if (activeTurn === "side1") {
@@ -125,7 +128,7 @@ export default function QuizGame({
   }
 
   function nextQuestion(next1: number, next2: number) {
-    if (index + 1 >= TOTAL_QUESTIONS) {
+    if (index + 1 >= questions.length) {
       finishQuiz(next1, next2);
       return;
     }
@@ -199,7 +202,7 @@ export default function QuizGame({
           <p className="text-lg font-black">{activeTeamName}</p>
           <p className={`text-3xl font-black ${timerColor}`}>{timeLeft}</p>
           <p className="text-sm text-white/60">
-            السؤال {index + 1} / {TOTAL_QUESTIONS}
+            السؤال {index + 1} / {questions.length}
           </p>
         </div>
 
@@ -231,9 +234,9 @@ export default function QuizGame({
           {current.question}
         </p>
 
-        {showOptions && current.options && current.options.length > 0 && (
+        {showOptions && currentOptions.length > 0 && (
           <div className="mt-6 grid grid-cols-2 gap-3">
-            {current.options.map((option) => (
+            {currentOptions.map((option) => (
               <div
                 key={option}
                 className="rounded-2xl border border-white/10 bg-black/20 p-4 text-lg font-bold"
@@ -263,7 +266,7 @@ export default function QuizGame({
               </button>
             )}
 
-            {!canUseHint && (current.options?.length ?? 0) > 0 && (
+            {!canUseHint && currentOptions.length > 0 && (
               <span className="text-sm font-bold text-white/45">
                 مساعدة {activeTeamName}: مستخدمة
               </span>
