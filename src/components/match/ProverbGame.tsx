@@ -6,8 +6,8 @@ import { PROVERB_PUZZLES as puzzles } from "@/data/proverbs";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_ROUNDS = 6;
-const ROUND_TIME = 20;
-const STEAL_TIME = 7;
+const MAIN_TIME = 20;
+const SECOND_TIME = 7;
 
 function shuffleArray<T>(items: T[]) {
   const array = [...items];
@@ -30,13 +30,12 @@ export default function ProverbGame({
   side2Name: string;
   onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
-  currentRound?: number;
 }) {
   const [rounds, setRounds] = useState<typeof puzzles>([]);
   const [index, setIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(ROUND_TIME);
+  const [timeLeft, setTimeLeft] = useState(MAIN_TIME);
   const [revealed, setRevealed] = useState(false);
-  const [stealMode, setStealMode] = useState(false);
+  const [secondTurn, setSecondTurn] = useState(false);
 
   const [side1Score, setSide1Score] = useState(0);
   const [side2Score, setSide2Score] = useState(0);
@@ -44,34 +43,39 @@ export default function ProverbGame({
   useEffect(() => {
     setRounds(shuffleArray(puzzles).slice(0, TOTAL_ROUNDS));
     setIndex(0);
-    setTimeLeft(ROUND_TIME);
+    setTimeLeft(MAIN_TIME);
     setRevealed(false);
-    setStealMode(false);
+    setSecondTurn(false);
     setSide1Score(0);
     setSide2Score(0);
   }, [roundKey]);
 
   const current = rounds[index];
 
-  const originalTurn: "side1" | "side2" = useMemo(
+  const mainTurn: "side1" | "side2" = useMemo(
     () => (index % 2 === 0 ? "side1" : "side2"),
     [index]
   );
 
-  const currentTurn: "side1" | "side2" = stealMode
-    ? originalTurn === "side1"
+  const activeTurn: "side1" | "side2" = secondTurn
+    ? mainTurn === "side1"
       ? "side2"
       : "side1"
-    : originalTurn;
+    : mainTurn;
 
-  const currentTeamName =
-    currentTurn === "side1" ? side1Name || "فريق 1" : side2Name || "فريق 2";
+  const activeTeamName =
+    activeTurn === "side1" ? side1Name || "فريق 1" : side2Name || "فريق 2";
 
   useEffect(() => {
     if (revealed || !current) return;
 
     if (timeLeft <= 0) {
-      handleWrong();
+      if (!secondTurn) {
+        setSecondTurn(true);
+        setTimeLeft(SECOND_TIME);
+      } else {
+        setRevealed(true);
+      }
       return;
     }
 
@@ -80,7 +84,7 @@ export default function ProverbGame({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [timeLeft, revealed, stealMode, current]);
+  }, [timeLeft, revealed, secondTurn, current]);
 
   function finishGame(final1: number, final2: number) {
     if (final1 > final2) return onRoundEnd("side1");
@@ -95,39 +99,19 @@ export default function ProverbGame({
     }
 
     setIndex((i) => i + 1);
-    setTimeLeft(ROUND_TIME);
+    setTimeLeft(MAIN_TIME);
     setRevealed(false);
-    setStealMode(false);
+    setSecondTurn(false);
   }
 
-  function handleCorrect() {
-    const next1 = side1Score + (currentTurn === "side1" ? 1 : 0);
-    const next2 = side2Score + (currentTurn === "side2" ? 1 : 0);
+  function givePoint(winner: "side1" | "side2" | "none") {
+    const next1 = side1Score + (winner === "side1" ? 1 : 0);
+    const next2 = side2Score + (winner === "side2" ? 1 : 0);
 
     setSide1Score(next1);
     setSide2Score(next2);
+
     goNext(next1, next2);
-  }
-
-  function handleWrong() {
-  if (!stealMode) {
-    setStealMode(true);
-
-    // وقت أقل للسرقة
-    setTimeLeft(STEAL_TIME);
-
-    return;
-  }
-
-  setRevealed(true);
-}
-
-  function revealAnswer() {
-    setRevealed(true);
-  }
-
-  function nextAfterReveal() {
-    goNext(side1Score, side2Score);
   }
 
   if (!current) {
@@ -164,7 +148,7 @@ export default function ProverbGame({
         <div className="mt-5 grid gap-3 md:grid-cols-3">
           <div
             className={`rounded-2xl p-4 ${
-              currentTurn === "side1"
+              activeTurn === "side1"
                 ? "border border-pink-300/40 bg-pink-500/20"
                 : "border border-pink-300/20 bg-pink-500/10"
             }`}
@@ -177,17 +161,17 @@ export default function ProverbGame({
 
           <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-4">
             <p className="text-sm text-white/65">
-              {stealMode ? "فرصة السرقة" : "الدور"}
+              {secondTurn ? "دور الفريق الثاني" : "الدور"}
             </p>
             <p className="mt-1 text-lg font-black text-white">
-              {currentTeamName}
+              {activeTeamName}
             </p>
             <p className={`mt-2 text-4xl ${timerTextClass}`}>{timeLeft}</p>
           </div>
 
           <div
             className={`rounded-2xl p-4 ${
-              currentTurn === "side2"
+              activeTurn === "side2"
                 ? "border border-cyan-300/40 bg-cyan-400/20"
                 : "border border-cyan-300/20 bg-white/10"
             }`}
@@ -207,14 +191,6 @@ export default function ProverbGame({
           <div className="text-6xl md:text-7xl">{current.emoji}</div>
         </div>
 
-        {!revealed && (
-          <div className="mt-4 text-white/70">
-            {stealMode
-              ? `فرصة السرقة لـ ${currentTeamName}`
-              : `الدور على ${currentTeamName}`}
-          </div>
-        )}
-
         {revealed && (
           <div className="mt-6 rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5">
             <p className="text-sm text-white/70">الإجابة</p>
@@ -226,25 +202,23 @@ export default function ProverbGame({
 
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           {!revealed ? (
-            <>
-              <button onClick={handleCorrect} className="btn-primary">
-                إجابة صحيحة
-              </button>
-
-              <button onClick={handleWrong} className="btn-secondary">
-                خطأ / ما جاوب
-              </button>
-
-              {stealMode && (
-                <button onClick={revealAnswer} className="btn-secondary">
-                  إظهار المثل
-                </button>
-              )}
-            </>
-          ) : (
-            <button onClick={nextAfterReveal} className="btn-primary">
-              التالي
+            <button onClick={() => setRevealed(true)} className="btn-primary">
+              إظهار الإجابة
             </button>
+          ) : (
+            <>
+              <button onClick={() => givePoint("side1")} className="btn-primary">
+                {side1Name || "فريق 1"}
+              </button>
+
+              <button onClick={() => givePoint("side2")} className="btn-primary">
+                {side2Name || "فريق 2"}
+              </button>
+
+              <button onClick={() => givePoint("none")} className="btn-secondary">
+                لا أحد
+              </button>
+            </>
           )}
         </div>
       </div>
