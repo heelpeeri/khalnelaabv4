@@ -229,7 +229,7 @@ export default function QuizGame({
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         {!showAnswer ? (
           <>
-            {current.options?.length > 0 && !showOptions && (
+            {(current.options?.length ?? 0) > 0 && !showOptions && (
               <button
                 onClick={() => setShowOptions(true)}
                 className="btn-secondary"
