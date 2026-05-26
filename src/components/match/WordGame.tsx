@@ -12,7 +12,7 @@ const MAX_TRIES = 5;
 const keyboardRows = [
   "جحخهعغفقثصض",
   "كمنتالبيسش",
-   "ورزدذطظ",
+  "ورزدذطظ",
 ];
 
 export default function WordGame({
@@ -42,16 +42,18 @@ export default function WordGame({
 
   useEffect(() => {
     resetRound();
-  }, [roundKey]);
+  }, [roundKey, currentRound]);
 
   function resetRound() {
+    const startingSide = currentRound % 2 === 1 ? "side1" : "side2";
+
     setAnswer(WORDS[Math.floor(Math.random() * WORDS.length)]);
     setGuesses([]);
     setCurrent("");
     setStatus("playing");
     setKeyStatus({});
-    setActiveSide("side1");
-    setFeedback("ابدأ التخمين");
+    setActiveSide(startingSide);
+    setFeedback(`الدور على ${startingSide === "side1" ? side1Name : side2Name}`);
   }
 
   function normalize(text: string) {
@@ -185,7 +187,8 @@ export default function WordGame({
               {Array.from({ length: remainingRows }).map((_, rowIndex) => (
                 <div key={`empty-${rowIndex}`} className="flex justify-center gap-2">
                   {Array.from({ length: answer.length }).map((__, colIndex) => {
-                    const previewLetter = rowIndex === 0 ? current[colIndex] ?? "" : "";
+                    const previewLetter =
+                      rowIndex === 0 ? current[colIndex] ?? "" : "";
 
                     return (
                       <div
