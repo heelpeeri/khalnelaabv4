@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import SetupGame from "@/components/SetupGame";
-
+import Link from "next/link";
 import WordGame from "@/components/match/WordGame";
 import QuizGame from "@/components/match/QuizGame";
 import ScrambleGame from "@/components/match/ScrambleGame";
