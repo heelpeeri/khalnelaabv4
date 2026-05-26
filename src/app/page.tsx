@@ -42,6 +42,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen px-4 py-8 text-white">
+
       <div className="mx-auto max-w-7xl">
 
         {/* Logo */}
@@ -49,22 +50,23 @@ export default function Home() {
           <img
             src="/logo.png"
             alt="خل نلعب"
-            className="h-auto w-[210px]"
+            className="w-[210px]"
           />
         </div>
 
         {/* Description */}
         <section className="mx-auto mt-6 max-w-3xl text-center">
-          <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-white/80 md:text-2xl">
+
+          <p className="text-lg leading-8 text-white/80 md:text-2xl">
             منصة ألعاب عائلية سعودية بتجربة سريعة، واضحة، وممتعة داخل البيت.
           </p>
+
         </section>
 
-        {/* Cards */}
         <section className="mt-14 grid gap-8 xl:grid-cols-2">
 
-          {/* تحدي الجلسة - يمين */}
-          <GlassCard className="rounded-[32px] border border-white/15 bg-black/20 p-7 md:p-8">
+          {/* تحدي الجلسة */}
+          <GlassCard className="rounded-[32px] border border-white/15 bg-black/20 p-8">
 
             <div className="text-right">
 
@@ -72,14 +74,13 @@ export default function Home() {
                 الوضع الرئيسي
               </p>
 
-              <h2 className="mt-1 text-4xl font-black md:text-5xl">
+              <h2 className="mt-2 text-4xl font-black">
                 تحدي الجلسة 🏆
               </h2>
 
-              <p className="mt-4 text-sm leading-8 text-white/80 md:text-lg">
+              <p className="mt-4 leading-8 text-white/80">
                 سجل أسماء الفرق مرة واحدة، اختر الألعاب اللي تبيها،
-                وكل لعبة تكون جولة مستقلة،
-                وفي النهاية يبان الفائز بالنقاط.
+                وكل لعبة تكون جولة مستقلة وفي النهاية يبان الفائز بالنقاط.
               </p>
 
             </div>
@@ -90,22 +91,23 @@ export default function Home() {
                 href="/match?mode=session"
                 className="
                 inline-flex
-                min-w-[220px]
+                min-w-[230px]
                 items-center
                 justify-center
                 rounded-full
-                bg-gradient-to-r
-                from-[#FFD84D]
-                via-[#FFC107]
-                to-[#FF9800]
+                border
+                border-white/20
+                bg-white/10
                 px-8
                 py-4
                 text-lg
                 font-black
-                text-[#2a1600]
-                shadow-[0_0_30px_rgba(255,193,7,0.7)]
+                text-[#FFD84D]
+                shadow-[0_0_24px_rgba(255,216,77,0.45)]
+                backdrop-blur-md
                 transition
-                hover:scale-[1.05]
+                hover:scale-[1.04]
+                hover:bg-white/15
                 active:scale-95
                 "
               >
@@ -116,8 +118,8 @@ export default function Home() {
 
           </GlassCard>
 
-          {/* لعبة سريعة - يسار */}
-          <GlassCard className="rounded-[32px] border border-white/15 bg-black/20 p-7 md:p-8">
+          {/* لعبة سريعة */}
+          <GlassCard className="rounded-[32px] border border-white/15 bg-black/20 p-8">
 
             <div className="text-right">
 
@@ -125,14 +127,12 @@ export default function Home() {
                 الوضع السريع
               </p>
 
-              <h2 className="mt-1 text-4xl font-black md:text-5xl">
+              <h2 className="mt-2 text-4xl font-black">
                 لعبة سريعة ⚡
               </h2>
 
-              <p className="mt-4 text-sm leading-8 text-white/80 md:text-lg">
-                اختر لعبة واحدة فقط،
-                حدد عدد الجولات،
-                وابدأ مباشرة بدون تعقيد.
+              <p className="mt-4 leading-8 text-white/80">
+                اختر لعبة واحدة فقط، حدد عدد الجولات، وابدأ مباشرة بدون تعقيد.
               </p>
 
             </div>
@@ -141,27 +141,26 @@ export default function Home() {
 
               <button
                 type="button"
-                onClick={() =>
-                  setShowQuickCards(prev => !prev)
-                }
+                onClick={() => setShowQuickCards(prev => !prev)}
                 className="
                 inline-flex
-                min-w-[220px]
+                min-w-[230px]
                 items-center
                 justify-center
                 rounded-full
-                bg-gradient-to-r
-                from-[#69E0FF]
-                via-[#35C4FF]
-                to-[#008DFF]
+                border
+                border-white/20
+                bg-white/10
                 px-8
                 py-4
                 text-lg
                 font-black
-                text-[#071521]
-                shadow-[0_0_30px_rgba(53,196,255,0.7)]
+                text-[#35C4FF]
+                shadow-[0_0_24px_rgba(53,196,255,0.45)]
+                backdrop-blur-md
                 transition
-                hover:scale-[1.05]
+                hover:scale-[1.04]
+                hover:bg-white/15
                 active:scale-95
                 "
               >
@@ -173,6 +172,7 @@ export default function Home() {
             </div>
 
             {showQuickCards && (
+
               <div className="mt-8 grid gap-3 sm:grid-cols-2">
 
                 {quickGames.map((game) => (
@@ -182,19 +182,18 @@ export default function Home() {
                     href={game.href}
                   >
 
-                    <div
-                      className="
-                      rounded-2xl
-                      border
-                      border-white/15
-                      bg-white/10
-                      px-5
-                      py-4
-                      transition
-                      hover:-translate-y-1
-                      hover:bg-white/15
-                      "
-                    >
+                    <div className="
+                    rounded-2xl
+                    border
+                    border-white/15
+                    bg-white/10
+                    px-5
+                    py-4
+                    transition
+                    hover:-translate-y-1
+                    hover:bg-white/15
+                    ">
+
                       <div className="flex items-center justify-between">
 
                         <span className="text-2xl">
@@ -206,6 +205,7 @@ export default function Home() {
                         </span>
 
                       </div>
+
                     </div>
 
                   </Link>
@@ -213,6 +213,7 @@ export default function Home() {
                 ))}
 
               </div>
+
             )}
 
           </GlassCard>
@@ -220,6 +221,7 @@ export default function Home() {
         </section>
 
       </div>
+
     </main>
   );
 }
