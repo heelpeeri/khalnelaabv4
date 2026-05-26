@@ -43,6 +43,9 @@ export default function QuizGame({
   const [side1Score, setSide1Score] = useState(0);
   const [side2Score, setSide2Score] = useState(0);
 
+  const [side1HintUsed, setSide1HintUsed] = useState(false);
+  const [side2HintUsed, setSide2HintUsed] = useState(false);
+
   useEffect(() => {
     if (!category) return;
 
@@ -57,6 +60,8 @@ export default function QuizGame({
     setTimeLeft(MAIN_TIME);
     setSide1Score(0);
     setSide2Score(0);
+    setSide1HintUsed(false);
+    setSide2HintUsed(false);
   }, [category, roundKey]);
 
   const current = questions[index];
@@ -76,6 +81,12 @@ export default function QuizGame({
   const activeTeamName =
     activeTurn === "side1" ? side1Name || "فريق 1" : side2Name || "فريق 2";
 
+  const activeTeamUsedHint =
+    activeTurn === "side1" ? side1HintUsed : side2HintUsed;
+
+  const canUseHint =
+    (current.options?.length ?? 0) > 0 && !showOptions && !activeTeamUsedHint;
+
   useEffect(() => {
     if (showAnswer || !current) return;
 
@@ -83,6 +94,7 @@ export default function QuizGame({
       if (!secondTurn) {
         setSecondTurn(true);
         setTimeLeft(SECOND_TIME);
+        setShowOptions(false);
       } else {
         setShowAnswer(true);
       }
@@ -95,6 +107,16 @@ export default function QuizGame({
 
     return () => clearTimeout(timer);
   }, [timeLeft, showAnswer, secondTurn, current]);
+
+  function useHint() {
+    setShowOptions(true);
+
+    if (activeTurn === "side1") {
+      setSide1HintUsed(true);
+    } else {
+      setSide2HintUsed(true);
+    }
+  }
 
   function finishQuiz(final1: number, final2: number) {
     if (final1 > final2) return onRoundEnd("side1");
@@ -167,6 +189,9 @@ export default function QuizGame({
         >
           <p>{side1Name || "فريق 1"}</p>
           <p className="text-3xl font-black">{side1Score}</p>
+          <p className="mt-1 text-xs text-white/45">
+            المساعدة: {side1HintUsed ? "استخدمت" : "متاحة"}
+          </p>
         </div>
 
         <div className="rounded-2xl bg-white/10 p-4">
@@ -187,6 +212,9 @@ export default function QuizGame({
         >
           <p>{side2Name || "فريق 2"}</p>
           <p className="text-3xl font-black">{side2Score}</p>
+          <p className="mt-1 text-xs text-white/45">
+            المساعدة: {side2HintUsed ? "استخدمت" : "متاحة"}
+          </p>
         </div>
       </div>
 
@@ -226,16 +254,19 @@ export default function QuizGame({
         </div>
       )}
 
-      <div className="mt-6 flex flex-wrap justify-center gap-3">
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
         {!showAnswer ? (
           <>
-            {(current.options?.length ?? 0) > 0 && !showOptions && (
-              <button
-                onClick={() => setShowOptions(true)}
-                className="btn-secondary"
-              >
-                إظهار الخيارات
+            {canUseHint && (
+              <button onClick={useHint} className="btn-secondary">
+                💡 إظهار الخيارات
               </button>
+            )}
+
+            {!canUseHint && (current.options?.length ?? 0) > 0 && (
+              <span className="text-sm font-bold text-white/45">
+                مساعدة {activeTeamName}: مستخدمة
+              </span>
             )}
 
             <button onClick={() => setShowAnswer(true)} className="btn-primary">
