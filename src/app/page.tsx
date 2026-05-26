@@ -5,36 +5,12 @@ import { useState } from "react";
 import { GlassCard } from "@/components/GlassCard";
 
 const quickGames = [
-  {
-    href: "/match?game=word",
-    emoji: "💬",
-    title: "خمن الكلمة",
-  },
-  {
-    href: "/match?game=wheel",
-    emoji: "🎡",
-    title: "لف وخمن",
-  },
-  {
-    href: "/match?game=quiz",
-    emoji: "❓",
-    title: "الأسئلة",
-  },
-  {
-    href: "/match?game=scramble",
-    emoji: "🧩",
-    title: "حروف بالخلاط",
-  },
-  {
-    href: "/match?game=draw",
-    emoji: "✏️",
-    title: "خمن المثل",
-  },
-  {
-    href: "/match?game=categories",
-    emoji: "🌍",
-    title: "إنسان حيوان نبات جماد بلاد",
-  },
+  { href: "/match?game=word", emoji: "💬", title: "خمن الكلمة" },
+  { href: "/match?game=wheel", emoji: "🎡", title: "لف وخمن" },
+  { href: "/match?game=quiz", emoji: "❓", title: "الأسئلة" },
+  { href: "/match?game=scramble", emoji: "🧩", title: "حروف بالخلاط" },
+  { href: "/match?game=draw", emoji: "✏️", title: "خمن المثل" },
+  { href: "/match?game=categories", emoji: "🌍", title: "إنسان حيوان نبات جماد بلاد" },
 ];
 
 export default function Home() {
@@ -60,54 +36,9 @@ export default function Home() {
           </p>
         </section>
 
-        {/* Modes */}
         <section className="mt-14 grid gap-8 xl:grid-cols-2">
 
-          {/* Session Mode */}
-          <GlassCard className="rounded-[32px] border border-white/15 bg-black/20 p-7 md:p-8">
-
-            <div className="text-right">
-              <p className="text-sm font-bold text-white/60">
-                الوضع الرئيسي
-              </p>
-
-              <h2 className="mt-1 text-4xl font-black md:text-5xl">
-                تحدي الجلسة 🏆
-              </h2>
-
-              <p className="mt-4 text-sm leading-8 text-white/80 md:text-lg">
-                سجل أسماء الفرق مرة واحدة، اختر الألعاب اللي تبيها، وكل لعبة تكون جولة مستقلة، وفي النهاية يبان الفائز بالنقاط.
-              </p>
-            </div>
-
-            <div className="mt-8 flex justify-start">
-              <Link
-                href="/match?mode=session"
-                className="
-                w-[190px]
-                rounded-2xl
-                bg-gradient-to-r
-                from-[#FFD43B]
-                to-[#FFB300]
-                px-8 py-4
-                text-center
-                text-lg
-                font-black
-                text-[#281400]
-                shadow-[0_0_30px_rgba(255,212,59,0.45)]
-                transition-all
-                hover:scale-[1.03]
-                hover:shadow-[0_0_40px_rgba(255,212,59,0.65)]
-                active:scale-95
-                "
-              >
-                ابدأ تحدي الجلسة
-              </Link>
-            </div>
-
-          </GlassCard>
-
-          {/* Quick Mode */}
+          {/* الوضع السريع */}
           <GlassCard className="rounded-[32px] border border-white/15 bg-black/20 p-7 md:p-8">
 
             <div className="text-right">
@@ -124,25 +55,31 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="mt-8 flex justify-start">
+            <div className="mt-8 flex justify-center">
               <button
                 type="button"
                 onClick={() => setShowQuickCards((prev) => !prev)}
                 className="
-                w-[190px]
-                rounded-2xl
+                inline-flex
+                min-w-[220px]
+                items-center
+                justify-center
+                rounded-full
                 bg-gradient-to-r
-                from-[#35A8FF]
+                from-[#65D6FF]
+                via-[#27B7FF]
                 to-[#007BFF]
-                px-8 py-4
-                text-center
+                px-8
+                py-4
                 text-lg
                 font-black
-                text-white
-                shadow-[0_0_30px_rgba(53,168,255,0.45)]
+                text-[#07111F]
+                border
+                border-cyan-300/50
+                shadow-[0_0_35px_rgba(39,183,255,0.65)]
                 transition-all
-                hover:scale-[1.03]
-                hover:shadow-[0_0_40px_rgba(53,168,255,0.65)]
+                hover:scale-[1.05]
+                hover:shadow-[0_0_50px_rgba(39,183,255,0.8)]
                 active:scale-95
                 "
               >
@@ -158,7 +95,6 @@ export default function Home() {
                   <Link
                     key={game.title}
                     href={game.href}
-                    className="block"
                   >
                     <div className="
                     rounded-2xl
@@ -167,18 +103,16 @@ export default function Home() {
                     bg-white/10
                     px-5
                     py-4
-                    text-right
                     transition
-                    duration-200
                     hover:-translate-y-1
                     hover:bg-white/15
                     ">
-                      <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center justify-between">
                         <span className="text-2xl">
                           {game.emoji}
                         </span>
 
-                        <span className="text-base font-bold md:text-lg">
+                        <span className="font-bold">
                           {game.title}
                         </span>
                       </div>
@@ -187,10 +121,60 @@ export default function Home() {
                 ))}
               </div>
             )}
+          </GlassCard>
+
+          {/* تحدي الجلسة */}
+          <GlassCard className="rounded-[32px] border border-white/15 bg-black/20 p-7 md:p-8">
+
+            <div className="text-right">
+              <p className="text-sm font-bold text-white/60">
+                الوضع الرئيسي
+              </p>
+
+              <h2 className="mt-1 text-4xl font-black md:text-5xl">
+                تحدي الجلسة 🏆
+              </h2>
+
+              <p className="mt-4 text-sm leading-8 text-white/80 md:text-lg">
+                سجل أسماء الفرق مرة واحدة، اختر الألعاب اللي تبيها، وكل لعبة تكون جولة مستقلة، وفي النهاية يبان الفائز بالنقاط.
+              </p>
+            </div>
+
+            <div className="mt-8 flex justify-center">
+              <Link
+                href="/match?mode=session"
+                className="
+                inline-flex
+                min-w-[220px]
+                items-center
+                justify-center
+                rounded-full
+                bg-gradient-to-r
+                from-[#FFD84D]
+                via-[#FFC107]
+                to-[#FF9800]
+                px-8
+                py-4
+                text-lg
+                font-black
+                text-[#2a1600]
+                border
+                border-yellow-300/50
+                shadow-[0_0_35px_rgba(255,193,7,0.65)]
+                transition-all
+                hover:scale-[1.05]
+                hover:shadow-[0_0_50px_rgba(255,193,7,0.85)]
+                active:scale-95
+                "
+              >
+                ابدأ تحدي الجلسة
+              </Link>
+            </div>
 
           </GlassCard>
 
         </section>
+
       </div>
     </main>
   );
