@@ -43,7 +43,7 @@ export default function Home() {
   return (
     <main className="min-h-screen px-4 py-8 text-white">
       <div className="mx-auto max-w-7xl">
-        
+
         {/* Logo */}
         <div className="flex justify-center">
           <img
@@ -65,46 +65,90 @@ export default function Home() {
 
           {/* Session Mode */}
           <GlassCard className="rounded-[32px] border border-white/15 bg-black/20 p-7 md:p-8">
+
             <div className="text-right">
-              <p className="text-sm font-bold text-white/60">الوضع الرئيسي</p>
+              <p className="text-sm font-bold text-white/60">
+                الوضع الرئيسي
+              </p>
+
               <h2 className="mt-1 text-4xl font-black md:text-5xl">
                 تحدي الجلسة 🏆
               </h2>
+
               <p className="mt-4 text-sm leading-8 text-white/80 md:text-lg">
-                سجل أسماء الفرق مرة واحدة، اختر الألعاب اللي تبيها، وكل لعبة تكون جولة
-                مستقلة، وفي النهاية يبان الفائز بالنقاط.
+                سجل أسماء الفرق مرة واحدة، اختر الألعاب اللي تبيها، وكل لعبة تكون جولة مستقلة، وفي النهاية يبان الفائز بالنقاط.
               </p>
             </div>
 
-            <div className="mt-8 flex justify-end">
+            <div className="mt-8 flex justify-start">
               <Link
                 href="/match?mode=session"
-                className="btn-primary px-8 py-4 text-lg active:scale-95"
+                className="
+                w-[190px]
+                rounded-2xl
+                bg-gradient-to-r
+                from-[#FFD43B]
+                to-[#FFB300]
+                px-8 py-4
+                text-center
+                text-lg
+                font-black
+                text-[#281400]
+                shadow-[0_0_30px_rgba(255,212,59,0.45)]
+                transition-all
+                hover:scale-[1.03]
+                hover:shadow-[0_0_40px_rgba(255,212,59,0.65)]
+                active:scale-95
+                "
               >
                 ابدأ تحدي الجلسة
               </Link>
             </div>
+
           </GlassCard>
 
           {/* Quick Mode */}
           <GlassCard className="rounded-[32px] border border-white/15 bg-black/20 p-7 md:p-8">
+
             <div className="text-right">
-              <p className="text-sm font-bold text-white/60">الوضع السريع</p>
+              <p className="text-sm font-bold text-white/60">
+                الوضع السريع
+              </p>
+
               <h2 className="mt-1 text-4xl font-black md:text-5xl">
                 لعبة سريعة ⚡
               </h2>
+
               <p className="mt-4 text-sm leading-8 text-white/80 md:text-lg">
                 اختر لعبة واحدة فقط، حدد عدد الجولات، وابدأ مباشرة بدون تعقيد.
               </p>
             </div>
 
-            <div className="mt-8 flex justify-end">
+            <div className="mt-8 flex justify-start">
               <button
                 type="button"
                 onClick={() => setShowQuickCards((prev) => !prev)}
-                className="btn-secondary px-8 py-4 text-lg active:scale-95"
+                className="
+                w-[190px]
+                rounded-2xl
+                bg-gradient-to-r
+                from-[#35A8FF]
+                to-[#007BFF]
+                px-8 py-4
+                text-center
+                text-lg
+                font-black
+                text-white
+                shadow-[0_0_30px_rgba(53,168,255,0.45)]
+                transition-all
+                hover:scale-[1.03]
+                hover:shadow-[0_0_40px_rgba(53,168,255,0.65)]
+                active:scale-95
+                "
               >
-                {showQuickCards ? "إخفاء الألعاب" : "اختر لعبة سريعة"}
+                {showQuickCards
+                  ? "إخفاء الألعاب"
+                  : "اختر لعبة سريعة"}
               </button>
             </div>
 
@@ -116,9 +160,24 @@ export default function Home() {
                     href={game.href}
                     className="block"
                   >
-                    <div className="rounded-2xl border border-white/15 bg-white/8 px-5 py-4 text-right transition duration-200 hover:-translate-y-1 hover:bg-white/14">
+                    <div className="
+                    rounded-2xl
+                    border
+                    border-white/15
+                    bg-white/10
+                    px-5
+                    py-4
+                    text-right
+                    transition
+                    duration-200
+                    hover:-translate-y-1
+                    hover:bg-white/15
+                    ">
                       <div className="flex items-center justify-between gap-3">
-                        <span className="text-2xl">{game.emoji}</span>
+                        <span className="text-2xl">
+                          {game.emoji}
+                        </span>
+
                         <span className="text-base font-bold md:text-lg">
                           {game.title}
                         </span>
@@ -128,6 +187,7 @@ export default function Home() {
                 ))}
               </div>
             )}
+
           </GlassCard>
 
         </section>
