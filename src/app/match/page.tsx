@@ -406,6 +406,33 @@ export default function MatchPage() {
 
   return (
     <main className="min-h-screen p-6 text-white">
+      <Link
+  href="/"
+  className="
+    fixed
+    top-5
+    left-5
+    z-[999]
+    flex
+    items-center
+    gap-2
+    rounded-full
+    border
+    border-cyan-400/30
+    bg-gradient-to-r
+    from-[#119DFF]
+    to-[#3C5BFF]
+    px-5
+    py-3
+    font-black
+    text-white
+    shadow-[0_0_20px_rgba(17,157,255,.45)]
+    transition-all
+    hover:scale-105
+  "
+>
+  🏠 الرئيسية
+</Link>
       {phase === "countdown" && <CountdownOverlay countdown={countdown} />}
 
       {phase === "transition" && nextRound && (
