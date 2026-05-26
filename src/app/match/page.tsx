@@ -503,7 +503,6 @@ export default function MatchPage() {
               roundKey={index}
               side1Name={side1}
               side2Name={side2}
-              currentRound={index + 1}
             />
           )}
 
