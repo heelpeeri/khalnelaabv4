@@ -181,20 +181,14 @@ next2
 
 }
 
-function handleWrong(){
+function handleWrong() {
+  if (!stealMode) {
+    setStealMode(true);
+    setTimeLeft(STEAL_TIME);
+    return;
+  }
 
-if(!stealMode){
-
-setStealMode(true);
-
-setTimeLeft(ROUND_TIME);
-
-return;
-
-}
-
-setShowAnswer(true);
-
+  setShowAnswer(true);
 }
 
 if(!current){
