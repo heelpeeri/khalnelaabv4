@@ -49,7 +49,7 @@ export default function Home() {
 
         <section className="mx-auto mt-7 max-w-3xl text-center">
           <p className="text-lg leading-8 text-white/80 md:text-2xl">
-            منصة ألعاب عائلية سعودية بتجربة سريعة، واضحة، وممتعة داخل البيت.
+          نسخة تجريبية
           </p>
         </section>
 
