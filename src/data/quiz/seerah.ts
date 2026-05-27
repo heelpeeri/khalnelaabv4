@@ -242,6 +242,7 @@ export const seerahQuestions: QuizQuestion[] = [
     "ابنه وزوجته",
     "أخوه وأبوه",
   ],
+     },
   {
     question: "كم عدد أبناء يعقوب عليه السلام؟",
     answer: "12",
