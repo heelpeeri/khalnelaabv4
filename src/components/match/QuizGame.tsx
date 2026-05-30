@@ -6,7 +6,7 @@ import type { QuizCategoryKey, QuizQuestion } from "@/data/quiz";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_QUESTIONS = 6;
-const MAIN_TIME = 30;
+const MAIN_TIME = 60;
 const SECOND_TIME = 10;
 
 function shuffleArray<T>(items: T[]) {
