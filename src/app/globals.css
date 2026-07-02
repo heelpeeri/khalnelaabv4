@@ -638,17 +638,3 @@ select option {
     min-width: 0;
   }
 }
-.twemoji-text {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35em;
-  flex-wrap: wrap;
-  line-height: 1;
-}
-
-.twemoji-text img {
-  width: 1em;
-  height: 1em;
-  display: inline-block;
-}
