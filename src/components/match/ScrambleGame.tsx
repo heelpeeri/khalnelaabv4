@@ -12,36 +12,41 @@ export default function ScrambleGame({
   onRoundEnd,
   roundKey,
   currentRound = 1,
+  timerEnabled = false,
+  timerSeconds = 30,
 }: {
   side1Name: string;
   side2Name: string;
   onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
   currentRound?: number;
+  timerEnabled?: boolean;
+  timerSeconds?: number;
 }) {
   function shuffleWord(word: string) {
     let shuffled = word;
 
     while (shuffled === word) {
       const chars = word.split("");
+
       for (let i = chars.length - 1; i > 0; i -= 1) {
         const j = Math.floor(Math.random() * (i + 1));
         [chars[i], chars[j]] = [chars[j], chars[i]];
       }
+
       shuffled = chars.join("");
     }
 
     return shuffled.split("").join(" ");
   }
 
-  const ROUND_TIME = 12;
-
   const [index, setIndex] = useState(
     () => Math.floor(Math.random() * QUESTIONS.length)
   );
+
   const current = useMemo(() => QUESTIONS[index], [index]);
 
-  const [timeLeft, setTimeLeft] = useState(ROUND_TIME);
+  const [timeLeft, setTimeLeft] = useState(timerSeconds);
   const [revealed, setRevealed] = useState(false);
   const [shuffled, setShuffled] = useState(() =>
     shuffleWord(QUESTIONS[index].answer)
@@ -50,18 +55,20 @@ export default function ScrambleGame({
 
   useEffect(() => {
     const next = Math.floor(Math.random() * QUESTIONS.length);
+
     setIndex(next);
     setShuffled(shuffleWord(QUESTIONS[next].answer));
-    setTimeLeft(ROUND_TIME);
+    setTimeLeft(timerSeconds);
     setRevealed(false);
     setShowWinnerModal(false);
-  }, [roundKey]);
+  }, [roundKey, timerSeconds]);
 
   useEffect(() => {
-    if (revealed) return;
+    if (!timerEnabled || revealed) return;
 
     if (timeLeft <= 0) {
       setRevealed(true);
+      setShowWinnerModal(true);
       return;
     }
 
@@ -70,7 +77,7 @@ export default function ScrambleGame({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [timeLeft, revealed]);
+  }, [timeLeft, revealed, timerEnabled]);
 
   function finishRound() {
     setRevealed(true);
@@ -83,13 +90,15 @@ export default function ScrambleGame({
   }
 
   const timerBoxClass =
-    timeLeft <= 3
+    timerEnabled && timeLeft <= 3
       ? "border-red-400/40 bg-red-500/15 text-red-300 animate-pulse"
-      : timeLeft <= 6
+      : timerEnabled && timeLeft <= 6
       ? "border-yellow-300/30 bg-yellow-400/10 text-yellow-200"
       : "border-cyan-300/20 bg-cyan-400/10 text-cyan-200";
 
-  const progressWidth = `${(timeLeft / ROUND_TIME) * 100}%`;
+  const progressWidth = timerEnabled
+    ? `${(timeLeft / timerSeconds) * 100}%`
+    : "100%";
 
   return (
     <>
@@ -118,15 +127,24 @@ export default function ScrambleGame({
             <div
               className={`rounded-2xl border p-4 shadow-[0_0_18px_rgba(34,211,238,0.08)] ${timerBoxClass}`}
             >
-              <p className="text-sm text-white/65">الوقت المتبقي</p>
-              <p className="mt-2 text-4xl font-black">{timeLeft}</p>
+              <p className="text-sm text-white/65">الوقت</p>
 
-              <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full border border-white/10 bg-white/10">
-                <div
-                  className="h-full bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-300 transition-all duration-1000"
-                  style={{ width: progressWidth }}
-                />
-              </div>
+              {timerEnabled ? (
+                <>
+                  <p className="mt-2 text-4xl font-black">{timeLeft}</p>
+
+                  <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full border border-white/10 bg-white/10">
+                    <div
+                      className="h-full bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-300 transition-all duration-1000"
+                      style={{ width: progressWidth }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <p className="mt-3 text-sm font-bold text-white/50">
+                  بدون مؤقت
+                </p>
+              )}
             </div>
 
             <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-4">
