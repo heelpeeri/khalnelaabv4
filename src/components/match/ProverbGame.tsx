@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
+import twemoji from "@twemoji/api";
 import { GlassCard } from "@/components/GlassCard";
 import { PROVERB_PUZZLES as puzzles } from "@/data/proverbs";
 import type { WinnerType } from "@/types/game";
@@ -17,6 +18,21 @@ function shuffleArray<T>(items: T[]) {
   }
 
   return array;
+}
+
+function TwemojiText({ text }: { text: string }) {
+  const html = twemoji.parse(text, {
+    folder: "svg",
+    ext: ".svg",
+    base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
+  });
+
+  return (
+    <span
+      className="twemoji-text"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
 }
 
 export default function ProverbGame({
@@ -197,7 +213,9 @@ export default function ProverbGame({
         </div>
 
         <div className="mt-6 rounded-3xl border border-white/10 bg-white/10 px-6 py-8">
-          <div className="text-6xl md:text-7xl">{current.emoji}</div>
+          <div className="text-6xl md:text-7xl">
+            <TwemojiText text={current.emoji} />
+          </div>
         </div>
 
         {revealed && (
