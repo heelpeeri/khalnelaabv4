@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import SetupGame from "@/components/SetupGame";
 import Link from "next/link";
+
+import SetupGame from "@/components/SetupGame";
 import WordGame from "@/components/match/WordGame";
 import QuizGame from "@/components/match/QuizGame";
 import ScrambleGame from "@/components/match/ScrambleGame";
@@ -198,6 +199,9 @@ export default function MatchPage() {
   const [gameRounds, setGameRounds] = useState<Record<string, number>>({});
   const [quizCategories, setQuizCategories] = useState<QuizCategoryKey[]>([]);
 
+  const [timerEnabled, setTimerEnabled] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(30);
+
   const [queue, setQueue] = useState<Round[]>([]);
   const [started, setStarted] = useState(false);
   const [index, setIndex] = useState(0);
@@ -216,15 +220,13 @@ export default function MatchPage() {
     const shuffledCategories = shuffle(quizCategories);
 
     selectedGames.forEach((game) => {
-      const count = game === "quiz" ? 1 : gameRounds[game] || getDefaultRounds(game);
+      const count =
+        game === "quiz" ? 1 : gameRounds[game] || getDefaultRounds(game);
 
       for (let i = 0; i < count; i++) {
         q.push({
           game,
-          category:
-            game === "quiz"
-              ? shuffledCategories[0] ?? null
-              : null,
+          category: game === "quiz" ? shuffledCategories[0] ?? null : null,
         });
       }
     });
@@ -407,32 +409,33 @@ export default function MatchPage() {
   return (
     <main className="min-h-screen p-6 text-white">
       <Link
-  href="/"
-  className="
-    fixed
-    top-5
-    left-5
-    z-[999]
-    flex
-    items-center
-    gap-2
-    rounded-full
-    border
-    border-cyan-400/30
-    bg-gradient-to-r
-    from-[#119DFF]
-    to-[#3C5BFF]
-    px-5
-    py-3
-    font-black
-    text-white
-    shadow-[0_0_20px_rgba(17,157,255,.45)]
-    transition-all
-    hover:scale-105
-  "
->
-  🏠 الرئيسية
-</Link>
+        href="/"
+        className="
+          fixed
+          top-5
+          left-5
+          z-[999]
+          flex
+          items-center
+          gap-2
+          rounded-full
+          border
+          border-cyan-400/30
+          bg-gradient-to-r
+          from-[#119DFF]
+          to-[#3C5BFF]
+          px-5
+          py-3
+          font-black
+          text-white
+          shadow-[0_0_20px_rgba(17,157,255,.45)]
+          transition-all
+          hover:scale-105
+        "
+      >
+        🏠 الرئيسية
+      </Link>
+
       {phase === "countdown" && <CountdownOverlay countdown={countdown} />}
 
       {phase === "transition" && nextRound && (
@@ -468,6 +471,10 @@ export default function MatchPage() {
           setGameRounds={setGameRounds}
           quizCategories={quizCategories}
           setQuizCategories={setQuizCategories}
+          timerEnabled={timerEnabled}
+          setTimerEnabled={setTimerEnabled}
+          timerSeconds={timerSeconds}
+          setTimerSeconds={setTimerSeconds}
           onStart={start}
         />
       ) : (
@@ -481,6 +488,8 @@ export default function MatchPage() {
               side1Score={side1Score}
               side2Score={side2Score}
               currentRound={index + 1}
+              timerEnabled={timerEnabled}
+              timerSeconds={timerSeconds}
             />
           )}
 
@@ -491,6 +500,8 @@ export default function MatchPage() {
               category={current.category}
               side1Name={side1}
               side2Name={side2}
+              timerEnabled={timerEnabled}
+              timerSeconds={timerSeconds}
             />
           )}
 
@@ -501,6 +512,8 @@ export default function MatchPage() {
               side1Name={side1}
               side2Name={side2}
               currentRound={index + 1}
+              timerEnabled={timerEnabled}
+              timerSeconds={timerSeconds}
             />
           )}
 
@@ -511,6 +524,8 @@ export default function MatchPage() {
               side1Name={side1}
               side2Name={side2}
               currentRound={index + 1}
+              timerEnabled={timerEnabled}
+              timerSeconds={timerSeconds}
             />
           )}
 
@@ -521,6 +536,8 @@ export default function MatchPage() {
               side1Name={side1}
               side2Name={side2}
               currentRound={index + 1}
+              timerEnabled={timerEnabled}
+              timerSeconds={timerSeconds}
             />
           )}
 
@@ -530,6 +547,8 @@ export default function MatchPage() {
               roundKey={index}
               side1Name={side1}
               side2Name={side2}
+              timerEnabled={timerEnabled}
+              timerSeconds={timerSeconds}
             />
           )}
 
