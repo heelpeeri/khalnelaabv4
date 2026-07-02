@@ -6,8 +6,7 @@ import { PROVERB_PUZZLES as puzzles } from "@/data/proverbs";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_ROUNDS = 6;
-const MAIN_TIME = 20;
-const SECOND_TIME = 7;
+const SECOND_TIME = 10;
 
 function shuffleArray<T>(items: T[]) {
   const array = [...items];
@@ -25,15 +24,19 @@ export default function ProverbGame({
   side2Name,
   onRoundEnd,
   roundKey,
+  timerEnabled = false,
+  timerSeconds = 30,
 }: {
   side1Name: string;
   side2Name: string;
   onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
+  timerEnabled?: boolean;
+  timerSeconds?: number;
 }) {
   const [rounds, setRounds] = useState<typeof puzzles>([]);
   const [index, setIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(MAIN_TIME);
+  const [timeLeft, setTimeLeft] = useState(timerSeconds);
   const [revealed, setRevealed] = useState(false);
   const [secondTurn, setSecondTurn] = useState(false);
 
@@ -43,12 +46,12 @@ export default function ProverbGame({
   useEffect(() => {
     setRounds(shuffleArray(puzzles).slice(0, TOTAL_ROUNDS));
     setIndex(0);
-    setTimeLeft(MAIN_TIME);
+    setTimeLeft(timerSeconds);
     setRevealed(false);
     setSecondTurn(false);
     setSide1Score(0);
     setSide2Score(0);
-  }, [roundKey]);
+  }, [roundKey, timerSeconds]);
 
   const current = rounds[index];
 
@@ -67,7 +70,7 @@ export default function ProverbGame({
     activeTurn === "side1" ? side1Name || "فريق 1" : side2Name || "فريق 2";
 
   useEffect(() => {
-    if (revealed || !current) return;
+    if (!timerEnabled || revealed || !current) return;
 
     if (timeLeft <= 0) {
       if (!secondTurn) {
@@ -84,7 +87,7 @@ export default function ProverbGame({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [timeLeft, revealed, secondTurn, current]);
+  }, [timeLeft, revealed, secondTurn, current, timerEnabled]);
 
   function finishGame(final1: number, final2: number) {
     if (final1 > final2) return onRoundEnd("side1");
@@ -99,7 +102,7 @@ export default function ProverbGame({
     }
 
     setIndex((i) => i + 1);
-    setTimeLeft(MAIN_TIME);
+    setTimeLeft(timerSeconds);
     setRevealed(false);
     setSecondTurn(false);
   }
@@ -163,10 +166,16 @@ export default function ProverbGame({
             <p className="text-sm text-white/65">
               {secondTurn ? "دور الفريق الثاني" : "الدور"}
             </p>
+
             <p className="mt-1 text-lg font-black text-white">
               {activeTeamName}
             </p>
-            <p className={`mt-2 text-4xl ${timerTextClass}`}>{timeLeft}</p>
+
+            {timerEnabled ? (
+              <p className={`mt-2 text-4xl ${timerTextClass}`}>{timeLeft}</p>
+            ) : (
+              <p className="mt-2 text-sm font-bold text-white/50">بدون مؤقت</p>
+            )}
           </div>
 
           <div
