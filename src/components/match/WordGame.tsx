@@ -23,6 +23,8 @@ export default function WordGame({
   side1Score = 0,
   side2Score = 0,
   currentRound = 1,
+  timerEnabled = false,
+  timerSeconds = 30,
 }: {
   onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
@@ -31,6 +33,8 @@ export default function WordGame({
   side1Score?: number;
   side2Score?: number;
   currentRound?: number;
+  timerEnabled?: boolean;
+  timerSeconds?: number;
 }) {
   const [answer, setAnswer] = useState("");
   const [guesses, setGuesses] = useState<string[]>([]);
@@ -39,10 +43,26 @@ export default function WordGame({
   const [keyStatus, setKeyStatus] = useState<Record<string, CellState>>({});
   const [activeSide, setActiveSide] = useState<"side1" | "side2">("side1");
   const [feedback, setFeedback] = useState("ابدأ التخمين");
+  const [timeLeft, setTimeLeft] = useState(timerSeconds);
 
   useEffect(() => {
     resetRound();
-  }, [roundKey, currentRound]);
+  }, [roundKey, currentRound, timerSeconds]);
+
+  useEffect(() => {
+    if (!timerEnabled || status !== "playing") return;
+
+    if (timeLeft <= 0) {
+      switchTurn();
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [timerEnabled, timeLeft, status, activeSide]);
 
   function resetRound() {
     const startingSide = currentRound % 2 === 1 ? "side1" : "side2";
@@ -53,6 +73,7 @@ export default function WordGame({
     setStatus("playing");
     setKeyStatus({});
     setActiveSide(startingSide);
+    setTimeLeft(timerSeconds);
     setFeedback(`الدور على ${startingSide === "side1" ? side1Name : side2Name}`);
   }
 
@@ -67,6 +88,14 @@ export default function WordGame({
 
   function getCurrentTurnName() {
     return activeSide === "side1" ? side1Name : side2Name;
+  }
+
+  function switchTurn() {
+    const nextSide = activeSide === "side1" ? "side2" : "side1";
+    setActiveSide(nextSide);
+    setCurrent("");
+    setTimeLeft(timerSeconds);
+    setFeedback(`انتهى الوقت — الدور على ${nextSide === "side1" ? side1Name : side2Name}`);
   }
 
   function submitGuess() {
@@ -119,6 +148,7 @@ export default function WordGame({
 
     const nextSide = activeSide === "side1" ? "side2" : "side1";
     setActiveSide(nextSide);
+    setTimeLeft(timerSeconds);
     setFeedback(`الدور على ${nextSide === "side1" ? side1Name : side2Name}`);
   }
 
@@ -150,6 +180,13 @@ export default function WordGame({
 
   const remainingRows = MAX_TRIES - guesses.length;
 
+  const timerColor =
+    timeLeft <= 5
+      ? "text-red-300 animate-pulse"
+      : timeLeft <= 10
+      ? "text-yellow-300"
+      : "text-cyan-300";
+
   return (
     <GameLayout
       title="خمن الكلمة"
@@ -163,6 +200,14 @@ export default function WordGame({
       <div className="flex flex-col gap-3">
         <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-white sm:text-base">
           {feedback}
+
+          {timerEnabled ? (
+            <span className={`mr-3 font-black ${timerColor}`}>
+              ⏱️ {timeLeft}
+            </span>
+          ) : (
+            <span className="mr-3 text-white/45">بدون مؤقت</span>
+          )}
         </div>
 
         <div className="relative min-h-[340px]">
@@ -205,25 +250,6 @@ export default function WordGame({
                   })}
                 </div>
               ))}
-            </div>
-          </div>
-
-          <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-[220px] text-right">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-sm text-white/75">حرف صحيح + مكانه صحيح</span>
-                <span className="h-4 w-4 rounded-md bg-green-500" />
-              </div>
-
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-sm text-white/75">موجود بمكان غير صحيح</span>
-                <span className="h-4 w-4 rounded-md bg-yellow-400" />
-              </div>
-
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-sm text-white/75">حرف غير موجود</span>
-                <span className="h-4 w-4 rounded-md bg-[#2f3750]" />
-              </div>
             </div>
           </div>
         </div>
