@@ -16,13 +16,10 @@ function getRoundOptions(gameId: string) {
   switch (gameId) {
     case "wheel":
       return [1, 3, 5];
-
     case "categories":
       return [1, 2];
-
     case "quiz":
       return [];
-
     case "word":
     case "scramble":
     case "draw":
@@ -35,11 +32,9 @@ function getDefaultRounds(gameId: string) {
   switch (gameId) {
     case "quiz":
       return 6;
-
     case "wheel":
     case "categories":
       return 1;
-
     case "word":
     case "scramble":
     case "draw":
@@ -52,22 +47,16 @@ function getGameDescription(gameId: string) {
   switch (gameId) {
     case "word":
       return "نسخة عربية من Wordle — يتبدل الفريق اللي يبدأ كل راوند";
-
     case "wheel":
       return "نسخة مبسطة من Wheel of Fortune — البداية ما تفرق";
-
     case "quiz":
       return "ثابتة: 6 أسئلة فقط — 3 لكل فريق";
-
     case "draw":
       return "خمن المثل من الإيموجي";
-
     case "scramble":
       return "رتب الحروف واكتشف الكلمة";
-
     case "categories":
       return "الكل يلعب بنفس الوقت";
-
     default:
       return "";
   }
@@ -85,6 +74,10 @@ export default function SetupGame({
   setGameRounds,
   quizCategories,
   setQuizCategories,
+  timerEnabled,
+  setTimerEnabled,
+  timerSeconds,
+  setTimerSeconds,
   onStart,
 }: any) {
   const clickSound = useRef<HTMLAudioElement | null>(null);
@@ -156,6 +149,48 @@ export default function SetupGame({
           placeholder="اختر اسم الفريق"
           className="input text-center text-lg font-bold"
         />
+      </div>
+
+      <div className="arcade-card p-5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="text-right">
+            <h3 className="text-lg font-black">⏱️ المؤقت</h3>
+            <p className="mt-1 text-sm text-white/60">
+              تقدر تشغله أو تخليه بدون وقت حسب جوكم
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              playClick();
+              setTimerEnabled(!timerEnabled);
+            }}
+            className={timerEnabled ? "arcade-button" : "btn-secondary"}
+          >
+            {timerEnabled ? "المؤقت شغال" : "بدون مؤقت"}
+          </button>
+        </div>
+
+        {timerEnabled && (
+          <div className="mt-5">
+            <div className="mb-2 flex items-center justify-between text-sm font-bold text-white/70">
+              <span>10 ثواني</span>
+              <span className="text-cyan-200">{timerSeconds} ثانية</span>
+              <span>120 ثانية</span>
+            </div>
+
+            <input
+              type="range"
+              min={10}
+              max={120}
+              step={5}
+              value={timerSeconds}
+              onChange={(e) => setTimerSeconds(Number(e.target.value))}
+              className="w-full accent-cyan-400"
+            />
+          </div>
+        )}
       </div>
 
       <div
