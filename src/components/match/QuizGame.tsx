@@ -6,7 +6,6 @@ import type { QuizCategoryKey, QuizQuestion } from "@/data/quiz";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_QUESTIONS = 6;
-const MAIN_TIME = 60;
 const SECOND_TIME = 10;
 
 function shuffleArray<T>(items: T[]) {
@@ -26,19 +25,23 @@ export default function QuizGame({
   onRoundEnd,
   roundKey,
   category,
+  timerEnabled = false,
+  timerSeconds = 30,
 }: {
   side1Name: string;
   side2Name: string;
   onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
   category?: QuizCategoryKey | null;
+  timerEnabled?: boolean;
+  timerSeconds?: number;
 }) {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [index, setIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [secondTurn, setSecondTurn] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(MAIN_TIME);
+  const [timeLeft, setTimeLeft] = useState(timerSeconds);
 
   const [side1Score, setSide1Score] = useState(0);
   const [side2Score, setSide2Score] = useState(0);
@@ -57,12 +60,12 @@ export default function QuizGame({
     setShowAnswer(false);
     setShowOptions(false);
     setSecondTurn(false);
-    setTimeLeft(MAIN_TIME);
+    setTimeLeft(timerSeconds);
     setSide1Score(0);
     setSide2Score(0);
     setSide1HintUsed(false);
     setSide2HintUsed(false);
-  }, [category, roundKey]);
+  }, [category, roundKey, timerSeconds]);
 
   const current = questions[index];
   const meta = category ? quizCategoryMeta[category] : null;
@@ -89,7 +92,7 @@ export default function QuizGame({
     currentOptions.length > 0 && !showOptions && !activeTeamUsedHint;
 
   useEffect(() => {
-    if (showAnswer || !current) return;
+    if (!timerEnabled || showAnswer || !current) return;
 
     if (timeLeft <= 0) {
       if (!secondTurn) {
@@ -107,7 +110,7 @@ export default function QuizGame({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [timeLeft, showAnswer, secondTurn, current]);
+  }, [timeLeft, showAnswer, secondTurn, current, timerEnabled]);
 
   function useHint() {
     if (!canUseHint) return;
@@ -137,7 +140,7 @@ export default function QuizGame({
     setShowAnswer(false);
     setShowOptions(false);
     setSecondTurn(false);
-    setTimeLeft(MAIN_TIME);
+    setTimeLeft(timerSeconds);
   }
 
   function givePoint(winner: "side1" | "side2" | "none") {
@@ -200,7 +203,13 @@ export default function QuizGame({
         <div className="rounded-2xl bg-white/10 p-4">
           <p>{secondTurn ? "دور الفريق الثاني" : "الدور"}</p>
           <p className="text-lg font-black">{activeTeamName}</p>
-          <p className={`text-3xl font-black ${timerColor}`}>{timeLeft}</p>
+
+          {timerEnabled ? (
+            <p className={`text-3xl font-black ${timerColor}`}>{timeLeft}</p>
+          ) : (
+            <p className="text-sm font-bold text-white/50">بدون مؤقت</p>
+          )}
+
           <p className="text-sm text-white/60">
             السؤال {index + 1} / {questions.length}
           </p>
