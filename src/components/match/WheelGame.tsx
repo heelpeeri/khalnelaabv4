@@ -3,7 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { GlassCard } from "@/components/GlassCard";
 import RoundBadge from "@/components/match/RoundBadge";
-import { WHEEL_SEGMENTS as SEGMENTS, WHEEL_PUZZLES as PUZZLES, WHEEL_LETTER_ROWS as LETTER_ROWS } from "@/data/wheel";
+import {
+  WHEEL_SEGMENTS as SEGMENTS,
+  WHEEL_PUZZLES as PUZZLES,
+  WHEEL_LETTER_ROWS as LETTER_ROWS,
+} from "@/data/wheel";
 import type { TeamTurn as Turn, WinnerType } from "@/types/game";
 import type { WheelValue as Value } from "@/data/wheel";
 
@@ -29,13 +33,7 @@ function splitAnswerWords(answer: string) {
   return answer.trim().split(/\s+/);
 }
 
-function HelpModal({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
+function HelpModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   if (!open) return null;
 
   return (
@@ -60,11 +58,7 @@ function HelpModal({
           <p>5. تقدر تختار حل الكلمة كاملة في دورك.</p>
         </div>
 
-        <button
-          onClick={onClose}
-          className="btn-primary mt-6 min-w-[140px]"
-          type="button"
-        >
+        <button onClick={onClose} className="btn-primary mt-6 min-w-[140px]" type="button">
           فهمت
         </button>
       </div>
@@ -78,14 +72,17 @@ export default function WheelGame({
   onRoundEnd,
   roundKey,
   currentRound = 1,
+  timerEnabled = false,
+  timerSeconds = 30,
 }: {
   side1Name: string;
   side2Name: string;
   onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
   currentRound?: number;
+  timerEnabled?: boolean;
+  timerSeconds?: number;
 }) {
-
   const [turn, setTurn] = useState<Turn>("side1");
   const [phase, setPhase] = useState<Phase>("spin");
   const [rotation, setRotation] = useState(0);
@@ -102,6 +99,8 @@ export default function WheelGame({
   const [score1, setScore1] = useState(0);
   const [score2, setScore2] = useState(0);
 
+  const [timeLeft, setTimeLeft] = useState(timerSeconds);
+
   const [wheelGlow, setWheelGlow] = useState(false);
   const [activeSegmentIndex, setActiveSegmentIndex] = useState<number | null>(null);
   const [showHelp, setShowHelp] = useState(false);
@@ -117,6 +116,7 @@ export default function WheelGame({
 
   useEffect(() => {
     const q = PUZZLES[Math.floor(Math.random() * PUZZLES.length)];
+
     setAnswer(q.answer);
     setCategory(q.category);
     setRevealed(Array(q.answer.length).fill(""));
@@ -129,13 +129,14 @@ export default function WheelGame({
     setWinnerName("");
     setScore1(0);
     setScore2(0);
+    setTimeLeft(timerSeconds);
     setWheelGlow(false);
     setActiveSegmentIndex(null);
 
     return () => {
       if (tickTimerRef.current) clearInterval(tickTimerRef.current);
     };
-  }, [roundKey]);
+  }, [roundKey, timerSeconds]);
 
   useEffect(() => {
     return () => {
@@ -146,10 +147,29 @@ export default function WheelGame({
     };
   }, []);
 
+  useEffect(() => {
+    if (!timerEnabled || phase !== "guess") return;
+
+    if (timeLeft <= 0) {
+      setCurrentValue(null);
+      nextTurn();
+      setPhase("spin");
+      setTimeLeft(timerSeconds);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [timerEnabled, phase, timeLeft, timerSeconds]);
+
   const answerWords = useMemo(() => splitAnswerWords(answer), [answer]);
 
   const revealedWordGroups = useMemo(() => {
     let cursor = 0;
+
     return answerWords.map((word) => {
       const letters = revealed.slice(cursor, cursor + word.length);
       cursor += word.length + 1;
@@ -178,6 +198,7 @@ export default function WheelGame({
 
   async function unlockAudio() {
     ensureAudio();
+
     if (!audioContextRef.current) return;
 
     if (audioContextRef.current.state === "suspended") {
@@ -190,6 +211,7 @@ export default function WheelGame({
   function playTickSound() {
     const ctx = audioContextRef.current;
     const masterGain = masterGainRef.current;
+
     if (!ctx || !masterGain) return;
 
     const now = ctx.currentTime;
@@ -219,6 +241,7 @@ export default function WheelGame({
   function playFinalTickSound() {
     const ctx = audioContextRef.current;
     const masterGain = masterGainRef.current;
+
     if (!ctx || !masterGain) return;
 
     const now = ctx.currentTime;
@@ -286,6 +309,7 @@ export default function WheelGame({
     }
 
     const idx = getPointerSegmentIndex(finalRotation);
+
     setActiveSegmentIndex(idx);
     setWheelGlow(true);
     playFinalTickSound();
@@ -298,10 +322,12 @@ export default function WheelGame({
     await unlockAudio();
 
     setSpinning(true);
+    setTimeLeft(timerSeconds);
 
     const index = Math.floor(Math.random() * SEGMENTS.length);
-const value: Value = SEGMENTS[index].value as Value;
-setCurrentValue(value);
+    const value: Value = SEGMENTS[index].value as Value;
+
+    setCurrentValue(value);
 
     const targetCenter = index * segmentAngle + segmentAngle / 2;
     const extraSpins = 8 * 360;
@@ -337,6 +363,7 @@ setCurrentValue(value);
           return;
         }
 
+        setTimeLeft(timerSeconds);
         setPhase("guess");
       }, 850);
     }, 3000);
@@ -374,12 +401,14 @@ setCurrentValue(value);
         .every((char, i) => char === " " || next[i] !== "");
 
       if (solved) finishRound(turn);
+
       return;
     }
 
     setCurrentValue(null);
     nextTurn();
     setPhase("spin");
+    setTimeLeft(timerSeconds);
   }
 
   function solveWord() {
@@ -396,12 +425,21 @@ setCurrentValue(value);
     setCurrentValue(null);
     nextTurn();
     setPhase("spin");
+    setTimeLeft(timerSeconds);
   }
+
+  const timerTextClass =
+    timeLeft <= 5
+      ? "animate-pulse text-red-300"
+      : timeLeft <= 10
+      ? "text-yellow-200"
+      : "text-cyan-200";
 
   return (
     <>
       <GlassCard className="relative min-h-[760px] p-4 text-center md:p-6">
-       <RoundBadge currentRound={currentRound} />
+        <RoundBadge currentRound={currentRound} />
+
         <div className="mx-auto max-w-5xl">
           <div className="rounded-[28px] border border-white/10 bg-[#091039]/55 p-4 shadow-[0_0_30px_rgba(0,0,0,0.35)] md:p-6">
             <div className="mb-5 text-center">
@@ -432,6 +470,18 @@ setCurrentValue(value);
               <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-4 shadow-[0_0_18px_rgba(34,211,238,0.08)]">
                 <p className="text-sm text-white/65">الدور الحالي</p>
                 <p className="mt-2 text-2xl font-black">{currentTeamName}</p>
+
+                {phase === "guess" && (
+                  timerEnabled ? (
+                    <p className={`mt-2 text-3xl font-black ${timerTextClass}`}>
+                      {timeLeft}
+                    </p>
+                  ) : (
+                    <p className="mt-2 text-sm font-bold text-white/50">
+                      بدون مؤقت
+                    </p>
+                  )
+                )}
               </div>
 
               <div className="rounded-2xl border border-white/15 bg-white/10 p-4">
