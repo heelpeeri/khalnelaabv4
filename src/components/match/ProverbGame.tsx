@@ -197,12 +197,12 @@ export default function ProverbGame({
         </div>
 
         <div className="mt-6 rounded-3xl border border-white/10 bg-white/10 px-6 py-8">
-          <img
-  src={current.image}
-  alt="لغز المثل"
-  className="mx-auto max-h-[360px] w-full max-w-[520px] rounded-3xl object-contain"
-/>
-        </div>
+  <img
+    src={current.image}
+    alt="لغز المثل"
+    className="mx-auto max-h-[360px] w-full max-w-[520px] rounded-3xl object-contain"
+  />
+</div>
 
         {revealed && (
           <div className="mt-6 rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5">
