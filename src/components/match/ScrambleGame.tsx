@@ -1,7 +1,11 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
-import { QRCodeSVG } from "qrcode.react";
+<img
+  src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(personUrl)}`}
+  alt="QR Code"
+  className="h-[260px] w-[260px] rounded-2xl"
+/>
 import { GlassCard } from "@/components/GlassCard";
 import RoundBadge from "@/components/match/RoundBadge";
 import { WHO_GAME } from "@/data/whoGame";
