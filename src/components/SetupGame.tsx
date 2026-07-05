@@ -6,7 +6,7 @@ import { quizCategoryList } from "@/data/quiz";
 const GAMES = [
   { id: "word", name: "خمن الكلمة", icon: "💬" },
   { id: "quiz", name: "الأسئلة", icon: "❓" },
-  { id: "scramble", name: "حروف بالخلاط", icon: "🧩" },
+  { id: "scramble", name: "منهو ذا؟", icon: "🕵🏻‍♂️" },
   { id: "wheel", name: "لف وخمن", icon: "🎡" },
   { id: "categories", name: "إنسان حيوان نبات جماد بلاد", icon: "🌍" },
   { id: "draw", name: "خمن المثل", icon: "✏️" },
@@ -48,13 +48,13 @@ function getGameDescription(gameId: string) {
     case "word":
       return "نسخة عربية من Wordle — يتبدل الفريق اللي يبدأ كل راوند";
     case "wheel":
-      return "نسخة مبسطة من Wheel of Fortune — البداية ما تفرق";
+      return "لف العجلة وحاول تجيب الكلمه الصحيحة";
     case "quiz":
       return "ثابتة: 6 أسئلة فقط — 3 لكل فريق";
     case "draw":
       return "خمن المثل من الإيموجي";
     case "scramble":
-      return "رتب الحروف واكتشف الكلمة";
+      return "خمن الشخص الوصف";
     case "categories":
       return "الكل يلعب بنفس الوقت";
     default:
