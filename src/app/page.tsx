@@ -22,8 +22,8 @@ const quickGames = [
   },
   {
     href: "/match?game=scramble",
-    emoji: "🧩",
-    title: "حروف بالخلاط",
+    emoji: "🕵🏻‍♂️",
+    title: "منهو ذا؟",
   },
   {
     href: "/match?game=draw",
