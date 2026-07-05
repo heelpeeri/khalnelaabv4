@@ -194,7 +194,7 @@ export default function ScrambleGame({
           الشخصية {index + 1} / {rounds.length}
         </div>
 
-        <div className="mt-6 rounded-3xl border border-white/10 bg-white p-6">
+        <div className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-6">
           {!revealed ? (
             <div className="flex flex-col items-center gap-4">
               {personUrl && (
@@ -203,15 +203,15 @@ export default function ScrambleGame({
                     personUrl
                   )}`}
                   alt="QR Code"
-                  className="h-[260px] w-[260px] rounded-2xl"
+                  className="h-[260px] w-[260px] rounded-2xl bg-white p-2"
                 />
               )}
 
-              <p className="text-lg font-black text-black">
+              <p className="text-lg font-black text-white">
                 امسح الكود وشوف الشخصية
               </p>
 
-              <p className="text-sm font-bold text-black/55">
+              <p className="text-sm font-bold text-white/55">
                 لا تقول الاسم، اوصف فقط
               </p>
             </div>
@@ -220,12 +220,8 @@ export default function ScrambleGame({
               <img
                 src={current.image}
                 alt={current.answer}
-                className="mx-auto max-h-[360px] rounded-3xl object-contain"
+                className="mx-auto max-h-[420px] rounded-3xl object-contain"
               />
-
-              <p className="mt-4 text-3xl font-black text-black">
-                {current.answer}
-              </p>
             </div>
           )}
         </div>
