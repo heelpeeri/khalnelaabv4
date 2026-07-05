@@ -1,17 +1,23 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
-<img
-  src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(personUrl)}`}
-  alt="QR Code"
-  className="h-[260px] w-[260px] rounded-2xl"
-/>
 import { GlassCard } from "@/components/GlassCard";
 import RoundBadge from "@/components/match/RoundBadge";
-import { WHO_GAME } from "@/data/whoGame";
+import { WHO_GAME } from "@/data/scramble";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_ROUNDS = 6;
+
+function shuffleArray<T>(items: T[]) {
+  const array = [...items];
+
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+
+  return array;
+}
 
 export default function ScrambleGame({
   side1Name,
@@ -35,26 +41,14 @@ export default function ScrambleGame({
   const [started, setStarted] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [timeLeft, setTimeLeft] = useState(timerSeconds);
+  const [origin, setOrigin] = useState("");
 
   const [side1Score, setSide1Score] = useState(0);
   const [side2Score, setSide2Score] = useState(0);
 
-  const [origin, setOrigin] = useState("");
-
   useEffect(() => {
     setOrigin(window.location.origin);
   }, []);
-
-  function shuffleArray<T>(items: T[]) {
-    const array = [...items];
-
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-
-    return array;
-  }
 
   useEffect(() => {
     const selected = shuffleArray(WHO_GAME).slice(0, TOTAL_ROUNDS);
@@ -204,12 +198,12 @@ export default function ScrambleGame({
           {!revealed ? (
             <div className="flex flex-col items-center gap-4">
               {personUrl && (
-                <QRCodeSVG
-                  value={personUrl}
-                  size={260}
-                  bgColor="#ffffff"
-                  fgColor="#000000"
-                  level="H"
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
+                    personUrl
+                  )}`}
+                  alt="QR Code"
+                  className="h-[260px] w-[260px] rounded-2xl"
                 />
               )}
 
