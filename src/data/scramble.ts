@@ -5,6 +5,11 @@ export const WHO_GAME = [
     answer: "حسون البارقي",
   },
   {
+    id: "talal",
+    image: "/images/people/talal.png",
+    answer: "طلال مداح",
+  },
+  {  
     id: "small",
     image: "/images/people/small.png",
     answer: "سمول كبتشينو",
