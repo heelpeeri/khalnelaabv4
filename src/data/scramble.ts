@@ -9,7 +9,7 @@ export const WHO_GAME = [
     image: "/images/people/talal.png",
     answer: "طلال مداح",
   },
-  {  
+  {
     id: "small",
     image: "/images/people/small.png",
     answer: "سمول كبتشينو",
@@ -48,5 +48,40 @@ export const WHO_GAME = [
     id: "rbeah",
     image: "/images/people/rbeah.png",
     answer: "ربيعة",
+  },
+  {
+    id: "buzz",
+    image: "/images/people/buzz.png",
+    answer: "باز يطير",
+  },
+  {
+    id: "woody",
+    image: "/images/people/woody.png",
+    answer: "وودي",
+  },
+  {
+    id: "bndr",
+    image: "/images/people/bndr.png",
+    answer: "بندرينا",
+  },
+  {
+    id: "abdh",
+    image: "/images/people/abdh.png",
+    answer: "محمد عبده",
+  },
+  {
+    id: "spider",
+    image: "/images/people/spider.png",
+    answer: "سبايدرمان",
+  },
+  {
+    id: "hussain",
+    image: "/images/people/hussain.png",
+    answer: "حسين عبدالغني",
+  },
+  {
+    id: "nor",
+    image: "/images/people/nor.png",
+    answer: "محمد نور",
   },
 ];
