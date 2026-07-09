@@ -5,6 +5,31 @@ export const WHO_GAME = [
     answer: "حسون البارقي",
   },
   {
+    id: "conan",
+    image: "/images/people/conan.png",
+    answer: "المحقق كونان",
+  },
+  {
+    id: "mario",
+    image: "/images/people/mario.png",
+    answer: "ماريو",
+  },
+  {
+    id: "majid",
+    image: "/images/people/majid.png",
+    answer: "ماجد عبدالله",
+  },
+  {
+    id: "cj",
+    image: "/images/people/cj.png",
+    answer: "سي جي",
+  },
+  {
+    id: "crash",
+    image: "/images/people/crash.png",
+    answer: "كراش",
+  },
+  {
     id: "talal",
     image: "/images/people/talal.png",
     answer: "طلال مداح",
