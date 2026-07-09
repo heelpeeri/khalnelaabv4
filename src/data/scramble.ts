@@ -3,7 +3,22 @@ export const WHO_GAME = [
     id: "hasson",
     image: "/images/people/hasson.png",
     answer: "حسون البارقي",
-    },
+  },
+  {
+    id: "batman",
+    image: "/images/people/batman.png",
+    answer: "باتمان",
+  },
+  {
+    id: "jobs",
+    image: "/images/people/jobs.png",
+    answer: "ستيف جوبز",
+  },
+  {
+    id: "superman",
+    image: "/images/people/superman.png",
+    answer: "سوبرمان",
+  },
   {
      id: "who",
     image: "/images/people/who.png",
