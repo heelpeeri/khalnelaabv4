@@ -5,6 +5,11 @@ export const WHO_GAME = [
     answer: "حسون البارقي",
   },
   {
+    id: "mory",
+    image: "/images/people/hasson.png",
+    answer: " توقوموري",
+  },
+  {
     id: "batman",
     image: "/images/people/batman.png",
     answer: "باتمان",
