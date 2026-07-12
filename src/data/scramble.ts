@@ -1,5 +1,20 @@
 export const WHO_GAME = [
   {
+  id: "znefr",
+  image: "/images/people/znefr.png",
+  answer: "أبو زنيفر (طاش)",
+},
+{
+  id: "koftah",
+  image: "/images/people/koftah.png",
+  answer: "كفتة (شباب البومب)",
+},
+{
+  id: "messi",
+  image: "/images/people/messi.png",
+  answer: "ميسي",
+},
+{
     id: "hasson",
     image: "/images/people/hasson.png",
     answer: "حسون البارقي",
