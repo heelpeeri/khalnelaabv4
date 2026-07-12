@@ -44,7 +44,7 @@ function getGameName(game: GameType) {
     case "quiz":
       return "❓ الأسئلة";
     case "scramble":
-      return "🧩 حروف بالخلاط";
+      return "🕵🏻‍♂️منهو ذا";
     case "wheel":
       return "🎡 لف وخمن";
     case "categories":
