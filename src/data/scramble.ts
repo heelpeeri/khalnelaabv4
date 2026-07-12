@@ -13,6 +13,11 @@ export const WHO_GAME = [
     id: "batman",
     image: "/images/people/batman.png",
     answer: "باتمان",
+    },
+  {
+    id: "3roj",
+    image: "/images/people/3roj.png",
+    answer: "عروج",
   },
   {
     id: "jobs",
