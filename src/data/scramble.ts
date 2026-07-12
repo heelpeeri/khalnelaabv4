@@ -6,7 +6,7 @@ export const WHO_GAME = [
   },
   {
     id: "mory",
-    image: "/images/people/hasson.png",
+    image: "/images/people/mory.png",
     answer: " توقوموري",
   },
   {
