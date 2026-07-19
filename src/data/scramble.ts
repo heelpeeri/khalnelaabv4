@@ -198,5 +198,5 @@ answer: "بن 10",
 id: "walter", 
 image: "/images/people/walter.png", 
 answer: "والتر وايت ", 
- { 
+}, 
 ];
