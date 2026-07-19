@@ -193,5 +193,9 @@ answer: "مايكل سكوفيلد",
 id: "ben", 
 image: "/images/people/ben.png", 
 answer: "بن 10", 
-},
+}, 
+{ 
+id: "walter", 
+image: "/images/people/walter.png", 
+answer: "والتر وايت ", 
 ];
