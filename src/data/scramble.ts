@@ -154,4 +154,44 @@ export const WHO_GAME = [
     image: "/images/people/nor.png",
     answer: "محمد نور",
   },
+  {
+ id: "nasser", 
+image: "/images/people/nasser.png", 
+answer: "ناصر القصبي", 
+}, 
+{ 
+id: "leon", 
+image: "/images/people/leon.png", 
+answer: "ليون كيندي", 
+}, 
+{ 
+id: "ronaldo", 
+image: "/images/people/ronaldo.png", 
+answer: "رونالدو", 
+}, 
+{ 
+id: "pepsi", 
+image: "/images/people/pepsi.png", 
+answer: "بيبسي مان", 
+}, 
+{ 
+id: "abdullah", 
+image: "/images/people/abdullah.png", 
+answer: "عبدالله الخيبري", 
+}, 
+{ 
+id: "dexter", 
+image: "/images/people/dexter.png", 
+answer: "ديكستر مورغان", 
+}, 
+{ 
+id: "prison", 
+image: "/images/people/prison.png", 
+answer: "مايكل سكوفيلد", 
+}, 
+{ 
+id: "ben", 
+image: "/images/people/ben.png", 
+answer: "بن 10", 
+},
 ];
