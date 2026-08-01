@@ -7,7 +7,6 @@ export const WHEEL_SEGMENTS: {
 }[] = [
   { label: "100", value: 100, color: "#22c55e" },
   { label: "200", value: 200, color: "#3b82f6" },
-  { label: "300", value: 300, color: "#a855f7" },
   { label: "400", value: 400, color: "#8b5cf6" },
   { label: "500", value: 500, color: "#f59e0b" },
   { label: "600", value: 600, color: "#f97316" },
