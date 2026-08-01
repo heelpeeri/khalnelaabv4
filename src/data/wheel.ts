@@ -13,7 +13,7 @@ export const WHEEL_SEGMENTS: {
   { label: "700", value: 700, color: "#ea580c" },
   { label: "1000", value: 1000, color: "#eab308" },
   { label: "إفلاس", value: "bankrupt", color: "#ef4444" },
-  { label: "خسارة الدور", value: "lose", color: "#6b7280" },
+  { label: "تخطي", value: "lose", color: "#6b7280" },
 ];
 
 export const WHEEL_PUZZLES = [
