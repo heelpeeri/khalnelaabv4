@@ -1,23 +1,22 @@
-export const WHEEL_SEGMENTS = [
+export type WheelValue = number | "bankrupt" | "lose";
+
+export const WHEEL_SEGMENTS: {
+  label: string;
+  value: WheelValue;
+  color: string;
+}[] = [
   { label: "100", value: 100, color: "#22c55e" },
-  { label: "100", value: 100, color: "#22c55e" },
-
+  { label: "150", value: 150, color: "#10b981" },
   { label: "200", value: 200, color: "#3b82f6" },
-  { label: "200", value: 200, color: "#3b82f6" },
-
+  { label: "250", value: 250, color: "#60a5fa" },
   { label: "300", value: 300, color: "#a855f7" },
-  { label: "300", value: 300, color: "#a855f7" },
-
+  { label: "400", value: 400, color: "#8b5cf6" },
   { label: "500", value: 500, color: "#f59e0b" },
-  { label: "700", value: 700, color: "#f97316" },
-
+  { label: "600", value: 600, color: "#f97316" },
+  { label: "700", value: 700, color: "#ea580c" },
   { label: "1000", value: 1000, color: "#eab308" },
-
   { label: "إفلاس", value: "bankrupt", color: "#ef4444" },
-
   { label: "خسارة الدور", value: "lose", color: "#6b7280" },
-
-  { label: "500", value: 500, color: "#06b6d4" },
 ];
 
 export const WHEEL_PUZZLES = [
