@@ -27,6 +27,7 @@ export const WHEEL_PUZZLES = [
   { answer: "قوتشي", category: "براند عالمي" },
   { answer: "كارتير", category: "براند عالمي" },
   { answer: "لويس فيتون", category: "براند عالمي" },
+  { answer: "رالف لورين", category: "براند عالمي" },
 
   { answer: "تاهو", category: "سيارة" },
   { answer: "كورولا", category: "سيارة" },
