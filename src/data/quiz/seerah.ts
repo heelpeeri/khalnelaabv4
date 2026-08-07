@@ -432,4 +432,5 @@ export const seerahQuestions: QuizQuestion[] = [
     options: ["راعٍ وتاجر", "مزارع وتاجر", "نجار وراعٍ", "حداد وتاجر"],
     ],
   },
+  {
 ];
