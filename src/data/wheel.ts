@@ -32,8 +32,8 @@ export const WHEEL_PUZZLES = [
   { answer: "المكسيك", category: "دولة" },
   { answer: "جمهورية موريشيوس", category: "دولة" },
 
-  { answer: "قوتشي", category: "براند عالمي" },
-  { answer: "كارتير", category: "براند عالمي" },
+  { answer: "غوتشي", category: "براند عالمي" },
+  { answer: "كارتييه", category: "براند عالمي" },
   { answer: "لويس فيتون", category: "براند عالمي" },
   { answer: "رالف لورين", category: "براند عالمي" },
 
