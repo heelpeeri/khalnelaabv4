@@ -26,6 +26,51 @@ function normalizeArabic(text: string) {
     .replace(/ى/g, "ي");
 }
 
+/*
+  تقييم التخمين بنفس منطق Wordle:
+
+  1. نحسب الحروف الصحيحة في مكانها أولاً "أخضر".
+  2. نحسب الحروف المتبقية في الجواب.
+  3. نعطي الأصفر فقط بعدد مرات وجود الحرف المتبقية.
+  4. أي تكرار زائد يصبح رمادي.
+*/
+function evaluateGuess(guess: string, answer: string): CellState[] {
+  const guessLetters = Array.from(normalizeArabic(guess));
+  const answerLetters = Array.from(normalizeArabic(answer));
+
+  const result: CellState[] = Array(guessLetters.length).fill("absent");
+
+  const remainingLetters: Record<string, number> = {};
+
+  // المرحلة الأولى: الأخضر
+  guessLetters.forEach((letter, index) => {
+    if (letter === answerLetters[index]) {
+      result[index] = "correct";
+    } else {
+      const answerLetter = answerLetters[index];
+
+      if (answerLetter) {
+        remainingLetters[answerLetter] =
+          (remainingLetters[answerLetter] ?? 0) + 1;
+      }
+    }
+  });
+
+  // المرحلة الثانية: الأصفر
+  guessLetters.forEach((letter, index) => {
+    if (result[index] === "correct") return;
+
+    const remainingCount = remainingLetters[letter] ?? 0;
+
+    if (remainingCount > 0) {
+      result[index] = "present";
+      remainingLetters[letter] = remainingCount - 1;
+    }
+  });
+
+  return result;
+}
+
 export default function WordGame({
   onRoundEnd,
   roundKey,
@@ -50,7 +95,9 @@ export default function WordGame({
   const [answer, setAnswer] = useState("");
   const [guesses, setGuesses] = useState<string[]>([]);
   const [current, setCurrent] = useState("");
-  const [status, setStatus] = useState<"playing" | "won" | "lost">("playing");
+  const [status, setStatus] = useState<"playing" | "won" | "lost">(
+    "playing"
+  );
 
   const [keyStatus, setKeyStatus] = useState<Record<string, CellState>>({});
   const [removedLetters, setRemovedLetters] = useState<string[]>([]);
@@ -100,7 +147,9 @@ export default function WordGame({
     }
 
     const randomWord =
-      fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.length)];
+      fiveLetterWords[
+        Math.floor(Math.random() * fiveLetterWords.length)
+      ];
 
     setAnswer(randomWord);
     setGuesses([]);
@@ -151,27 +200,50 @@ export default function WordGame({
       return;
     }
 
+    /*
+      هنا نحسب نتيجة كل حرف مرة واحدة.
+      getCellColor يستخدم نفس الدالة عند عرض المحاولة.
+    */
+    const evaluation = evaluateGuess(rawGuess, answer);
+
     const nextGuesses = [...guesses, rawGuess];
     const nextKeyStatus = { ...keyStatus };
 
-    rawGuess.split("").forEach((letter, index) => {
-      const normalizedLetter = normalizeArabic(letter);
-      const answerLetter = normalizedAnswer[index];
+    /*
+      تحديث ألوان الكيبورد.
 
-      if (normalizedLetter === answerLetter) {
+      الأولوية:
+      correct > present > absent
+
+      يعني لو عرفنا سابقًا أن الحرف أخضر،
+      ما يتحول لاحقًا إلى أصفر أو رمادي.
+    */
+    Array.from(rawGuess).forEach((letter, index) => {
+      const normalizedLetter = normalizeArabic(letter);
+      const newState = evaluation[index];
+      const previousState = nextKeyStatus[normalizedLetter];
+
+      if (previousState === "correct") {
+        return;
+      }
+
+      if (newState === "correct") {
         nextKeyStatus[normalizedLetter] = "correct";
         return;
       }
 
-      if (normalizedAnswer.includes(normalizedLetter)) {
-        if (nextKeyStatus[normalizedLetter] !== "correct") {
-          nextKeyStatus[normalizedLetter] = "present";
-        }
-
+      if (previousState === "present") {
         return;
       }
 
-      nextKeyStatus[normalizedLetter] = "absent";
+      if (newState === "present") {
+        nextKeyStatus[normalizedLetter] = "present";
+        return;
+      }
+
+      if (!previousState) {
+        nextKeyStatus[normalizedLetter] = "absent";
+      }
     });
 
     setGuesses(nextGuesses);
@@ -217,10 +289,14 @@ export default function WordGame({
     if (status !== "playing" || !answer) return;
 
     const hintAlreadyUsed =
-      activeSide === "side1" ? side1HintUsed : side2HintUsed;
+      activeSide === "side1"
+        ? side1HintUsed
+        : side2HintUsed;
 
     if (hintAlreadyUsed) {
-      setFeedback(`${getCurrentTurnName()} استخدم المساعدة من قبل`);
+      setFeedback(
+        `${getCurrentTurnName()} استخدم المساعدة من قبل`
+      );
       return;
     }
 
@@ -231,22 +307,29 @@ export default function WordGame({
       .split("")
       .map((letter) => normalizeArabic(letter));
 
-    const availableWrongLetters = allKeyboardLetters.filter((letter) => {
-      const isInAnswer = normalizedAnswer.includes(letter);
-      const isAlreadyRemoved = removedLetters.includes(letter);
-      const isAlreadyUsed = Boolean(keyStatus[letter]);
-      const isInCurrentGuess = current
-        .split("")
-        .map((item) => normalizeArabic(item))
-        .includes(letter);
+    const availableWrongLetters =
+      allKeyboardLetters.filter((letter) => {
+        const isInAnswer =
+          normalizedAnswer.includes(letter);
 
-      return (
-        !isInAnswer &&
-        !isAlreadyRemoved &&
-        !isAlreadyUsed &&
-        !isInCurrentGuess
-      );
-    });
+        const isAlreadyRemoved =
+          removedLetters.includes(letter);
+
+        const isAlreadyUsed =
+          Boolean(keyStatus[letter]);
+
+        const isInCurrentGuess = current
+          .split("")
+          .map((item) => normalizeArabic(item))
+          .includes(letter);
+
+        return (
+          !isInAnswer &&
+          !isAlreadyRemoved &&
+          !isAlreadyUsed &&
+          !isInCurrentGuess
+        );
+      });
 
     if (availableWrongLetters.length === 0) {
       setFeedback("ما فيه حرف متاح للحذف");
@@ -255,10 +338,16 @@ export default function WordGame({
 
     const removedLetter =
       availableWrongLetters[
-        Math.floor(Math.random() * availableWrongLetters.length)
+        Math.floor(
+          Math.random() *
+            availableWrongLetters.length
+        )
       ];
 
-    setRemovedLetters((previous) => [...previous, removedLetter]);
+    setRemovedLetters((previous) => [
+      ...previous,
+      removedLetter,
+    ]);
 
     if (activeSide === "side1") {
       setSide1HintUsed(true);
@@ -276,7 +365,9 @@ export default function WordGame({
 
     const normalizedKey = normalizeArabic(key);
     const state = keyStatus[normalizedKey];
-    const wasRemoved = removedLetters.includes(normalizedKey);
+
+    const wasRemoved =
+      removedLetters.includes(normalizedKey);
 
     if (state === "absent" || wasRemoved) return;
     if (current.length >= WORD_LENGTH) return;
@@ -284,16 +375,30 @@ export default function WordGame({
     setCurrent((previous) => previous + key);
   }
 
-  function getCellColor(letter: string, index: number) {
-    const normalizedLetter = normalizeArabic(letter);
-    const normalizedAnswer = normalizeArabic(answer);
-    const answerLetter = normalizedAnswer[index];
+  /*
+    مهم:
+    الدالة الآن تستقبل التخمين كامل،
+    وليس حرفًا واحدًا.
 
-    if (normalizedLetter === answerLetter) {
+    لأن تحديد الأصفر/الرمادي يعتمد
+    على بقية الحروف الموجودة في نفس التخمين.
+  */
+  function getCellColor(
+    guess: string,
+    index: number
+  ) {
+    const evaluation = evaluateGuess(
+      guess,
+      answer
+    );
+
+    const state = evaluation[index];
+
+    if (state === "correct") {
       return "bg-green-500 border-green-400 text-white";
     }
 
-    if (normalizedAnswer.includes(normalizedLetter)) {
+    if (state === "present") {
       return "bg-yellow-400 border-yellow-300 text-black";
     }
 
@@ -303,7 +408,9 @@ export default function WordGame({
   function getKeyColor(key: string) {
     const normalizedKey = normalizeArabic(key);
     const state = keyStatus[normalizedKey];
-    const wasRemoved = removedLetters.includes(normalizedKey);
+
+    const wasRemoved =
+      removedLetters.includes(normalizedKey);
 
     if (wasRemoved) {
       return "border-red-500/20 bg-red-950/40 text-white/20 line-through";
@@ -335,23 +442,28 @@ export default function WordGame({
   }
 
   const activeTeamHintUsed =
-    activeSide === "side1" ? side1HintUsed : side2HintUsed;
+    activeSide === "side1"
+      ? side1HintUsed
+      : side2HintUsed;
 
-  const remainingRows = MAX_TRIES - guesses.length;
+  const remainingRows =
+    MAX_TRIES - guesses.length;
 
   const timerColor =
     timeLeft <= 5
       ? "text-red-300 animate-pulse"
       : timeLeft <= 10
-      ? "text-yellow-300"
-      : "text-cyan-300";
+        ? "text-yellow-300"
+        : "text-cyan-300";
 
   if (!answer) {
     return (
       <div className="text-center text-white">
         <p>ما فيه كلمات من 5 حروف</p>
+
         <p className="mt-2 text-sm text-white/50">
-          عدّل ملف words.ts وأضف كلمات مكوّنة من 5 حروف.
+          عدّل ملف words.ts وأضف كلمات مكوّنة
+          من 5 حروف.
         </p>
 
         <button
@@ -372,19 +484,19 @@ export default function WordGame({
       side2={side2Name}
       side1Score={side1Score}
       side2Score={side2Score}
-      turn={`دور ${getCurrentTurnName()}`}
+      turn={getCurrentTurnName()}
       currentRound={currentRound}
     >
       <div className="flex flex-col gap-3">
         <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-white sm:text-base">
           {feedback}
 
-          {timerEnabled ? (
-            <span className={`mr-3 font-black ${timerColor}`}>
+          {timerEnabled && (
+            <span
+              className={`mr-3 font-black ${timerColor}`}
+            >
               ⏱️ {timeLeft}
             </span>
-          ) : (
-            <span className="mr-3 text-white/45">بدون مؤقت</span>
           )}
         </div>
 
@@ -396,9 +508,15 @@ export default function WordGame({
                 : "border-white/10 bg-white/5"
             }`}
           >
-            <p className="font-black">{side1Name}</p>
+            <p className="font-black">
+              {side1Name}
+            </p>
+
             <p className="mt-1 text-xs text-white/55">
-              المساعدة: {side1HintUsed ? "استخدمت" : "متاحة"}
+              المساعدة:{" "}
+              {side1HintUsed
+                ? "استخدمت"
+                : "متاحة"}
             </p>
           </div>
 
@@ -409,9 +527,15 @@ export default function WordGame({
                 : "border-white/10 bg-white/5"
             }`}
           >
-            <p className="font-black">{side2Name}</p>
+            <p className="font-black">
+              {side2Name}
+            </p>
+
             <p className="mt-1 text-xs text-white/55">
-              المساعدة: {side2HintUsed ? "استخدمت" : "متاحة"}
+              المساعدة:{" "}
+              {side2HintUsed
+                ? "استخدمت"
+                : "متاحة"}
             </p>
           </div>
         </div>
@@ -419,95 +543,122 @@ export default function WordGame({
         <div className="relative min-h-[400px]">
           <div className="flex justify-center">
             <div className="space-y-2">
-              {guesses.map((guess, rowIndex) => (
-                <div
-                  key={rowIndex}
-                  className="flex justify-center gap-2"
-                >
-                  {guess.split("").map((letter, colIndex) => (
-                    <div
-                      key={colIndex}
-                      className={`flex h-11 w-11 items-center justify-center rounded-xl border text-xl font-black sm:h-12 sm:w-12 md:h-14 md:w-14 md:text-2xl ${getCellColor(
-                        letter,
-                        colIndex
-                      )}`}
-                    >
-                      {letter}
-                    </div>
-                  ))}
-                </div>
-              ))}
-
-              {Array.from({ length: remainingRows }).map(
-                (_, rowIndex) => (
+              {guesses.map(
+                (guess, rowIndex) => (
                   <div
-                    key={`empty-${rowIndex}`}
+                    key={rowIndex}
                     className="flex justify-center gap-2"
                   >
-                    {Array.from({ length: WORD_LENGTH }).map(
-                      (__, colIndex) => {
-                        const previewLetter =
-                          rowIndex === 0
-                            ? current[colIndex] ?? ""
-                            : "";
-
-                        return (
-                          <div
-                            key={colIndex}
-                            className={`flex h-11 w-11 items-center justify-center rounded-xl border text-xl font-black text-white sm:h-12 sm:w-12 md:h-14 md:w-14 md:text-2xl ${
-                              rowIndex === 0
-                                ? "border-[#6d6be9] bg-[#20193f]"
-                                : "border-white/10 bg-[#16142a]"
-                            }`}
-                          >
-                            {previewLetter}
-                          </div>
-                        );
-                      }
+                    {Array.from(guess).map(
+                      (letter, colIndex) => (
+                        <div
+                          key={colIndex}
+                          className={`flex h-11 w-11 items-center justify-center rounded-xl border text-xl font-black sm:h-12 sm:w-12 md:h-14 md:w-14 md:text-2xl ${getCellColor(
+                            guess,
+                            colIndex
+                          )}`}
+                        >
+                          {letter}
+                        </div>
+                      )
                     )}
                   </div>
                 )
               )}
+
+              {Array.from({
+                length: remainingRows,
+              }).map((_, rowIndex) => (
+                <div
+                  key={`empty-${rowIndex}`}
+                  className="flex justify-center gap-2"
+                >
+                  {Array.from({
+                    length: WORD_LENGTH,
+                  }).map(
+                    (__, colIndex) => {
+                      const previewLetter =
+                        rowIndex === 0
+                          ? current[
+                              colIndex
+                            ] ?? ""
+                          : "";
+
+                      return (
+                        <div
+                          key={colIndex}
+                          className={`flex h-11 w-11 items-center justify-center rounded-xl border text-xl font-black text-white sm:h-12 sm:w-12 md:h-14 md:w-14 md:text-2xl ${
+                            rowIndex ===
+                            0
+                              ? "border-[#6d6be9] bg-[#20193f]"
+                              : "border-white/10 bg-[#16142a]"
+                          }`}
+                        >
+                          {
+                            previewLetter
+                          }
+                        </div>
+                      );
+                    }
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
         <div className="mt-1 space-y-2">
-          {keyboardRows.map((row, rowIndex) => (
-            <div
-              key={rowIndex}
-              className={`flex justify-center gap-2 ${
-                rowIndex === 1
-                  ? "mr-3 sm:mr-5"
-                  : rowIndex === 2
-                  ? "mr-5 sm:mr-8"
-                  : ""
-              }`}
-            >
-              {row.split("").map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => handleKeyboardClick(key)}
-                  disabled={isKeyDisabled(key)}
-                  className={`h-10 min-w-[38px] rounded-lg border text-sm font-bold transition active:scale-95 disabled:cursor-not-allowed sm:h-11 sm:min-w-[42px] sm:text-base ${getKeyColor(
-                    key
-                  )}`}
-                >
-                  {key}
-                </button>
-              ))}
-            </div>
-          ))}
+          {keyboardRows.map(
+            (row, rowIndex) => (
+              <div
+                key={rowIndex}
+                className={`flex justify-center gap-2 ${
+                  rowIndex === 1
+                    ? "mr-3 sm:mr-5"
+                    : rowIndex === 2
+                      ? "mr-5 sm:mr-8"
+                      : ""
+                }`}
+              >
+                {row
+                  .split("")
+                  .map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() =>
+                        handleKeyboardClick(
+                          key
+                        )
+                      }
+                      disabled={isKeyDisabled(
+                        key
+                      )}
+                      className={`h-10 min-w-[38px] rounded-lg border text-sm font-bold transition active:scale-95 disabled:cursor-not-allowed sm:h-11 sm:min-w-[42px] sm:text-base ${getKeyColor(
+                        key
+                      )}`}
+                    >
+                      {key}
+                    </button>
+                  ))}
+              </div>
+            )
+          )}
 
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             <button
               type="button"
               onClick={() =>
-                setCurrent((previous) => previous.slice(0, -1))
+                setCurrent((previous) =>
+                  previous.slice(
+                    0,
+                    -1
+                  )
+                )
               }
               disabled={
-                status !== "playing" || current.length === 0
+                status !== "playing" ||
+                current.length === 0
               }
               className="h-11 min-w-[105px] rounded-xl border border-white/10 bg-[#2a2f45] font-bold text-white transition hover:bg-[#343a56] disabled:opacity-40"
             >
@@ -519,7 +670,8 @@ export default function WordGame({
               onClick={submitGuess}
               disabled={
                 status !== "playing" ||
-                current.length !== WORD_LENGTH
+                current.length !==
+                  WORD_LENGTH
               }
               className="h-11 min-w-[105px] rounded-xl bg-gradient-to-r from-orange-400 to-pink-500 font-bold text-white transition hover:scale-[1.02] disabled:opacity-40"
             >
@@ -530,7 +682,8 @@ export default function WordGame({
               type="button"
               onClick={useHint}
               disabled={
-                status !== "playing" || activeTeamHintUsed
+                status !== "playing" ||
+                activeTeamHintUsed
               }
               className="h-11 min-w-[140px] rounded-xl border border-yellow-300/30 bg-yellow-400/10 font-bold text-yellow-100 transition hover:bg-yellow-400/20 disabled:opacity-40"
             >
@@ -539,7 +692,9 @@ export default function WordGame({
 
             <button
               type="button"
-              onClick={() => onRoundEnd()}
+              onClick={() =>
+                onRoundEnd()
+              }
               className="h-11 min-w-[110px] rounded-xl border border-white/10 bg-[#4c2b7a] font-bold text-white transition hover:bg-[#5a3392]"
             >
               إنهاء الجولة
