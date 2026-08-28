@@ -284,13 +284,11 @@ export default function ProverbGame({
         </div>
 
         {/* صورة المثل */}
-        <div className="rounded-3xl border border-white/10 bg-white/[0.06] px-5 py-6 sm:px-6 sm:py-8">
-          <img
-            src={current.image}
-            alt="لغز المثل"
-            className="mx-auto max-h-[360px] w-full max-w-[520px] rounded-3xl object-contain"
-          />
-        </div>
+        <img
+  src={current.image}
+  alt="لغز المثل"
+  className="mx-auto max-h-[360px] w-full max-w-[520px] rounded-3xl object-contain"
+/>
 
         {/* الإجابة */}
         {revealed && (
