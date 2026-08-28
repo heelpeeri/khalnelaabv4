@@ -36,6 +36,8 @@ export default function CategoriesGame({
   const [side1Time, setSide1Time] = useState<number | null>(null);
   const [side2Time, setSide2Time] = useState<number | null>(null);
 
+  const [roundStartedAt, setRoundStartedAt] = useState(() => Date.now());
+
   const instructionText =
     "فكروا في: إنسان – حيوان – نبات – جماد – بلاد، كلها بنفس الحرف. إذا خلص الفريق يبلغ صاحب الجلسة. إذا إجابات الفريقين صحيحة، الفائز هو الأسرع.";
 
@@ -52,6 +54,8 @@ export default function CategoriesGame({
 
     setSide1Time(null);
     setSide2Time(null);
+
+    setRoundStartedAt(Date.now());
   }, [roundKey, timerSeconds]);
 
   useEffect(() => {
@@ -85,14 +89,19 @@ export default function CategoriesGame({
   function markReady(side: "side1" | "side2") {
     if (revealed) return;
 
-    const elapsedTime = timerEnabled
-      ? timerSeconds - timeLeft
-      : null;
+    const elapsedTime = Math.max(
+      1,
+      Math.floor((Date.now() - roundStartedAt) / 1000)
+    );
 
     if (side === "side1") {
+      if (side1Ready) return;
+
       setSide1Ready(true);
       setSide1Time(elapsedTime);
     } else {
+      if (side2Ready) return;
+
       setSide2Ready(true);
       setSide2Time(elapsedTime);
     }
@@ -156,7 +165,7 @@ export default function CategoriesGame({
             </p>
 
             {side1Time !== null && (
-              <p className="mt-1 text-xs font-bold text-white/55">
+              <p className="mt-2 text-sm font-black text-fuchsia-100/80">
                 {side1Time} ث
               </p>
             )}
@@ -210,7 +219,7 @@ export default function CategoriesGame({
             </p>
 
             {side2Time !== null && (
-              <p className="mt-1 text-xs font-bold text-white/55">
+              <p className="mt-2 text-sm font-black text-cyan-100/80">
                 {side2Time} ث
               </p>
             )}
