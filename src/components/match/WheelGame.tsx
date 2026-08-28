@@ -855,11 +855,7 @@ export default function WheelGame({
             {/* Guess phase */}
             {phase === "guess" && (
               <div className="space-y-5">
-                <div className="rounded-2xl border border-yellow-300/20 bg-yellow-400/10 px-4 py-3 text-base font-bold text-yellow-100">
-                  اختر حرفًا مناسبًا قبل ما
-                  يروح دورك
-                </div>
-
+               
                 {/* Keyboard */}
                 <div className="space-y-2">
                   {LETTER_ROWS.map(
