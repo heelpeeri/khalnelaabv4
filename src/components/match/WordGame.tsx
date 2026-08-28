@@ -47,24 +47,21 @@ function evaluateGuess(
     number
   > = {};
 
-  // الأخضر أولًا
+  // أولاً: الحروف الصحيحة وفي مكانها
   guessLetters.forEach((letter, index) => {
     if (letter === answerLetters[index]) {
       result[index] = "correct";
     } else {
-      const answerLetter =
-        answerLetters[index];
+      const answerLetter = answerLetters[index];
 
       if (answerLetter) {
         remainingLetters[answerLetter] =
-          (remainingLetters[
-            answerLetter
-          ] ?? 0) + 1;
+          (remainingLetters[answerLetter] ?? 0) + 1;
       }
     }
   });
 
-  // بعدها الأصفر حسب عدد الحروف المتبقية
+  // ثانياً: الحروف الموجودة لكن في مكان خاطئ
   guessLetters.forEach((letter, index) => {
     if (result[index] === "correct") {
       return;
@@ -83,6 +80,74 @@ function evaluateGuess(
   return result;
 }
 
+function HelpModal({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 px-4 backdrop-blur-sm">
+      <div className="w-full max-w-lg rounded-[28px] border border-white/15 bg-[#120d2c]/95 p-6 text-right shadow-2xl">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-2xl font-black text-white">
+            طريقة اللعب
+          </h3>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-lg font-bold text-white transition hover:bg-white/10"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="mt-5 space-y-3 text-sm leading-7 text-white/85 md:text-base">
+          <p>
+            1. حاول تخمين الكلمة المكوّنة من 5 حروف.
+          </p>
+
+          <p>
+            2. اللون الأخضر يعني أن الحرف صحيح وفي مكانه الصحيح.
+          </p>
+
+          <p>
+            3. اللون الأصفر يعني أن الحرف موجود في الكلمة لكن في مكان مختلف.
+          </p>
+
+          <p>
+            4. اللون الرمادي يعني أن الحرف غير موجود في الكلمة.
+          </p>
+
+          <p>
+            5. بعد كل محاولة ينتقل الدور للفريق الثاني.
+          </p>
+
+          <p>
+            6. لكل فريق مساعدة واحدة تحذف حرفًا خاطئًا من لوحة الحروف.
+          </p>
+
+          <p>
+            7. الفريق الذي يخمن الكلمة بشكل صحيح يفوز بالجولة.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={onClose}
+          className="btn-primary mt-6 min-w-[140px]"
+        >
+          فهمت
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function WordGame({
   onRoundEnd,
   roundKey,
@@ -94,27 +159,20 @@ export default function WordGame({
   timerEnabled = false,
   timerSeconds = 30,
 }: {
-  onRoundEnd: (
-    winner?: WinnerType
-  ) => void;
-
+  onRoundEnd: (winner?: WinnerType) => void;
   roundKey: number;
-
   side1Name?: string;
   side2Name?: string;
-
   side1Score?: number;
   side2Score?: number;
-
   currentRound?: number;
-
   timerEnabled?: boolean;
   timerSeconds?: number;
 }) {
   const [answer, setAnswer] = useState("");
-  const [guesses, setGuesses] = useState<
-    string[]
-  >([]);
+
+  const [guesses, setGuesses] =
+    useState<string[]>([]);
 
   const [current, setCurrent] =
     useState("");
@@ -124,9 +182,7 @@ export default function WordGame({
   >("playing");
 
   const [keyStatus, setKeyStatus] =
-    useState<
-      Record<string, CellState>
-    >({});
+    useState<Record<string, CellState>>({});
 
   const [
     removedLetters,
@@ -151,6 +207,9 @@ export default function WordGame({
     side2HintUsed,
     setSide2HintUsed,
   ] = useState(false);
+
+  const [showHelp, setShowHelp] =
+    useState(false);
 
   useEffect(() => {
     resetRound();
@@ -179,8 +238,7 @@ export default function WordGame({
       );
     }, 1000);
 
-    return () =>
-      clearTimeout(timer);
+    return () => clearTimeout(timer);
   }, [
     timerEnabled,
     timeLeft,
@@ -471,9 +529,7 @@ export default function WordGame({
             );
 
           const isAlreadyUsed =
-            Boolean(
-              keyStatus[letter]
-            );
+            Boolean(keyStatus[letter]);
 
           const isInCurrentGuess =
             current
@@ -655,10 +711,6 @@ export default function WordGame({
         ? "text-yellow-300"
         : "text-cyan-300";
 
-  /*
-    الرسائل العادية ما تحتاج تظهر،
-    لأن GameLayout يوضح الدور الحالي.
-  */
   const routineFeedback =
     feedback === "ابدأ التخمين" ||
     feedback.startsWith(
@@ -694,223 +746,239 @@ export default function WordGame({
   }
 
   return (
-    <GameLayout
-      title="خمن الكلمة"
-      side1={side1Name}
-      side2={side2Name}
-      side1Score={side1Score}
-      side2Score={side2Score}
-      turn={getCurrentTurnName()}
-      currentRound={currentRound}
-    >
-      <div className="flex flex-col gap-2">
+    <>
+      <GameLayout
+        title="خمن الكلمة"
+        side1={side1Name}
+        side2={side2Name}
+        side1Score={side1Score}
+        side2Score={side2Score}
+        turn={getCurrentTurnName()}
+        currentRound={currentRound}
+      >
+        <div className="flex flex-col gap-2">
 
-        {/* Timer / important feedback only */}
-        {(timerEnabled ||
-          showFeedback) && (
-          <div className="flex min-h-8 flex-wrap items-center justify-center gap-3 text-sm font-bold">
-
-            {showFeedback && (
-              <span className="text-white/75">
-                {feedback}
-              </span>
-            )}
+          {/* طريقة اللعب + المؤقت */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() =>
+                setShowHelp(true)
+              }
+              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white transition hover:bg-white/10"
+            >
+              طريقة اللعب
+            </button>
 
             {timerEnabled && (
               <span
-                className={`font-black ${timerColor}`}
+                className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 font-black ${timerColor}`}
               >
                 ⏱️ {timeLeft}
               </span>
             )}
           </div>
-        )}
 
-        {/* Guess board */}
-        <div className="flex justify-center py-1">
-          <div className="space-y-1.5">
+          {/* الرسائل المهمة فقط */}
+          {showFeedback && (
+            <div className="mt-1 text-center text-sm font-bold text-white/75">
+              {feedback}
+            </div>
+          )}
 
-            {guesses.map(
-              (guess, rowIndex) => (
-                <div
-                  key={rowIndex}
-                  className="flex justify-center gap-1.5"
-                >
-                  {Array.from(
-                    guess
-                  ).map(
-                    (
-                      letter,
-                      colIndex
-                    ) => (
-                      <div
-                        key={
-                          colIndex
-                        }
-                        className={`flex h-10 w-10 items-center justify-center rounded-lg border text-lg font-black sm:h-11 sm:w-11 sm:text-xl md:h-12 md:w-12 md:text-xl ${getCellColor(
-                          guess,
-                          colIndex
-                        )}`}
-                      >
-                        {letter}
-                      </div>
-                    )
-                  )}
-                </div>
-              )
-            )}
+          {/* مربعات التخمين */}
+          <div className="flex justify-center py-2">
+            <div className="space-y-1.5">
 
-            {Array.from({
-              length: remainingRows,
-            }).map(
-              (_, rowIndex) => (
-                <div
-                  key={`empty-${rowIndex}`}
-                  className="flex justify-center gap-1.5"
-                >
-                  {Array.from({
-                    length:
-                      WORD_LENGTH,
-                  }).map(
-                    (
-                      __,
-                      colIndex
-                    ) => {
-                      const previewLetter =
-                        rowIndex ===
-                        0
-                          ? current[
-                              colIndex
-                            ] ?? ""
-                          : "";
-
-                      return (
+              {guesses.map(
+                (guess, rowIndex) => (
+                  <div
+                    key={rowIndex}
+                    className="flex justify-center gap-1.5"
+                  >
+                    {Array.from(
+                      guess
+                    ).map(
+                      (
+                        letter,
+                        colIndex
+                      ) => (
                         <div
                           key={
                             colIndex
                           }
-                          className={`flex h-10 w-10 items-center justify-center rounded-lg border text-lg font-black text-white sm:h-11 sm:w-11 sm:text-xl md:h-12 md:w-12 md:text-xl ${
-                            rowIndex ===
-                            0
-                              ? "border-[#6d6be9] bg-[#20193f]"
-                              : "border-white/10 bg-[#16142a]"
-                          }`}
+                          className={`flex h-10 w-10 items-center justify-center rounded-lg border text-lg font-black sm:h-11 sm:w-11 sm:text-xl md:h-12 md:w-12 ${getCellColor(
+                            guess,
+                            colIndex
+                          )}`}
                         >
-                          {
-                            previewLetter
-                          }
+                          {letter}
                         </div>
-                      );
-                    }
-                  )}
+                      )
+                    )}
+                  </div>
+                )
+              )}
+
+              {Array.from({
+                length: remainingRows,
+              }).map(
+                (_, rowIndex) => (
+                  <div
+                    key={`empty-${rowIndex}`}
+                    className="flex justify-center gap-1.5"
+                  >
+                    {Array.from({
+                      length:
+                        WORD_LENGTH,
+                    }).map(
+                      (
+                        __,
+                        colIndex
+                      ) => {
+                        const previewLetter =
+                          rowIndex ===
+                          0
+                            ? current[
+                                colIndex
+                              ] ?? ""
+                            : "";
+
+                        return (
+                          <div
+                            key={
+                              colIndex
+                            }
+                            className={`flex h-10 w-10 items-center justify-center rounded-lg border text-lg font-black text-white sm:h-11 sm:w-11 sm:text-xl md:h-12 md:w-12 ${
+                              rowIndex ===
+                              0
+                                ? "border-[#6d6be9] bg-[#20193f]"
+                                : "border-white/10 bg-[#16142a]"
+                            }`}
+                          >
+                            {
+                              previewLetter
+                            }
+                          </div>
+                        );
+                      }
+                    )}
+                  </div>
+                )
+              )}
+            </div>
+          </div>
+
+          {/* الكيبورد */}
+          <div className="mt-2 space-y-1.5">
+            {keyboardRows.map(
+              (row, rowIndex) => (
+                <div
+                  key={rowIndex}
+                  className={`flex justify-center gap-1.5 ${
+                    rowIndex === 1
+                      ? "mr-2 sm:mr-4"
+                      : rowIndex ===
+                          2
+                        ? "mr-4 sm:mr-6"
+                        : ""
+                  }`}
+                >
+                  {row
+                    .split("")
+                    .map((key) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() =>
+                          handleKeyboardClick(
+                            key
+                          )
+                        }
+                        disabled={isKeyDisabled(
+                          key
+                        )}
+                        className={`h-9 min-w-[34px] rounded-lg border px-1 text-sm font-bold transition active:scale-95 disabled:cursor-not-allowed sm:h-10 sm:min-w-[38px] sm:text-base ${getKeyColor(
+                          key
+                        )}`}
+                      >
+                        {key}
+                      </button>
+                    ))}
                 </div>
               )
             )}
           </div>
+
+          {/* الأزرار */}
+          <div className="mt-2 flex flex-wrap justify-center gap-2">
+
+            <button
+              type="button"
+              onClick={() =>
+                setCurrent(
+                  (previous) =>
+                    previous.slice(
+                      0,
+                      -1
+                    )
+                )
+              }
+              disabled={
+                status !== "playing" ||
+                current.length === 0
+              }
+              className="h-10 min-w-[90px] rounded-xl border border-white/10 bg-[#2a2f45] px-4 text-sm font-bold text-white transition hover:bg-[#343a56] disabled:opacity-40"
+            >
+              حذف
+            </button>
+
+            <button
+              type="button"
+              onClick={submitGuess}
+              disabled={
+                status !== "playing" ||
+                current.length !==
+                  WORD_LENGTH
+              }
+              className="h-10 min-w-[90px] rounded-xl bg-gradient-to-r from-orange-400 to-pink-500 px-4 text-sm font-bold text-white transition hover:scale-[1.02] disabled:opacity-40"
+            >
+              إدخال
+            </button>
+
+            <button
+              type="button"
+              onClick={useHint}
+              disabled={
+                status !== "playing" ||
+                activeTeamHintUsed
+              }
+              className="h-10 min-w-[125px] rounded-xl border border-yellow-300/30 bg-yellow-400/10 px-4 text-sm font-bold text-yellow-100 transition hover:bg-yellow-400/20 disabled:opacity-40"
+            >
+              {activeTeamHintUsed
+                ? "المساعدة استخدمت"
+                : "💡 حذف حرف"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() =>
+                onRoundEnd()
+              }
+              className="h-10 min-w-[105px] rounded-xl border border-white/10 bg-[#4c2b7a] px-4 text-sm font-bold text-white transition hover:bg-[#5a3392]"
+            >
+              إنهاء الجولة
+            </button>
+          </div>
         </div>
+      </GameLayout>
 
-        {/* Keyboard */}
-        <div className="mt-2 space-y-1.5">
-          {keyboardRows.map(
-            (row, rowIndex) => (
-              <div
-                key={rowIndex}
-                className={`flex justify-center gap-1.5 ${
-                  rowIndex === 1
-                    ? "mr-2 sm:mr-4"
-                    : rowIndex ===
-                        2
-                      ? "mr-4 sm:mr-6"
-                      : ""
-                }`}
-              >
-                {row
-                  .split("")
-                  .map((key) => (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() =>
-                        handleKeyboardClick(
-                          key
-                        )
-                      }
-                      disabled={isKeyDisabled(
-                        key
-                      )}
-                      className={`h-9 min-w-[34px] rounded-lg border px-1 text-sm font-bold transition active:scale-95 disabled:cursor-not-allowed sm:h-10 sm:min-w-[38px] sm:text-base ${getKeyColor(
-                        key
-                      )}`}
-                    >
-                      {key}
-                    </button>
-                  ))}
-              </div>
-            )
-          )}
-        </div>
-
-        {/* Actions */}
-        <div className="mt-2 flex flex-wrap justify-center gap-2">
-
-          <button
-            type="button"
-            onClick={() =>
-              setCurrent(
-                (previous) =>
-                  previous.slice(
-                    0,
-                    -1
-                  )
-              )
-            }
-            disabled={
-              status !== "playing" ||
-              current.length === 0
-            }
-            className="h-10 min-w-[90px] rounded-xl border border-white/10 bg-[#2a2f45] px-4 text-sm font-bold text-white transition hover:bg-[#343a56] disabled:opacity-40"
-          >
-            حذف
-          </button>
-
-          <button
-            type="button"
-            onClick={submitGuess}
-            disabled={
-              status !== "playing" ||
-              current.length !==
-                WORD_LENGTH
-            }
-            className="h-10 min-w-[90px] rounded-xl bg-gradient-to-r from-orange-400 to-pink-500 px-4 text-sm font-bold text-white transition hover:scale-[1.02] disabled:opacity-40"
-          >
-            إدخال
-          </button>
-
-          <button
-            type="button"
-            onClick={useHint}
-            disabled={
-              status !== "playing" ||
-              activeTeamHintUsed
-            }
-            className="h-10 min-w-[125px] rounded-xl border border-yellow-300/30 bg-yellow-400/10 px-4 text-sm font-bold text-yellow-100 transition hover:bg-yellow-400/20 disabled:opacity-40"
-          >
-            {activeTeamHintUsed
-              ? "المساعدة استخدمت"
-              : "💡 حذف حرف"}
-          </button>
-
-          <button
-            type="button"
-            onClick={() =>
-              onRoundEnd()
-            }
-            className="h-10 min-w-[105px] rounded-xl border border-white/10 bg-[#4c2b7a] px-4 text-sm font-bold text-white transition hover:bg-[#5a3392]"
-          >
-            إنهاء الجولة
-          </button>
-        </div>
-      </div>
-    </GameLayout>
+      <HelpModal
+        open={showHelp}
+        onClose={() =>
+          setShowHelp(false)
+        }
+      />
+    </>
   );
 }
