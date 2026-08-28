@@ -27,7 +27,7 @@ function formatValue(value: Value | null) {
   if (value === null) return "لف العجلة";
   if (value === "bankrupt") return "💸 إفلاس";
   if (value === "lose") return "❌ خسارة الدور";
-  return `+${value}`;
+  return `${value}`;
 }
 
 function splitAnswerWords(answer: string) {
