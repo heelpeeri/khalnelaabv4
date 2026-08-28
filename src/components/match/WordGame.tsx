@@ -108,7 +108,7 @@ function HelpModal({
 
         <div className="mt-5 space-y-3 text-sm leading-7 text-white/85 md:text-base">
           <p>
-            1. حاول تخمين الكلمة المكوّنة من 5 حروف.
+            1. حاول تخمن الكلمة المكوّنة من 5 حروف.
           </p>
 
           <p>
