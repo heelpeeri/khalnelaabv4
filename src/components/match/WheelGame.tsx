@@ -654,7 +654,7 @@ export default function WheelGame({
                   currentValue
                 )}`
               : phase === "guess"
-                ? `اختر حرفًا — قيمة الحرف ${formatValue(
+                ? `اختر حرف — قيمة الحرف ${formatValue(
                     currentValue
                   )}`
                 : phase === "celebrate"
