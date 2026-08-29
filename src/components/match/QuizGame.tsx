@@ -244,26 +244,17 @@ export default function QuizGame({
     }
   }
 
-  function finishQuiz(
-  final1: number,
-  final2: number
-) {
-  onRoundEnd();
-}
-
-  function nextQuestion(
-    next1: number,
-    next2: number
-  ) {
+  function nextQuestion() {
+    /*
+      إذا كان هذا آخر سؤال:
+      ننهي الجولة بدون إرسال فائز،
+      عشان تظهر شاشة "من فاز؟"
+    */
     if (
       index + 1 >=
       questions.length
     ) {
-      finishQuiz(
-        next1,
-        next2
-      );
-
+      onRoundEnd();
       return;
     }
 
@@ -301,10 +292,7 @@ export default function QuizGame({
     setSide1Score(next1);
     setSide2Score(next2);
 
-    nextQuestion(
-      next1,
-      next2
-    );
+    nextQuestion();
   }
 
   if (!category) {
@@ -355,19 +343,8 @@ export default function QuizGame({
       }
       side1Score={side1Score}
       side2Score={side2Score}
-
-      /*
-        اسم الفريق الحالي
-      */
       turn={activeTeamName}
-
-      /*
-        هذا أهم شيء للألوان.
-        يخبر GameLayout مباشرة
-        أي فريق دوره.
-      */
       turnSide={activeTurn}
-
       currentRound={currentRound}
     >
       <div className="flex flex-col gap-4">
