@@ -24,6 +24,58 @@ function shuffleArray<T>(items: T[]) {
   return array;
 }
 
+/*
+  نفس تصميم شاشة التحكيم الرئيسية،
+  لكن مخصصة لنتيجة التخمين.
+*/
+function GuessJudgeModal({
+  show,
+  onCorrect,
+  onWrong,
+}: {
+  show: boolean;
+  onCorrect: () => void;
+  onWrong: () => void;
+}) {
+  if (!show) return null;
+
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
+      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
+        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
+          نتيجة التخمين
+        </p>
+
+        <h1 className="arcade-title mt-5">
+          هل التخمين صحيح؟ 🎯
+        </h1>
+
+        <p className="mt-3 text-lg font-bold text-white/70">
+          حدد نتيجة المحاولة
+        </p>
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={onCorrect}
+            className="arcade-button px-6 py-4 text-lg"
+          >
+            صحيح ✅
+          </button>
+
+          <button
+            type="button"
+            onClick={onWrong}
+            className="btn-secondary px-6 py-4 text-lg"
+          >
+            غير صحيح
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ScrambleGame({
   side1Name,
   side2Name,
@@ -52,6 +104,9 @@ export default function ScrambleGame({
   const [revealed, setRevealed] =
     useState(false);
 
+  const [showJudge, setShowJudge] =
+    useState(false);
+
   const [timeLeft, setTimeLeft] =
     useState(timerSeconds);
 
@@ -78,6 +133,7 @@ export default function ScrambleGame({
 
     setStarted(false);
     setRevealed(false);
+    setShowJudge(false);
 
     setTimeLeft(timerSeconds);
 
@@ -114,7 +170,8 @@ export default function ScrambleGame({
       !timerEnabled ||
       !started ||
       revealed ||
-      !current
+      !current ||
+      showJudge
     ) {
       return;
     }
@@ -138,6 +195,7 @@ export default function ScrambleGame({
     revealed,
     timeLeft,
     current,
+    showJudge,
   ]);
 
   function startGuessing() {
@@ -185,6 +243,7 @@ export default function ScrambleGame({
 
     setStarted(false);
     setRevealed(false);
+    setShowJudge(false);
 
     setTimeLeft(timerSeconds);
   }
@@ -210,10 +269,28 @@ export default function ScrambleGame({
     setSide1Score(next1);
     setSide2Score(next2);
 
+    setShowJudge(false);
+
     goNext(
       next1,
       next2
     );
+  }
+
+  /*
+    إذا التخمين صحيح:
+    النقطة تروح للفريق اللي دوره.
+  */
+  function markCorrect() {
+    givePoint(activeSide);
+  }
+
+  /*
+    إذا التخمين غير صحيح:
+    ما أحد يأخذ نقطة.
+  */
+  function markWrong() {
+    givePoint("none");
   }
 
   if (!current) {
@@ -243,167 +320,144 @@ export default function ScrambleGame({
         ? "text-yellow-300"
         : "text-cyan-300";
 
+  const isLastRound =
+    index + 1 >= rounds.length;
+
   return (
-    <GameLayout
-      title="منهو ذا؟"
-      side1={
-        side1Name || "فريق 1"
-      }
-      side2={
-        side2Name || "فريق 2"
-      }
-      side1Score={side1Score}
-      side2Score={side2Score}
+    <>
+      <GameLayout
+        title="منهو ذا؟"
+        side1={
+          side1Name || "فريق 1"
+        }
+        side2={
+          side2Name || "فريق 2"
+        }
+        side1Score={side1Score}
+        side2Score={side2Score}
+        turn={activeTeamName}
+        turnSide={activeSide}
+        currentRound={currentRound}
+      >
+        <div className="flex flex-col gap-4">
 
-      /*
-        اسم الفريق الحالي
-      */
-      turn={activeTeamName}
+          {/* معلومات الشخصية + المؤقت */}
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
+              الشخصية{" "}
+              <span className="text-white">
+                {index + 1}
+              </span>
+              {" / "}
+              {rounds.length}
+            </div>
 
-      /*
-        يحدد لون الفريق بشكل مضمون
-      */
-      turnSide={activeSide}
-
-      currentRound={currentRound}
-    >
-      <div className="flex flex-col gap-4">
-
-        {/* معلومات الشخصية + المؤقت */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
-
-          <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
-            الشخصية{" "}
-            <span className="text-white">
-              {index + 1}
-            </span>
-            {" / "}
-            {rounds.length}
-          </div>
-
-          {started &&
-            !revealed &&
-            timerEnabled && (
-              <div
-                className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 text-lg font-black ${timerClass}`}
-              >
-                ⏱️ {timeLeft}
-              </div>
-            )}
-
-          {!started &&
-            !revealed && (
-              <div className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-100">
-                امسح الكود ثم ابدأ الوصف
-              </div>
-            )}
-        </div>
-
-        {/* الشخصية */}
-        <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 sm:p-6">
-
-          {!revealed ? (
-            <div className="flex flex-col items-center gap-4">
-
-              {personUrl && (
-                <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
-                    personUrl
-                  )}`}
-                  alt="QR Code"
-                  className="h-[250px] w-[250px] rounded-2xl bg-white p-2 sm:h-[280px] sm:w-[280px]"
-                />
+            {started &&
+              !revealed &&
+              timerEnabled && (
+                <div
+                  className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 text-lg font-black ${timerClass}`}
+                >
+                  ⏱️ {timeLeft}
+                </div>
               )}
 
-              <div>
-                <p className="text-lg font-black text-white">
-                  امسح الكود وشوف الشخصية
-                </p>
+            {!started &&
+              !revealed && (
+                <div className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-100">
+                  امسح الكود ثم ابدأ الوصف
+                </div>
+              )}
+          </div>
 
-                <p className="mt-1 text-sm font-bold text-white/50">
-                  لا تقول الاسم، اوصف فقط
+          {/* الشخصية */}
+          <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 sm:p-6">
+            {!revealed ? (
+              <div className="flex flex-col items-center gap-4">
+                {personUrl && (
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
+                      personUrl
+                    )}`}
+                    alt="QR Code"
+                    className="h-[250px] w-[250px] rounded-2xl bg-white p-2 sm:h-[280px] sm:w-[280px]"
+                  />
+                )}
+
+                <div>
+                  <p className="text-lg font-black text-white">
+                    امسح الكود وشوف الشخصية
+                  </p>
+
+                  <p className="mt-1 text-sm font-bold text-white/50">
+                    لا تقول الاسم، اوصف فقط
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <img
+                  src={current.image}
+                  alt={current.answer}
+                  className="mx-auto max-h-[420px] rounded-3xl object-contain"
+                />
+
+                <p className="mt-4 text-2xl font-black text-white">
+                  {current.answer}
                 </p>
               </div>
-            </div>
-          ) : (
-            <div>
-              <img
-                src={current.image}
-                alt={current.answer}
-                className="mx-auto max-h-[420px] rounded-3xl object-contain"
-              />
+            )}
+          </div>
 
-              <p className="mt-4 text-2xl font-black text-white">
-                {current.answer}
-              </p>
-            </div>
-          )}
-        </div>
+          {/* الأزرار */}
+          <div className="flex flex-wrap justify-center gap-3">
+            {!started &&
+              !revealed && (
+                <button
+                  type="button"
+                  onClick={startGuessing}
+                  className="btn-primary"
+                >
+                  ابدأ الوصف
+                </button>
+              )}
 
-        {/* الأزرار */}
-        <div className="flex flex-wrap justify-center gap-3">
+            {started &&
+              !revealed && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setRevealed(true)
+                  }
+                  className="btn-primary"
+                >
+                  إظهار الإجابة
+                </button>
+              )}
 
-          {!started &&
-            !revealed && (
+            {revealed && (
               <button
                 type="button"
-                onClick={startGuessing}
-                className="btn-primary"
+                onClick={() =>
+                  setShowJudge(true)
+                }
+                className="btn-primary min-w-[170px]"
               >
-                ابدأ الوصف
+                {isLastRound
+                  ? "إنهاء اللعبة"
+                  : "التالي"}
               </button>
             )}
-
-          {started &&
-            !revealed && (
-              <button
-                type="button"
-                onClick={() =>
-                  setRevealed(true)
-                }
-                className="btn-primary"
-              >
-                إظهار الإجابة
-              </button>
-            )}
-
-          {revealed && (
-            <>
-              <button
-                type="button"
-                onClick={() =>
-                  givePoint("side1")
-                }
-                className="btn-primary"
-              >
-                {side1Name ||
-                  "فريق 1"}
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  givePoint("side2")
-                }
-                className="btn-primary"
-              >
-                {side2Name ||
-                  "فريق 2"}
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  givePoint("none")
-                }
-                className="btn-secondary"
-              >
-                لا أحد
-              </button>
-            </>
-          )}
+          </div>
         </div>
-      </div>
-    </GameLayout>
+      </GameLayout>
+
+      {/* شاشة التحكيم */}
+      <GuessJudgeModal
+        show={showJudge}
+        onCorrect={markCorrect}
+        onWrong={markWrong}
+      />
+    </>
   );
 }
