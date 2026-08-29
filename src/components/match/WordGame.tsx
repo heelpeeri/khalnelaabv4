@@ -63,7 +63,6 @@ function evaluateGuess(
     }
   });
 
-  // ثانياً: الحروف الموجودة لكن في مكان خاطئ
   guessLetters.forEach((letter, index) => {
     if (result[index] === "correct") {
       return;
@@ -443,9 +442,6 @@ export default function WordGame({
 
     setCurrent("");
 
-    /*
-      أحد الفريقين عرف الكلمة.
-    */
     if (
       guess === normalizedAnswer
     ) {
@@ -461,14 +457,7 @@ export default function WordGame({
 
       return;
     }
-
-    /*
-      انتهت كل المحاولات.
-
-      مهم:
-      ما ننهي الجولة تلقائيًا.
-      نخلي الحل ظاهر للاعبين أولاً.
-    */
+    
     if (
       nextGuesses.length >=
       MAX_TRIES
