@@ -37,21 +37,6 @@ type Round = {
   category: QuizCategoryKey | null;
 };
 
-/*
-  الألعاب اللي تحسب الفائز بنفسها.
-
-  مهم:
-  scramble موجودة هنا لأن "منهو ذا؟"
-  تحسب نتيجة الشخصيتين داخليًا،
-  لذلك ما نحتاج نسأل "من فاز؟" مرة ثانية.
-*/
-const SELF_JUDGED_GAMES: GameType[] = [
-  "word",
-  "wheel",
-  "quiz",
-  "scramble",
-];
-
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
 }
@@ -73,7 +58,7 @@ function getGameName(game: GameType) {
       return "❓ الأسئلة";
 
     case "scramble":
-      return "🕵🏻‍♂️منهو ذا";
+      return "🕵🏻‍♂️ منهو ذا";
 
     case "wheel":
       return "🎡 لف وخمن";
@@ -86,6 +71,9 @@ function getGameName(game: GameType) {
   }
 }
 
+/*
+  نتيجة اللعبة / الجلسة كاملة
+*/
 function WinnerOverlay({
   show,
   winnerName,
@@ -124,6 +112,7 @@ function WinnerOverlay({
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <button
+            type="button"
             onClick={onRestart}
             className="arcade-button"
           >
@@ -133,6 +122,7 @@ function WinnerOverlay({
           </button>
 
           <button
+            type="button"
             onClick={onGoHome}
             className="btn-secondary"
           >
@@ -144,6 +134,9 @@ function WinnerOverlay({
   );
 }
 
+/*
+  العد التنازلي قبل بداية اللعب
+*/
 function CountdownOverlay({
   countdown,
 }: {
@@ -164,6 +157,9 @@ function CountdownOverlay({
   );
 }
 
+/*
+  الانتقال للجولة التالية
+*/
 function TransitionOverlay({
   nextRound,
 }: {
@@ -188,6 +184,10 @@ function TransitionOverlay({
   );
 }
 
+/*
+  شاشة التحكيم للألعاب
+  اللي ما تعرف الفائز بنفسها
+*/
 function RoundWinnerPicker({
   show,
   side1Name,
@@ -218,18 +218,16 @@ function RoundWinnerPicker({
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <button
-            onClick={() =>
-              onPick("side1")
-            }
+            type="button"
+            onClick={() => onPick("side1")}
             className="arcade-button px-6 py-4 text-lg"
           >
             {side1Name || "فريق 1"}
           </button>
 
           <button
-            onClick={() =>
-              onPick("side2")
-            }
+            type="button"
+            onClick={() => onPick("side2")}
             className="arcade-button px-6 py-4 text-lg"
           >
             {side2Name || "فريق 2"}
@@ -237,13 +235,47 @@ function RoundWinnerPicker({
         </div>
 
         <button
-          onClick={() =>
-            onPick("none")
-          }
+          type="button"
+          onClick={() => onPick("none")}
           className="btn-secondary mt-4 w-full px-6 py-4 text-lg"
         >
           لا أحد
         </button>
+      </div>
+    </div>
+  );
+}
+
+/*
+  نتيجة الجولة قبل الانتقال للجولة التالية
+*/
+function RoundResultOverlay({
+  show,
+  winnerName,
+  isDraw,
+}: {
+  show: boolean;
+  winnerName: string;
+  isDraw: boolean;
+}) {
+  if (!show) return null;
+
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
+      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
+        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
+          انتهت الجولة
+        </p>
+
+        <h1 className="arcade-title mt-5">
+          {isDraw ? "تعادل! 🤝" : "كفووو! 🏆"}
+        </h1>
+
+        <p className="arcade-winner mt-6">
+          {isDraw
+            ? "ما أحد أخذ نقطة الجولة"
+            : `فاز بالجولة: ${winnerName}`}
+        </p>
       </div>
     </div>
   );
@@ -321,6 +353,19 @@ export default function MatchPage() {
     setShowRoundWinnerPicker,
   ] = useState(false);
 
+  /*
+    نتيجة الجولة الحالية
+  */
+  const [
+    showRoundResult,
+    setShowRoundResult,
+  ] = useState(false);
+
+  const [
+    roundResultWinner,
+    setRoundResultWinner,
+  ] = useState<WinnerType>("none");
+
   const current = queue[index];
   const nextRound = queue[index + 1];
 
@@ -340,10 +385,10 @@ export default function MatchPage() {
       for (let i = 0; i < count; i++) {
         q.push({
           game,
+
           category:
             game === "quiz"
-              ? shuffledCategories[0] ??
-                null
+              ? shuffledCategories[0] ?? null
               : null,
         });
       }
@@ -353,9 +398,7 @@ export default function MatchPage() {
   }
 
   function start() {
-    if (
-      selectedGames.length === 0
-    ) {
+    if (selectedGames.length === 0) {
       alert("اختر لعبة");
       return;
     }
@@ -389,33 +432,31 @@ export default function MatchPage() {
     setSide2Score(0);
 
     setShowWinner(false);
+    setShowRoundWinnerPicker(false);
 
-    setShowRoundWinnerPicker(
-      false
-    );
+    setShowRoundResult(false);
+    setRoundResultWinner("none");
 
     setCountdown(3);
 
     setPhase("countdown");
   }
 
+  /*
+    Countdown
+  */
   useEffect(() => {
-    if (
-      phase !== "countdown"
-    ) {
+    if (phase !== "countdown") {
       return;
     }
 
     if (countdown > 0) {
-      const timer = setTimeout(
-        () => {
-          setCountdown(
-            (current) =>
-              current - 1
-          );
-        },
-        800
-      );
+      const timer = setTimeout(() => {
+        setCountdown(
+          (currentCountdown) =>
+            currentCountdown - 1
+        );
+      }, 800);
 
       return () =>
         clearTimeout(timer);
@@ -424,7 +465,6 @@ export default function MatchPage() {
     const startTimer =
       setTimeout(() => {
         setStarted(true);
-
         setPhase("playing");
       }, 650);
 
@@ -435,6 +475,9 @@ export default function MatchPage() {
     countdown,
   ]);
 
+  /*
+    Quick mode / URL
+  */
   useEffect(() => {
     const params =
       new URLSearchParams(
@@ -454,19 +497,16 @@ export default function MatchPage() {
         "category"
       ) as QuizCategoryKey | null;
 
-    const validGames: GameType[] =
-      [
-        "word",
-        "quiz",
-        "scramble",
-        "wheel",
-        "categories",
-        "draw",
-      ];
+    const validGames: GameType[] = [
+      "word",
+      "quiz",
+      "scramble",
+      "wheel",
+      "categories",
+      "draw",
+    ];
 
-    if (
-      urlMode === "session"
-    ) {
+    if (urlMode === "session") {
       setMode("session");
 
       setStarted(false);
@@ -474,10 +514,8 @@ export default function MatchPage() {
       setPhase("setup");
 
       setShowWinner(false);
-
-      setShowRoundWinnerPicker(
-        false
-      );
+      setShowRoundWinnerPicker(false);
+      setShowRoundResult(false);
 
       return;
     }
@@ -526,12 +564,15 @@ export default function MatchPage() {
     setSide2Score(0);
 
     setShowWinner(false);
+    setShowRoundWinnerPicker(false);
 
-    setShowRoundWinnerPicker(
-      false
-    );
+    setShowRoundResult(false);
+    setRoundResultWinner("none");
   }, []);
 
+  /*
+    نهاية اللعبة / الجلسة
+  */
   function finishSession(
     finalSide1Score: number,
     finalSide2Score: number
@@ -544,6 +585,9 @@ export default function MatchPage() {
       finalSide2Score
     );
 
+    setShowRoundResult(false);
+    setShowRoundWinnerPicker(false);
+
     setStarted(false);
 
     setPhase("finished");
@@ -551,6 +595,9 @@ export default function MatchPage() {
     setShowWinner(true);
   }
 
+  /*
+    الانتقال للجولة التالية
+  */
   function goToNextRound(
     nextSide1Score: number,
     nextSide2Score: number
@@ -571,25 +618,32 @@ export default function MatchPage() {
 
     setTimeout(() => {
       setIndex(
-        (i) => i + 1
+        (currentIndex) =>
+          currentIndex + 1
       );
 
       setPhase("playing");
     }, 1500);
   }
 
+  /*
+    اعتماد فائز الجولة
+  */
   function applyRoundWinner(
     winner?: WinnerType
   ) {
+    const finalWinner: WinnerType =
+      winner ?? "none";
+
     const nextSide1Score =
       side1Score +
-      (winner === "side1"
+      (finalWinner === "side1"
         ? 1
         : 0);
 
     const nextSide2Score =
       side2Score +
-      (winner === "side2"
+      (finalWinner === "side2"
         ? 1
         : 0);
 
@@ -605,40 +659,67 @@ export default function MatchPage() {
       false
     );
 
-    goToNextRound(
-      nextSide1Score,
-      nextSide2Score
-    );
-  }
-
-  function endRound(
-    winner?: WinnerType
-  ) {
-    if (!current) return;
-
-    const gameJudgesItself =
-      SELF_JUDGED_GAMES.includes(
-        current.game
-      );
-
     /*
-      الألعاب اللي ما تحسب
-      الفائز بنفسها:
-      نظهر شاشة "من فاز؟"
+      إذا هذه آخر جولة،
+      ما نحتاج نتيجة جولة منفصلة.
+      نعرض نتيجة اللعبة النهائية مباشرة.
     */
-    if (!gameJudgesItself) {
-      setShowRoundWinnerPicker(
-        true
+    if (
+      index + 1 >=
+      queue.length
+    ) {
+      finishSession(
+        nextSide1Score,
+        nextSide2Score
       );
 
       return;
     }
 
     /*
-      Word / Wheel / Quiz / Scramble
-      ترسل الفائز مباشرة.
+      فيه جولة بعدها:
+      نعرض مين فاز بالجولة الحالية.
     */
-    applyRoundWinner(winner);
+    setRoundResultWinner(
+      finalWinner
+    );
+
+    setShowRoundResult(true);
+
+    setTimeout(() => {
+      setShowRoundResult(false);
+
+      goToNextRound(
+        nextSide1Score,
+        nextSide2Score
+      );
+    }, 1400);
+  }
+
+  /*
+    نهاية الجولة.
+
+    القاعدة الجديدة:
+
+    إذا اللعبة أرسلت فائز:
+    نعتمد النتيجة مباشرة.
+
+    إذا ما أرسلت فائز:
+    نظهر شاشة "من فاز؟".
+  */
+  function endRound(
+    winner?: WinnerType
+  ) {
+    if (!current) return;
+
+    if (winner !== undefined) {
+      applyRoundWinner(winner);
+      return;
+    }
+
+    setShowRoundWinnerPicker(
+      true
+    );
   }
 
   function restart() {
@@ -648,6 +729,12 @@ export default function MatchPage() {
 
     setShowRoundWinnerPicker(
       false
+    );
+
+    setShowRoundResult(false);
+
+    setRoundResultWinner(
+      "none"
     );
 
     setIndex(0);
@@ -705,6 +792,19 @@ export default function MatchPage() {
   const isDraw =
     side1Score === side2Score;
 
+  /*
+    اسم فائز الجولة الحالية
+  */
+  const roundWinnerName =
+    roundResultWinner === "side1"
+      ? side1 || "فريق 1"
+      : roundResultWinner === "side2"
+        ? side2 || "فريق 2"
+        : "";
+
+  const roundIsDraw =
+    roundResultWinner === "none";
+
   return (
     <main className="min-h-screen p-6 text-white">
       <Link
@@ -735,21 +835,22 @@ export default function MatchPage() {
         🏠 الرئيسية
       </Link>
 
-      {phase ===
-        "countdown" && (
+      {/* Countdown */}
+      {phase === "countdown" && (
         <CountdownOverlay
           countdown={countdown}
         />
       )}
 
-      {phase ===
-        "transition" &&
+      {/* Transition */}
+      {phase === "transition" &&
         nextRound && (
           <TransitionOverlay
             nextRound={nextRound}
           />
         )}
 
+      {/* Final winner */}
       <WinnerOverlay
         show={showWinner}
         winnerName={
@@ -761,6 +862,7 @@ export default function MatchPage() {
         onGoHome={goHome}
       />
 
+      {/* Manual round judge */}
       <RoundWinnerPicker
         show={
           showRoundWinnerPicker
@@ -770,6 +872,15 @@ export default function MatchPage() {
         onPick={
           applyRoundWinner
         }
+      />
+
+      {/* Round result */}
+      <RoundResultOverlay
+        show={showRoundResult}
+        winnerName={
+          roundWinnerName
+        }
+        isDraw={roundIsDraw}
       />
 
       {!started ? (
@@ -813,6 +924,8 @@ export default function MatchPage() {
         />
       ) : (
         <div className="mx-auto max-w-5xl">
+
+          {/* Word */}
           {current?.game ===
             "word" && (
             <WordGame
@@ -840,6 +953,7 @@ export default function MatchPage() {
             />
           )}
 
+          {/* Quiz */}
           {current?.game ===
             "quiz" && (
             <QuizGame
@@ -852,6 +966,9 @@ export default function MatchPage() {
               }
               side1Name={side1}
               side2Name={side2}
+              currentRound={
+                index + 1
+              }
               timerEnabled={
                 timerEnabled
               }
@@ -861,6 +978,7 @@ export default function MatchPage() {
             />
           )}
 
+          {/* Scramble */}
           {current?.game ===
             "scramble" && (
             <ScrambleGame
@@ -882,6 +1000,7 @@ export default function MatchPage() {
             />
           )}
 
+          {/* Wheel */}
           {current?.game ===
             "wheel" && (
             <WheelGame
@@ -903,6 +1022,7 @@ export default function MatchPage() {
             />
           )}
 
+          {/* Categories */}
           {current?.game ===
             "categories" && (
             <CategoriesGame
@@ -924,6 +1044,7 @@ export default function MatchPage() {
             />
           )}
 
+          {/* Proverb */}
           {current?.game ===
             "draw" && (
             <ProverbGame
@@ -933,6 +1054,9 @@ export default function MatchPage() {
               roundKey={index}
               side1Name={side1}
               side2Name={side2}
+              currentRound={
+                index + 1
+              }
               timerEnabled={
                 timerEnabled
               }
