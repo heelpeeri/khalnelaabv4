@@ -21,7 +21,9 @@ function shuffleArray<T>(items: T[]) {
   const array = [...items];
 
   for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(
+      Math.random() * (i + 1)
+    );
 
     [array[i], array[j]] = [
       array[j],
@@ -32,61 +34,65 @@ function shuffleArray<T>(items: T[]) {
   return array;
 }
 
+/*
+  نفس تصميم RoundWinnerPicker
+  لكن مخصص لتحكيم إجابة السؤال.
+*/
 function AnswerJudgeModal({
-  open,
+  show,
   side1Name,
   side2Name,
-  onSelect,
+  onPick,
 }: {
-  open: boolean;
+  show: boolean;
   side1Name: string;
   side2Name: string;
-  onSelect: (
+  onPick: (
     winner: "side1" | "side2" | "none"
   ) => void;
 }) {
-  if (!open) return null;
+  if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-[30px] border border-white/15 bg-[#16102f]/95 p-6 text-center shadow-[0_25px_80px_rgba(0,0,0,0.55)] sm:p-7">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-purple-300/20 bg-purple-500/15 text-3xl">
-          ✓
-        </div>
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
+      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
+        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
+          نتيجة السؤال
+        </p>
 
-        <h3 className="mt-4 text-2xl font-black text-white sm:text-3xl">
-          من جاوب صح؟
-        </h3>
+        <h1 className="arcade-title mt-5">
+          من جاوب صح؟ ✅
+        </h1>
 
-        <p className="mt-2 text-sm font-bold text-white/50">
+        <p className="mt-3 text-lg font-bold text-white/70">
           اختر الفريق اللي جاوب الإجابة الصحيحة
         </p>
 
-        <div className="mt-6 space-y-3">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <button
             type="button"
-            onClick={() => onSelect("side1")}
-            className="w-full rounded-2xl border border-fuchsia-300/40 bg-gradient-to-r from-fuchsia-500/20 to-pink-500/15 px-5 py-4 text-lg font-black text-fuchsia-50 transition hover:scale-[1.01] hover:bg-fuchsia-500/25 active:scale-[0.99]"
+            onClick={() => onPick("side1")}
+            className="arcade-button px-6 py-4 text-lg"
           >
             {side1Name || "فريق 1"}
           </button>
 
           <button
             type="button"
-            onClick={() => onSelect("side2")}
-            className="w-full rounded-2xl border border-cyan-300/40 bg-gradient-to-r from-cyan-400/20 to-blue-500/15 px-5 py-4 text-lg font-black text-cyan-50 transition hover:scale-[1.01] hover:bg-cyan-400/25 active:scale-[0.99]"
+            onClick={() => onPick("side2")}
+            className="arcade-button px-6 py-4 text-lg"
           >
             {side2Name || "فريق 2"}
           </button>
-
-          <button
-            type="button"
-            onClick={() => onSelect("none")}
-            className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-lg font-black text-white/70 transition hover:bg-white/10 active:scale-[0.99]"
-          >
-            لا أحد
-          </button>
         </div>
+
+        <button
+          type="button"
+          onClick={() => onPick("none")}
+          className="btn-secondary mt-4 w-full px-6 py-4 text-lg"
+        >
+          لا أحد
+        </button>
       </div>
     </div>
   );
@@ -211,6 +217,10 @@ export default function QuizGame({
   const currentOptions =
     current?.options ?? [];
 
+  /*
+    الفريق الأساسي يتغير
+    مع كل سؤال.
+  */
   const mainTurn: TeamSide =
     useMemo(
       () =>
@@ -220,6 +230,10 @@ export default function QuizGame({
       [index]
     );
 
+  /*
+    إذا ضاعت فرصة الفريق الأساسي
+    تنتقل الفرصة للفريق الثاني.
+  */
   const activeTurn: TeamSide =
     secondTurn
       ? mainTurn === "side1"
@@ -253,11 +267,21 @@ export default function QuizGame({
     }
 
     if (timeLeft <= 0) {
+      /*
+        انتهى وقت الفريق الأساسي:
+        نعطي الفريق الثاني 10 ثواني.
+      */
       if (!secondTurn) {
         setSecondTurn(true);
+
         setTimeLeft(SECOND_TIME);
+
         setShowOptions(false);
       } else {
+        /*
+          انتهى وقت الفريقين:
+          نظهر الإجابة.
+        */
         setShowAnswer(true);
       }
 
@@ -293,6 +317,10 @@ export default function QuizGame({
     }
   }
 
+  /*
+    بعد السؤال الأخير نحسب
+    الفائز النهائي من النقاط.
+  */
   function finishQuiz(
     final1: number,
     final2: number
@@ -310,6 +338,10 @@ export default function QuizGame({
     onRoundEnd("none");
   }
 
+  /*
+    الانتقال للسؤال التالي
+    بعد اختيار من جاوب صح.
+  */
   function nextQuestion(
     next1: number,
     next2: number
@@ -333,12 +365,16 @@ export default function QuizGame({
 
     setShowAnswer(false);
     setShowOptions(false);
+
     setSecondTurn(false);
     setShowJudge(false);
 
     setTimeLeft(timerSeconds);
   }
 
+  /*
+    تسجيل نتيجة السؤال.
+  */
   function givePoint(
     winner:
       | "side1"
@@ -470,7 +506,8 @@ export default function QuizGame({
 
             {/* الخيارات */}
             {showOptions &&
-              currentOptions.length > 0 && (
+              currentOptions.length >
+                0 && (
                 <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {currentOptions.map(
                     (option) => (
@@ -503,6 +540,7 @@ export default function QuizGame({
           <div className="flex flex-wrap items-center justify-center gap-3">
             {!showAnswer ? (
               <>
+                {/* Hint */}
                 {currentOptions.length >
                   0 && (
                   <button
@@ -519,6 +557,7 @@ export default function QuizGame({
                   </button>
                 )}
 
+                {/* Show answer */}
                 <button
                   type="button"
                   onClick={() =>
@@ -530,12 +569,16 @@ export default function QuizGame({
                 </button>
               </>
             ) : (
+              /*
+                بعد ظهور الإجابة:
+                نفتح شاشة التحكيم.
+              */
               <button
                 type="button"
                 onClick={() =>
                   setShowJudge(true)
                 }
-                className="btn-primary min-w-[160px]"
+                className="btn-primary min-w-[170px]"
               >
                 {isLastQuestion
                   ? "إنهاء الكويز"
@@ -546,11 +589,12 @@ export default function QuizGame({
         </div>
       </GameLayout>
 
+      {/* شاشة من جاوب صح؟ */}
       <AnswerJudgeModal
-        open={showJudge}
+        show={showJudge}
         side1Name={side1Name}
         side2Name={side2Name}
-        onSelect={givePoint}
+        onPick={givePoint}
       />
     </>
   );
