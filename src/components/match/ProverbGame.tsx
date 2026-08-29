@@ -25,6 +25,70 @@ function shuffleArray<T>(items: T[]) {
   return array;
 }
 
+/*
+  نفس تصميم شاشة "من فاز؟"
+  الموجودة في MatchPage.
+*/
+function ProverbWinnerModal({
+  show,
+  side1Name,
+  side2Name,
+  onPick,
+}: {
+  show: boolean;
+  side1Name: string;
+  side2Name: string;
+  onPick: (
+    winner: "side1" | "side2" | "none"
+  ) => void;
+}) {
+  if (!show) return null;
+
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
+      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
+        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
+          نتيجة المثل
+        </p>
+
+        <h1 className="arcade-title mt-5">
+          من فاز؟ 🏆
+        </h1>
+
+        <p className="mt-3 text-lg font-bold text-white/70">
+          اختر الفائز في هذا المثل
+        </p>
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={() => onPick("side1")}
+            className="arcade-button px-6 py-4 text-lg"
+          >
+            {side1Name || "فريق 1"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onPick("side2")}
+            className="arcade-button px-6 py-4 text-lg"
+          >
+            {side2Name || "فريق 2"}
+          </button>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onPick("none")}
+          className="btn-secondary mt-4 w-full px-6 py-4 text-lg"
+        >
+          لا أحد
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function ProverbGame({
   side1Name,
   side2Name,
@@ -57,6 +121,9 @@ export default function ProverbGame({
   const [secondTurn, setSecondTurn] =
     useState(false);
 
+  const [showWinnerPicker, setShowWinnerPicker] =
+    useState(false);
+
   const [side1Score, setSide1Score] =
     useState(0);
 
@@ -76,6 +143,7 @@ export default function ProverbGame({
 
     setRevealed(false);
     setSecondTurn(false);
+    setShowWinnerPicker(false);
 
     setSide1Score(0);
     setSide2Score(0);
@@ -114,7 +182,8 @@ export default function ProverbGame({
     if (
       !timerEnabled ||
       revealed ||
-      !current
+      !current ||
+      showWinnerPicker
     ) {
       return;
     }
@@ -144,8 +213,13 @@ export default function ProverbGame({
     secondTurn,
     current,
     timerEnabled,
+    showWinnerPicker,
   ]);
 
+  /*
+    بعد آخر مثل:
+    اللعبة تحسب الفائز من النقاط.
+  */
   function finishGame(
     final1: number,
     final2: number
@@ -163,6 +237,9 @@ export default function ProverbGame({
     onRoundEnd("none");
   }
 
+  /*
+    الانتقال للمثل التالي.
+  */
   function goNext(
     next1: number,
     next2: number
@@ -187,8 +264,12 @@ export default function ProverbGame({
 
     setRevealed(false);
     setSecondTurn(false);
+    setShowWinnerPicker(false);
   }
 
+  /*
+    تسجيل فائز المثل.
+  */
   function givePoint(
     winner:
       | "side1"
@@ -205,6 +286,8 @@ export default function ProverbGame({
 
     setSide1Score(next1);
     setSide2Score(next2);
+
+    setShowWinnerPicker(false);
 
     goNext(
       next1,
@@ -237,121 +320,112 @@ export default function ProverbGame({
         ? "text-yellow-200"
         : "text-cyan-200";
 
+  const isLastProverb =
+    index + 1 >= rounds.length;
+
   return (
-    <GameLayout
-      title="خمن المثل"
-      side1={
-        side1Name || "فريق 1"
-      }
-      side2={
-        side2Name || "فريق 2"
-      }
-      side1Score={side1Score}
-      side2Score={side2Score}
-      turn={activeTeamName}
-      turnSide={activeTurn}
-      currentRound={currentRound}
-    >
-      <div className="flex flex-col gap-4">
+    <>
+      <GameLayout
+        title="خمن المثل"
+        side1={
+          side1Name || "فريق 1"
+        }
+        side2={
+          side2Name || "فريق 2"
+        }
+        side1Score={side1Score}
+        side2Score={side2Score}
+        turn={activeTeamName}
+        turnSide={activeTurn}
+        currentRound={currentRound}
+      >
+        <div className="flex flex-col gap-4">
 
-        {/* معلومات الجولة */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
+          {/* معلومات الجولة */}
+          <div className="flex flex-wrap items-center justify-center gap-2">
 
-          <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
-            المثل{" "}
-            <span className="text-white">
-              {index + 1}
-            </span>
-            {" / "}
-            {rounds.length}
+            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
+              المثل{" "}
+              <span className="text-white">
+                {index + 1}
+              </span>
+              {" / "}
+              {rounds.length}
+            </div>
+
+            {secondTurn &&
+              !revealed && (
+                <div className="rounded-full border border-yellow-300/25 bg-yellow-400/10 px-4 py-2 text-sm font-bold text-yellow-100">
+                  فرصة ثانية
+                </div>
+              )}
+
+            {timerEnabled &&
+              !revealed && (
+                <div
+                  className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 text-lg font-black ${timerTextClass}`}
+                >
+                  ⏱️ {timeLeft}
+                </div>
+              )}
           </div>
 
-          {secondTurn &&
-            !revealed && (
-              <div className="rounded-full border border-yellow-300/25 bg-yellow-400/10 px-4 py-2 text-sm font-bold text-yellow-100">
-                فرصة ثانية
-              </div>
-            )}
+          {/* صورة المثل */}
+          <img
+            src={current.image}
+            alt="لغز المثل"
+            className="mx-auto max-h-[360px] w-full max-w-[520px] rounded-3xl object-contain"
+          />
 
-          {timerEnabled &&
-            !revealed && (
-              <div
-                className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 text-lg font-black ${timerTextClass}`}
-              >
-                ⏱️ {timeLeft}
-              </div>
-            )}
-        </div>
+          {/* الإجابة */}
+          {revealed && (
+            <div className="rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5">
+              <p className="text-sm font-bold text-white/60">
+                الإجابة
+              </p>
 
-        {/* صورة المثل */}
-        <img
-  src={current.image}
-  alt="لغز المثل"
-  className="mx-auto max-h-[360px] w-full max-w-[520px] rounded-3xl object-contain"
-/>
-
-        {/* الإجابة */}
-        {revealed && (
-          <div className="rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5">
-            <p className="text-sm font-bold text-white/60">
-              الإجابة
-            </p>
-
-            <p className="mt-2 text-2xl font-black text-white">
-              {current.answer}
-            </p>
-          </div>
-        )}
-
-        {/* الأزرار */}
-        <div className="flex flex-wrap justify-center gap-3">
-          {!revealed ? (
-            <button
-              type="button"
-              onClick={() =>
-                setRevealed(true)
-              }
-              className="btn-primary"
-            >
-              إظهار الإجابة
-            </button>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={() =>
-                  givePoint("side1")
-                }
-                className="btn-primary"
-              >
-                {side1Name ||
-                  "فريق 1"}
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  givePoint("side2")
-                }
-                className="btn-primary"
-              >
-                {side2Name ||
-                  "فريق 2"}
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  givePoint("none")
-                }
-                className="btn-secondary"
-              >
-                لا أحد
-              </button>
-            </>
+              <p className="mt-2 text-2xl font-black text-white">
+                {current.answer}
+              </p>
+            </div>
           )}
+
+          {/* الأزرار */}
+          <div className="flex flex-wrap justify-center gap-3">
+            {!revealed ? (
+              <button
+                type="button"
+                onClick={() =>
+                  setRevealed(true)
+                }
+                className="btn-primary"
+              >
+                إظهار الإجابة
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() =>
+                  setShowWinnerPicker(true)
+                }
+                className="btn-primary min-w-[170px]"
+              >
+                {isLastProverb
+                  ? "إنهاء الجولة"
+                  : "التالي"}
+              </button>
+            )}
+          </div>
         </div>
-      </div>
-    </GameLayout>
+      </GameLayout>
+
+      {/* شاشة من فاز؟ */}
+      <ProverbWinnerModal
+        show={showWinnerPicker}
+        side1Name={side1Name}
+        side2Name={side2Name}
+        onPick={givePoint}
+      />
+    </>
   );
 }
