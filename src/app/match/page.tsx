@@ -693,7 +693,7 @@ export default function MatchPage() {
         nextSide1Score,
         nextSide2Score
       );
-    }, 1400);
+    }, 2500);
   }
 
   /*
