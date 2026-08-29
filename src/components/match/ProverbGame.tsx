@@ -25,10 +25,6 @@ function shuffleArray<T>(items: T[]) {
   return array;
 }
 
-/*
-  نفس تصميم شاشة "من فاز؟"
-  الموجودة في MatchPage.
-*/
 function ProverbWinnerModal({
   show,
   side1Name,
@@ -151,9 +147,6 @@ export default function ProverbGame({
 
   const current = rounds[index];
 
-  /*
-    الفريق الأساسي يتغير مع كل مثل.
-  */
   const mainTurn: TeamSide = useMemo(
     () =>
       index % 2 === 0
@@ -162,10 +155,6 @@ export default function ProverbGame({
     [index]
   );
 
-  /*
-    إذا انتهى وقت الفريق الأساسي،
-    تنتقل الفرصة للفريق الثاني.
-  */
   const activeTurn: TeamSide =
     secondTurn
       ? mainTurn === "side1"
@@ -216,10 +205,6 @@ export default function ProverbGame({
     showWinnerPicker,
   ]);
 
-  /*
-    بعد آخر مثل:
-    اللعبة تحسب الفائز من النقاط.
-  */
   function finishGame(
     final1: number,
     final2: number
@@ -237,9 +222,6 @@ export default function ProverbGame({
     onRoundEnd("none");
   }
 
-  /*
-    الانتقال للمثل التالي.
-  */
   function goNext(
     next1: number,
     next2: number
@@ -267,9 +249,6 @@ export default function ProverbGame({
     setShowWinnerPicker(false);
   }
 
-  /*
-    تسجيل فائز المثل.
-  */
   function givePoint(
     winner:
       | "side1"
