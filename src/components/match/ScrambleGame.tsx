@@ -5,7 +5,12 @@ import GameLayout from "@/components/match/GameLayout";
 import { WHO_GAME } from "@/data/scramble";
 import type { WinnerType } from "@/types/game";
 
-const TOTAL_ROUNDS = 6;
+/*
+  كل جولة:
+  شخصية لفريق 1
+  وشخصية لفريق 2
+*/
+const TOTAL_ROUNDS = 2;
 
 type TeamSide = "side1" | "side2";
 
@@ -25,8 +30,8 @@ function shuffleArray<T>(items: T[]) {
 }
 
 /*
-  نفس تصميم شاشة التحكيم الرئيسية،
-  لكن مخصصة لنتيجة التخمين.
+  شاشة تحكيم التخمين
+  بنفس ستايل الـ arcade عندك.
 */
 function GuessJudgeModal({
   show,
@@ -123,12 +128,17 @@ export default function ScrambleGame({
     setOrigin(window.location.origin);
   }, []);
 
+  /*
+    كل roundKey جديد:
+    نختار شخصيتين جديدتين فقط.
+  */
   useEffect(() => {
     const selected = shuffleArray(
       WHO_GAME
     ).slice(0, TOTAL_ROUNDS);
 
     setRounds(selected);
+
     setIndex(0);
 
     setStarted(false);
@@ -139,12 +149,17 @@ export default function ScrambleGame({
 
     setSide1Score(0);
     setSide2Score(0);
-  }, [roundKey, timerSeconds]);
+  }, [
+    roundKey,
+    timerSeconds,
+  ]);
 
-  const current = rounds[index];
+  const current =
+    rounds[index];
 
   /*
-    الفريق يتغير مع كل شخصية.
+    الشخصية الأولى = فريق 1
+    الشخصية الثانية = فريق 2
   */
   const activeSide: TeamSide =
     useMemo(
@@ -165,6 +180,9 @@ export default function ScrambleGame({
       ? `${origin}/person/${current.id}`
       : "";
 
+  /*
+    المؤقت
+  */
   useEffect(() => {
     if (
       !timerEnabled ||
@@ -203,6 +221,9 @@ export default function ScrambleGame({
     setTimeLeft(timerSeconds);
   }
 
+  /*
+    اللعبة تعرف الفائز بنفسها.
+  */
   function finishGame(
     final1: number,
     final2: number
@@ -220,6 +241,11 @@ export default function ScrambleGame({
     onRoundEnd("none");
   }
 
+  /*
+    بعد نتيجة الشخصية:
+    إما ننتقل للشخصية الثانية
+    أو ننهي الجولة.
+  */
   function goNext(
     next1: number,
     next2: number
@@ -248,6 +274,9 @@ export default function ScrambleGame({
     setTimeLeft(timerSeconds);
   }
 
+  /*
+    تسجيل نتيجة المحاولة.
+  */
   function givePoint(
     winner:
       | "side1"
@@ -279,7 +308,7 @@ export default function ScrambleGame({
 
   /*
     إذا التخمين صحيح:
-    النقطة تروح للفريق اللي دوره.
+    النقطة تروح للفريق الحالي.
   */
   function markCorrect() {
     givePoint(activeSide);
@@ -287,7 +316,7 @@ export default function ScrambleGame({
 
   /*
     إذا التخمين غير صحيح:
-    ما أحد يأخذ نقطة.
+    بدون نقطة.
   */
   function markWrong() {
     givePoint("none");
@@ -320,7 +349,7 @@ export default function ScrambleGame({
         ? "text-yellow-300"
         : "text-cyan-300";
 
-  const isLastRound =
+  const isLastCharacter =
     index + 1 >= rounds.length;
 
   return (
@@ -341,7 +370,7 @@ export default function ScrambleGame({
       >
         <div className="flex flex-col gap-4">
 
-          {/* معلومات الشخصية + المؤقت */}
+          {/* معلومات الشخصية */}
           <div className="flex flex-wrap items-center justify-center gap-2">
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
               الشخصية{" "}
@@ -411,6 +440,7 @@ export default function ScrambleGame({
 
           {/* الأزرار */}
           <div className="flex flex-wrap justify-center gap-3">
+
             {!started &&
               !revealed && (
                 <button
@@ -443,8 +473,8 @@ export default function ScrambleGame({
                 }
                 className="btn-primary min-w-[170px]"
               >
-                {isLastRound
-                  ? "إنهاء اللعبة"
+                {isLastCharacter
+                  ? "إنهاء الجولة"
                   : "التالي"}
               </button>
             )}
