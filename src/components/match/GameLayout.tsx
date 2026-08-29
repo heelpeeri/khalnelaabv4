@@ -13,18 +13,8 @@ type GameLayoutProps = {
   side1Score: number;
   side2Score: number;
 
-  /*
-    اسم الفريق الحالي.
-    مثال:
-    "فريق 1"
-    "الصقور"
-  */
   turn: string;
 
-  /*
-    الأفضل تمريره من كل لعبة.
-    هذا اللي يحدد اللون بشكل مضمون.
-  */
   turnSide?: TeamSide;
 
   currentRound?: number;
@@ -62,12 +52,6 @@ export default function GameLayout({
   const cleanSide1 = normalizeTeamName(side1);
   const cleanSide2 = normalizeTeamName(side2);
 
-  /*
-    إذا اللعبة أرسلت turnSide نستخدمه مباشرة.
-
-    إذا ما أرسلته، نحاول نعرف الفريق
-    من الاسم عشان الألعاب القديمة ما تنكسر.
-  */
   const detectedSide: TeamSide | null =
     turnSide ??
     (cleanTurn === cleanSide1 ||
