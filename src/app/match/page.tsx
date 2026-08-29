@@ -273,7 +273,7 @@ function RoundResultOverlay({
 
         <p className="arcade-winner mt-6">
           {isDraw
-            ? "ما أحد أخذ نقطة الجولة"
+            ? "محد أخذ نقطة الجولة"
             : `فاز بالجولة: ${winnerName}`}
         </p>
       </div>
