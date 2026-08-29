@@ -34,10 +34,6 @@ function shuffleArray<T>(items: T[]) {
   return array;
 }
 
-/*
-  نفس تصميم RoundWinnerPicker
-  لكن مخصص لتحكيم إجابة السؤال.
-*/
 function AnswerJudgeModal({
   show,
   side1Name,
@@ -217,10 +213,6 @@ export default function QuizGame({
   const currentOptions =
     current?.options ?? [];
 
-  /*
-    الفريق الأساسي يتغير
-    مع كل سؤال.
-  */
   const mainTurn: TeamSide =
     useMemo(
       () =>
@@ -230,10 +222,6 @@ export default function QuizGame({
       [index]
     );
 
-  /*
-    إذا ضاعت فرصة الفريق الأساسي
-    تنتقل الفرصة للفريق الثاني.
-  */
   const activeTurn: TeamSide =
     secondTurn
       ? mainTurn === "side1"
@@ -267,10 +255,7 @@ export default function QuizGame({
     }
 
     if (timeLeft <= 0) {
-      /*
-        انتهى وقت الفريق الأساسي:
-        نعطي الفريق الثاني 10 ثواني.
-      */
+   
       if (!secondTurn) {
         setSecondTurn(true);
 
@@ -278,10 +263,7 @@ export default function QuizGame({
 
         setShowOptions(false);
       } else {
-        /*
-          انتهى وقت الفريقين:
-          نظهر الإجابة.
-        */
+   
         setShowAnswer(true);
       }
 
@@ -317,10 +299,6 @@ export default function QuizGame({
     }
   }
 
-  /*
-    بعد السؤال الأخير نحسب
-    الفائز النهائي من النقاط.
-  */
   function finishQuiz(
     final1: number,
     final2: number
@@ -338,10 +316,6 @@ export default function QuizGame({
     onRoundEnd("none");
   }
 
-  /*
-    الانتقال للسؤال التالي
-    بعد اختيار من جاوب صح.
-  */
   function nextQuestion(
     next1: number,
     next2: number
@@ -372,9 +346,6 @@ export default function QuizGame({
     setTimeLeft(timerSeconds);
   }
 
-  /*
-    تسجيل نتيجة السؤال.
-  */
   function givePoint(
     winner:
       | "side1"
@@ -569,10 +540,7 @@ export default function QuizGame({
                 </button>
               </>
             ) : (
-              /*
-                بعد ظهور الإجابة:
-                نفتح شاشة التحكيم.
-              */
+          
               <button
                 type="button"
                 onClick={() =>
