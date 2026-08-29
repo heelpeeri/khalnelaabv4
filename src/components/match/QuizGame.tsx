@@ -21,9 +21,7 @@ function shuffleArray<T>(items: T[]) {
   const array = [...items];
 
   for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(
-      Math.random() * (i + 1)
-    );
+    const j = Math.floor(Math.random() * (i + 1));
 
     [array[i], array[j]] = [
       array[j],
@@ -32,6 +30,66 @@ function shuffleArray<T>(items: T[]) {
   }
 
   return array;
+}
+
+function AnswerJudgeModal({
+  open,
+  side1Name,
+  side2Name,
+  onSelect,
+}: {
+  open: boolean;
+  side1Name: string;
+  side2Name: string;
+  onSelect: (
+    winner: "side1" | "side2" | "none"
+  ) => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-[30px] border border-white/15 bg-[#16102f]/95 p-6 text-center shadow-[0_25px_80px_rgba(0,0,0,0.55)] sm:p-7">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-purple-300/20 bg-purple-500/15 text-3xl">
+          ✓
+        </div>
+
+        <h3 className="mt-4 text-2xl font-black text-white sm:text-3xl">
+          من جاوب صح؟
+        </h3>
+
+        <p className="mt-2 text-sm font-bold text-white/50">
+          اختر الفريق اللي جاوب الإجابة الصحيحة
+        </p>
+
+        <div className="mt-6 space-y-3">
+          <button
+            type="button"
+            onClick={() => onSelect("side1")}
+            className="w-full rounded-2xl border border-fuchsia-300/40 bg-gradient-to-r from-fuchsia-500/20 to-pink-500/15 px-5 py-4 text-lg font-black text-fuchsia-50 transition hover:scale-[1.01] hover:bg-fuchsia-500/25 active:scale-[0.99]"
+          >
+            {side1Name || "فريق 1"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onSelect("side2")}
+            className="w-full rounded-2xl border border-cyan-300/40 bg-gradient-to-r from-cyan-400/20 to-blue-500/15 px-5 py-4 text-lg font-black text-cyan-50 transition hover:scale-[1.01] hover:bg-cyan-400/25 active:scale-[0.99]"
+          >
+            {side2Name || "فريق 2"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onSelect("none")}
+            className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-lg font-black text-white/70 transition hover:bg-white/10 active:scale-[0.99]"
+          >
+            لا أحد
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function QuizGame({
@@ -81,6 +139,11 @@ export default function QuizGame({
     setSecondTurn,
   ] = useState(false);
 
+  const [
+    showJudge,
+    setShowJudge,
+  ] = useState(false);
+
   const [timeLeft, setTimeLeft] =
     useState(timerSeconds);
 
@@ -123,6 +186,7 @@ export default function QuizGame({
     setShowAnswer(false);
     setShowOptions(false);
     setSecondTurn(false);
+    setShowJudge(false);
 
     setTimeLeft(timerSeconds);
 
@@ -147,10 +211,6 @@ export default function QuizGame({
   const currentOptions =
     current?.options ?? [];
 
-  /*
-    الفريق الأساسي يتغير
-    مع كل سؤال.
-  */
   const mainTurn: TeamSide =
     useMemo(
       () =>
@@ -160,10 +220,6 @@ export default function QuizGame({
       [index]
     );
 
-  /*
-    إذا ضاعت فرصة الفريق الأول
-    تنتقل الفرصة للفريق الثاني.
-  */
   const activeTurn: TeamSide =
     secondTurn
       ? mainTurn === "side1"
@@ -190,26 +246,18 @@ export default function QuizGame({
     if (
       !timerEnabled ||
       showAnswer ||
-      !current
+      !current ||
+      showJudge
     ) {
       return;
     }
 
     if (timeLeft <= 0) {
-      /*
-        انتهى وقت الفريق الأساسي:
-        نعطي الفريق الثاني 10 ثواني.
-      */
       if (!secondTurn) {
         setSecondTurn(true);
-
         setTimeLeft(SECOND_TIME);
-
         setShowOptions(false);
       } else {
-        /*
-          انتهى وقت الفريقين.
-        */
         setShowAnswer(true);
       }
 
@@ -230,6 +278,7 @@ export default function QuizGame({
     secondTurn,
     current,
     timerEnabled,
+    showJudge,
   ]);
 
   function useHint() {
@@ -244,17 +293,36 @@ export default function QuizGame({
     }
   }
 
-  function nextQuestion() {
-    /*
-      إذا كان هذا آخر سؤال:
-      ننهي الجولة بدون إرسال فائز،
-      عشان تظهر شاشة "من فاز؟"
-    */
+  function finishQuiz(
+    final1: number,
+    final2: number
+  ) {
+    if (final1 > final2) {
+      onRoundEnd("side1");
+      return;
+    }
+
+    if (final2 > final1) {
+      onRoundEnd("side2");
+      return;
+    }
+
+    onRoundEnd("none");
+  }
+
+  function nextQuestion(
+    next1: number,
+    next2: number
+  ) {
     if (
       index + 1 >=
       questions.length
     ) {
-      onRoundEnd();
+      finishQuiz(
+        next1,
+        next2
+      );
+
       return;
     }
 
@@ -265,8 +333,8 @@ export default function QuizGame({
 
     setShowAnswer(false);
     setShowOptions(false);
-
     setSecondTurn(false);
+    setShowJudge(false);
 
     setTimeLeft(timerSeconds);
   }
@@ -292,7 +360,12 @@ export default function QuizGame({
     setSide1Score(next1);
     setSide2Score(next2);
 
-    nextQuestion();
+    setShowJudge(false);
+
+    nextQuestion(
+      next1,
+      next2
+    );
   }
 
   if (!category) {
@@ -330,174 +403,155 @@ export default function QuizGame({
         ? "text-yellow-300"
         : "text-cyan-300";
 
+  const isLastQuestion =
+    index + 1 >= questions.length;
+
   return (
-    <GameLayout
-      title={`${meta?.emoji ?? "❓"} ${
-        meta?.title ?? "كويز"
-      }`}
-      side1={
-        side1Name || "فريق 1"
-      }
-      side2={
-        side2Name || "فريق 2"
-      }
-      side1Score={side1Score}
-      side2Score={side2Score}
-      turn={activeTeamName}
-      turnSide={activeTurn}
-      currentRound={currentRound}
-    >
-      <div className="flex flex-col gap-4">
+    <>
+      <GameLayout
+        title={`${meta?.emoji ?? "❓"} ${
+          meta?.title ?? "كويز"
+        }`}
+        side1={
+          side1Name || "فريق 1"
+        }
+        side2={
+          side2Name || "فريق 2"
+        }
+        side1Score={side1Score}
+        side2Score={side2Score}
+        turn={activeTeamName}
+        turnSide={activeTurn}
+        currentRound={currentRound}
+      >
+        <div className="flex flex-col gap-4">
 
-        {/* معلومات السؤال */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
+          {/* معلومات السؤال */}
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
+              السؤال{" "}
+              <span className="text-white">
+                {index + 1}
+              </span>
+              {" / "}
+              {questions.length}
+            </div>
 
-          <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
-            السؤال{" "}
-            <span className="text-white">
-              {index + 1}
-            </span>
-            {" / "}
-            {questions.length}
-          </div>
-
-          {secondTurn &&
-            !showAnswer && (
-              <div className="rounded-full border border-yellow-300/25 bg-yellow-400/10 px-4 py-2 text-sm font-bold text-yellow-100">
-                فرصة ثانية
-              </div>
-            )}
-
-          {timerEnabled &&
-            !showAnswer && (
-              <div
-                className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 text-lg font-black ${timerColor}`}
-              >
-                ⏱️ {timeLeft}
-              </div>
-            )}
-        </div>
-
-        {/* السؤال */}
-        <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 sm:p-6">
-
-          {current.image && (
-            <img
-              src={current.image}
-              alt={current.question}
-              className="mx-auto mb-5 max-h-[260px] w-full rounded-2xl object-contain"
-            />
-          )}
-
-          <p className="text-xl font-black leading-relaxed text-white sm:text-2xl">
-            {current.question}
-          </p>
-
-          {/* الخيارات */}
-          {showOptions &&
-            currentOptions.length >
-              0 && (
-              <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {currentOptions.map(
-                  (option) => (
-                    <div
-                      key={option}
-                      className="rounded-2xl border border-white/10 bg-black/20 p-4 text-base font-bold text-white sm:text-lg"
-                    >
-                      {option}
-                    </div>
-                  )
-                )}
-              </div>
-            )}
-        </div>
-
-        {/* الإجابة */}
-        {showAnswer && (
-          <div className="rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5">
-            <p className="text-sm font-bold text-white/60">
-              الإجابة
-            </p>
-
-            <p className="mt-2 text-xl font-black text-yellow-100">
-              {current.answer}
-            </p>
-          </div>
-        )}
-
-        {/* Actions */}
-        <div className="flex flex-wrap items-center justify-center gap-3">
-
-          {!showAnswer ? (
-            <>
-              {/* Hint */}
-              {currentOptions.length >
-                0 && (
-                <button
-                  type="button"
-                  onClick={useHint}
-                  disabled={!canUseHint}
-                  className="btn-secondary disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {activeTeamUsedHint
-                    ? "المساعدة استخدمت"
-                    : showOptions
-                      ? "الخيارات ظاهرة"
-                      : "💡 إظهار الخيارات"}
-                </button>
+            {secondTurn &&
+              !showAnswer && (
+                <div className="rounded-full border border-yellow-300/25 bg-yellow-400/10 px-4 py-2 text-sm font-bold text-yellow-100">
+                  فرصة ثانية
+                </div>
               )}
 
-              {/* Show answer */}
-              <button
-                type="button"
-                onClick={() =>
-                  setShowAnswer(true)
-                }
-                className="btn-primary"
-              >
-                إظهار الإجابة
-              </button>
-            </>
-          ) : (
-            <>
-              {/* Point team 1 */}
-              <button
-                type="button"
-                onClick={() =>
-                  givePoint("side1")
-                }
-                className="btn-primary"
-              >
-                {side1Name ||
-                  "فريق 1"}
-              </button>
+            {timerEnabled &&
+              !showAnswer && (
+                <div
+                  className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 text-lg font-black ${timerColor}`}
+                >
+                  ⏱️ {timeLeft}
+                </div>
+              )}
+          </div>
 
-              {/* Point team 2 */}
-              <button
-                type="button"
-                onClick={() =>
-                  givePoint("side2")
-                }
-                className="btn-primary"
-              >
-                {side2Name ||
-                  "فريق 2"}
-              </button>
+          {/* السؤال */}
+          <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 sm:p-6">
+            {current.image && (
+              <img
+                src={current.image}
+                alt={current.question}
+                className="mx-auto mb-5 max-h-[260px] w-full rounded-2xl object-contain"
+              />
+            )}
 
-              {/* Nobody */}
-              <button
-                type="button"
-                onClick={() =>
-                  givePoint("none")
-                }
-                className="btn-secondary"
-              >
-                لا أحد
-              </button>
-            </>
+            <p className="text-xl font-black leading-relaxed text-white sm:text-2xl">
+              {current.question}
+            </p>
+
+            {/* الخيارات */}
+            {showOptions &&
+              currentOptions.length > 0 && (
+                <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {currentOptions.map(
+                    (option) => (
+                      <div
+                        key={option}
+                        className="rounded-2xl border border-white/10 bg-black/20 p-4 text-base font-bold text-white sm:text-lg"
+                      >
+                        {option}
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
+          </div>
+
+          {/* الإجابة */}
+          {showAnswer && (
+            <div className="rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5">
+              <p className="text-sm font-bold text-white/60">
+                الإجابة
+              </p>
+
+              <p className="mt-2 text-xl font-black text-yellow-100">
+                {current.answer}
+              </p>
+            </div>
           )}
+
+          {/* Actions */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {!showAnswer ? (
+              <>
+                {currentOptions.length >
+                  0 && (
+                  <button
+                    type="button"
+                    onClick={useHint}
+                    disabled={!canUseHint}
+                    className="btn-secondary disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    {activeTeamUsedHint
+                      ? "المساعدة استخدمت"
+                      : showOptions
+                        ? "الخيارات ظاهرة"
+                        : "💡 إظهار الخيارات"}
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowAnswer(true)
+                  }
+                  className="btn-primary"
+                >
+                  إظهار الإجابة
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() =>
+                  setShowJudge(true)
+                }
+                className="btn-primary min-w-[160px]"
+              >
+                {isLastQuestion
+                  ? "إنهاء الكويز"
+                  : "السؤال التالي"}
+              </button>
+            )}
+          </div>
         </div>
-      </div>
-    </GameLayout>
+      </GameLayout>
+
+      <AnswerJudgeModal
+        open={showJudge}
+        side1Name={side1Name}
+        side2Name={side2Name}
+        onSelect={givePoint}
+      />
+    </>
   );
 }
