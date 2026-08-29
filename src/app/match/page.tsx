@@ -71,9 +71,6 @@ function getGameName(game: GameType) {
   }
 }
 
-/*
-  نتيجة اللعبة / الجلسة كاملة
-*/
 function WinnerOverlay({
   show,
   winnerName,
@@ -134,9 +131,6 @@ function WinnerOverlay({
   );
 }
 
-/*
-  العد التنازلي قبل بداية اللعب
-*/
 function CountdownOverlay({
   countdown,
 }: {
@@ -157,9 +151,6 @@ function CountdownOverlay({
   );
 }
 
-/*
-  الانتقال للجولة التالية
-*/
 function TransitionOverlay({
   nextRound,
 }: {
@@ -184,10 +175,6 @@ function TransitionOverlay({
   );
 }
 
-/*
-  شاشة التحكيم للألعاب
-  اللي ما تعرف الفائز بنفسها
-*/
 function RoundWinnerPicker({
   show,
   side1Name,
@@ -246,9 +233,6 @@ function RoundWinnerPicker({
   );
 }
 
-/*
-  نتيجة الجولة قبل الانتقال للجولة التالية
-*/
 function RoundResultOverlay({
   show,
   winnerName,
@@ -353,9 +337,7 @@ export default function MatchPage() {
     setShowRoundWinnerPicker,
   ] = useState(false);
 
-  /*
-    نتيجة الجولة الحالية
-  */
+  
   const [
     showRoundResult,
     setShowRoundResult,
@@ -442,9 +424,7 @@ export default function MatchPage() {
     setPhase("countdown");
   }
 
-  /*
-    Countdown
-  */
+ 
   useEffect(() => {
     if (phase !== "countdown") {
       return;
@@ -475,9 +455,6 @@ export default function MatchPage() {
     countdown,
   ]);
 
-  /*
-    Quick mode / URL
-  */
   useEffect(() => {
     const params =
       new URLSearchParams(
@@ -570,9 +547,6 @@ export default function MatchPage() {
     setRoundResultWinner("none");
   }, []);
 
-  /*
-    نهاية اللعبة / الجلسة
-  */
   function finishSession(
     finalSide1Score: number,
     finalSide2Score: number
@@ -595,9 +569,6 @@ export default function MatchPage() {
     setShowWinner(true);
   }
 
-  /*
-    الانتقال للجولة التالية
-  */
   function goToNextRound(
     nextSide1Score: number,
     nextSide2Score: number
@@ -625,10 +596,7 @@ export default function MatchPage() {
       setPhase("playing");
     }, 1500);
   }
-
-  /*
-    اعتماد فائز الجولة
-  */
+  
   function applyRoundWinner(
     winner?: WinnerType
   ) {
@@ -659,11 +627,6 @@ export default function MatchPage() {
       false
     );
 
-    /*
-      إذا هذه آخر جولة،
-      ما نحتاج نتيجة جولة منفصلة.
-      نعرض نتيجة اللعبة النهائية مباشرة.
-    */
     if (
       index + 1 >=
       queue.length
@@ -675,11 +638,7 @@ export default function MatchPage() {
 
       return;
     }
-
-    /*
-      فيه جولة بعدها:
-      نعرض مين فاز بالجولة الحالية.
-    */
+    
     setRoundResultWinner(
       finalWinner
     );
@@ -696,17 +655,6 @@ export default function MatchPage() {
     }, 2500);
   }
 
-  /*
-    نهاية الجولة.
-
-    القاعدة الجديدة:
-
-    إذا اللعبة أرسلت فائز:
-    نعتمد النتيجة مباشرة.
-
-    إذا ما أرسلت فائز:
-    نظهر شاشة "من فاز؟".
-  */
   function endRound(
     winner?: WinnerType
   ) {
@@ -792,9 +740,6 @@ export default function MatchPage() {
   const isDraw =
     side1Score === side2Score;
 
-  /*
-    اسم فائز الجولة الحالية
-  */
   const roundWinnerName =
     roundResultWinner === "side1"
       ? side1 || "فريق 1"
