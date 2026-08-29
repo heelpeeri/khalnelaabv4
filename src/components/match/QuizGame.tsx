@@ -245,21 +245,11 @@ export default function QuizGame({
   }
 
   function finishQuiz(
-    final1: number,
-    final2: number
-  ) {
-    if (final1 > final2) {
-      onRoundEnd("side1");
-      return;
-    }
-
-    if (final2 > final1) {
-      onRoundEnd("side2");
-      return;
-    }
-
-    onRoundEnd("none");
-  }
+  final1: number,
+  final2: number
+) {
+  onRoundEnd();
+}
 
   function nextQuestion(
     next1: number,
