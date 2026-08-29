@@ -5,11 +5,7 @@ import GameLayout from "@/components/match/GameLayout";
 import { WHO_GAME } from "@/data/scramble";
 import type { WinnerType } from "@/types/game";
 
-/*
-  كل جولة:
-  شخصية لفريق 1
-  وشخصية لفريق 2
-*/
+
 const TOTAL_ROUNDS = 2;
 
 type TeamSide = "side1" | "side2";
@@ -29,10 +25,6 @@ function shuffleArray<T>(items: T[]) {
   return array;
 }
 
-/*
-  شاشة تحكيم التخمين
-  بنفس ستايل الـ arcade عندك.
-*/
 function GuessJudgeModal({
   show,
   onCorrect,
@@ -128,10 +120,6 @@ export default function ScrambleGame({
     setOrigin(window.location.origin);
   }, []);
 
-  /*
-    كل roundKey جديد:
-    نختار شخصيتين جديدتين فقط.
-  */
   useEffect(() => {
     const selected = shuffleArray(
       WHO_GAME
@@ -157,10 +145,6 @@ export default function ScrambleGame({
   const current =
     rounds[index];
 
-  /*
-    الشخصية الأولى = فريق 1
-    الشخصية الثانية = فريق 2
-  */
   const activeSide: TeamSide =
     useMemo(
       () =>
@@ -180,9 +164,6 @@ export default function ScrambleGame({
       ? `${origin}/person/${current.id}`
       : "";
 
-  /*
-    المؤقت
-  */
   useEffect(() => {
     if (
       !timerEnabled ||
@@ -221,9 +202,6 @@ export default function ScrambleGame({
     setTimeLeft(timerSeconds);
   }
 
-  /*
-    اللعبة تعرف الفائز بنفسها.
-  */
   function finishGame(
     final1: number,
     final2: number
@@ -241,11 +219,6 @@ export default function ScrambleGame({
     onRoundEnd("none");
   }
 
-  /*
-    بعد نتيجة الشخصية:
-    إما ننتقل للشخصية الثانية
-    أو ننهي الجولة.
-  */
   function goNext(
     next1: number,
     next2: number
@@ -274,9 +247,6 @@ export default function ScrambleGame({
     setTimeLeft(timerSeconds);
   }
 
-  /*
-    تسجيل نتيجة المحاولة.
-  */
   function givePoint(
     winner:
       | "side1"
@@ -306,18 +276,10 @@ export default function ScrambleGame({
     );
   }
 
-  /*
-    إذا التخمين صحيح:
-    النقطة تروح للفريق الحالي.
-  */
   function markCorrect() {
     givePoint(activeSide);
   }
 
-  /*
-    إذا التخمين غير صحيح:
-    بدون نقطة.
-  */
   function markWrong() {
     givePoint("none");
   }
