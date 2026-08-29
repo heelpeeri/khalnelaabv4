@@ -52,12 +52,12 @@ function ProverbWinnerModal({
         </p>
 
         <h1 className="arcade-title mt-5">
-          من فاز؟ 🏆
-        </h1>
+  من جاوب صح؟ ✅
+</h1>
 
-        <p className="mt-3 text-lg font-bold text-white/70">
-          اختر الفائز في هذا المثل
-        </p>
+<p className="mt-3 text-lg font-bold text-white/70">
+  اختر الفريق اللي جاوب الإجابة الصحيحة
+</p>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <button
