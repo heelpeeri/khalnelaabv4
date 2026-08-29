@@ -52,11 +52,13 @@ function evaluateGuess(
     if (letter === answerLetters[index]) {
       result[index] = "correct";
     } else {
-      const answerLetter = answerLetters[index];
+      const answerLetter =
+        answerLetters[index];
 
       if (answerLetter) {
         remainingLetters[answerLetter] =
-          (remainingLetters[answerLetter] ?? 0) + 1;
+          (remainingLetters[answerLetter] ??
+            0) + 1;
       }
     }
   });
@@ -72,6 +74,7 @@ function evaluateGuess(
 
     if (remainingCount > 0) {
       result[index] = "present";
+
       remainingLetters[letter] =
         remainingCount - 1;
     }
@@ -169,7 +172,8 @@ export default function WordGame({
   timerEnabled?: boolean;
   timerSeconds?: number;
 }) {
-  const [answer, setAnswer] = useState("");
+  const [answer, setAnswer] =
+    useState("");
 
   const [guesses, setGuesses] =
     useState<string[]>([]);
@@ -238,7 +242,8 @@ export default function WordGame({
       );
     }, 1000);
 
-    return () => clearTimeout(timer);
+    return () =>
+      clearTimeout(timer);
   }, [
     timerEnabled,
     timeLeft,
@@ -263,7 +268,9 @@ export default function WordGame({
     const fiveLetterWords =
       getFiveLetterWords();
 
-    if (fiveLetterWords.length === 0) {
+    if (
+      fiveLetterWords.length === 0
+    ) {
       setAnswer("");
 
       setFeedback(
@@ -396,7 +403,9 @@ export default function WordGame({
           return;
         }
 
-        if (newState === "correct") {
+        if (
+          newState === "correct"
+        ) {
           nextKeyStatus[
             normalizedLetter
           ] = "correct";
@@ -410,7 +419,9 @@ export default function WordGame({
           return;
         }
 
-        if (newState === "present") {
+        if (
+          newState === "present"
+        ) {
           nextKeyStatus[
             normalizedLetter
           ] = "present";
@@ -432,6 +443,9 @@ export default function WordGame({
 
     setCurrent("");
 
+    /*
+      أحد الفريقين عرف الكلمة.
+    */
     if (
       guess === normalizedAnswer
     ) {
@@ -448,6 +462,13 @@ export default function WordGame({
       return;
     }
 
+    /*
+      انتهت كل المحاولات.
+
+      مهم:
+      ما ننهي الجولة تلقائيًا.
+      نخلي الحل ظاهر للاعبين أولاً.
+    */
     if (
       nextGuesses.length >=
       MAX_TRIES
@@ -455,12 +476,8 @@ export default function WordGame({
       setStatus("lost");
 
       setFeedback(
-        `انتهت المحاولات — الكلمة: ${answer}`
+        "انتهت المحاولات"
       );
-
-      setTimeout(() => {
-        onRoundEnd("none");
-      }, 700);
 
       return;
     }
@@ -529,7 +546,9 @@ export default function WordGame({
             );
 
           const isAlreadyUsed =
-            Boolean(keyStatus[letter]);
+            Boolean(
+              keyStatus[letter]
+            );
 
           const isInCurrentGuess =
             current
@@ -574,7 +593,9 @@ export default function WordGame({
       ]
     );
 
-    if (activeSide === "side1") {
+    if (
+      activeSide === "side1"
+    ) {
       setSide1HintUsed(true);
     } else {
       setSide2HintUsed(true);
@@ -588,7 +609,9 @@ export default function WordGame({
   function handleKeyboardClick(
     key: string
   ) {
-    if (status !== "playing") {
+    if (
+      status !== "playing"
+    ) {
       return;
     }
 
@@ -611,13 +634,15 @@ export default function WordGame({
     }
 
     if (
-      current.length >= WORD_LENGTH
+      current.length >=
+      WORD_LENGTH
     ) {
       return;
     }
 
     setCurrent(
-      (previous) => previous + key
+      (previous) =>
+        previous + key
     );
   }
 
@@ -634,11 +659,15 @@ export default function WordGame({
     const state =
       evaluation[index];
 
-    if (state === "correct") {
+    if (
+      state === "correct"
+    ) {
       return "bg-green-500 border-green-400 text-white";
     }
 
-    if (state === "present") {
+    if (
+      state === "present"
+    ) {
       return "bg-yellow-400 border-yellow-300 text-black";
     }
 
@@ -663,15 +692,21 @@ export default function WordGame({
       return "border-red-500/20 bg-red-950/40 text-white/20 line-through";
     }
 
-    if (state === "correct") {
+    if (
+      state === "correct"
+    ) {
       return "bg-green-500 border-green-400 text-white";
     }
 
-    if (state === "present") {
+    if (
+      state === "present"
+    ) {
       return "bg-yellow-400 border-yellow-300 text-black";
     }
 
-    if (state === "absent") {
+    if (
+      state === "absent"
+    ) {
       return "bg-[#2f3750] border-[#4b5676] text-white/25";
     }
 
@@ -712,7 +747,8 @@ export default function WordGame({
         : "text-cyan-300";
 
   const routineFeedback =
-    feedback === "ابدأ التخمين" ||
+    feedback ===
+      "ابدأ التخمين" ||
     feedback.startsWith(
       "الدور على "
     );
@@ -770,13 +806,15 @@ export default function WordGame({
               طريقة اللعب
             </button>
 
-            {timerEnabled && (
-              <span
-                className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 font-black ${timerColor}`}
-              >
-                ⏱️ {timeLeft}
-              </span>
-            )}
+            {timerEnabled &&
+              status ===
+                "playing" && (
+                <span
+                  className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 font-black ${timerColor}`}
+                >
+                  ⏱️ {timeLeft}
+                </span>
+              )}
           </div>
 
           {/* الرسائل المهمة فقط */}
@@ -789,11 +827,15 @@ export default function WordGame({
           {/* مربعات التخمين */}
           <div className="flex justify-center py-2">
             <div className="space-y-1.5">
-
               {guesses.map(
-                (guess, rowIndex) => (
+                (
+                  guess,
+                  rowIndex
+                ) => (
                   <div
-                    key={rowIndex}
+                    key={
+                      rowIndex
+                    }
                     className="flex justify-center gap-1.5"
                   >
                     {Array.from(
@@ -821,9 +863,13 @@ export default function WordGame({
               )}
 
               {Array.from({
-                length: remainingRows,
+                length:
+                  remainingRows,
               }).map(
-                (_, rowIndex) => (
+                (
+                  _,
+                  rowIndex
+                ) => (
                   <div
                     key={`empty-${rowIndex}`}
                     className="flex justify-center gap-1.5"
@@ -869,12 +915,30 @@ export default function WordGame({
             </div>
           </div>
 
+          {/* تظهر الإجابة إذا انتهت المحاولات */}
+          {status === "lost" && (
+            <div className="mx-auto mt-3 w-full max-w-md rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5 text-center shadow-[0_0_24px_rgba(253,224,71,0.08)]">
+              <p className="text-sm font-bold text-white/60">
+                الكلمة الصحيحة
+              </p>
+
+              <p className="mt-2 text-3xl font-black text-yellow-100">
+                {answer}
+              </p>
+            </div>
+          )}
+
           {/* الكيبورد */}
           <div className="mt-2 space-y-1.5">
             {keyboardRows.map(
-              (row, rowIndex) => (
+              (
+                row,
+                rowIndex
+              ) => (
                 <div
-                  key={rowIndex}
+                  key={
+                    rowIndex
+                  }
                   className={`flex justify-center gap-1.5 ${
                     rowIndex === 1
                       ? "mr-2 sm:mr-4"
@@ -886,25 +950,29 @@ export default function WordGame({
                 >
                   {row
                     .split("")
-                    .map((key) => (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() =>
-                          handleKeyboardClick(
+                    .map(
+                      (key) => (
+                        <button
+                          key={
                             key
-                          )
-                        }
-                        disabled={isKeyDisabled(
-                          key
-                        )}
-                        className={`h-9 min-w-[34px] rounded-lg border px-1 text-sm font-bold transition active:scale-95 disabled:cursor-not-allowed sm:h-10 sm:min-w-[38px] sm:text-base ${getKeyColor(
-                          key
-                        )}`}
-                      >
-                        {key}
-                      </button>
-                    ))}
+                          }
+                          type="button"
+                          onClick={() =>
+                            handleKeyboardClick(
+                              key
+                            )
+                          }
+                          disabled={isKeyDisabled(
+                            key
+                          )}
+                          className={`h-9 min-w-[34px] rounded-lg border px-1 text-sm font-bold transition active:scale-95 disabled:cursor-not-allowed sm:h-10 sm:min-w-[38px] sm:text-base ${getKeyColor(
+                            key
+                          )}`}
+                        >
+                          {key}
+                        </button>
+                      )
+                    )}
                 </div>
               )
             )}
@@ -913,62 +981,85 @@ export default function WordGame({
           {/* الأزرار */}
           <div className="mt-2 flex flex-wrap justify-center gap-2">
 
-            <button
-              type="button"
-              onClick={() =>
-                setCurrent(
-                  (previous) =>
-                    previous.slice(
-                      0,
-                      -1
+            {status ===
+              "playing" && (
+              <>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrent(
+                      (
+                        previous
+                      ) =>
+                        previous.slice(
+                          0,
+                          -1
+                        )
                     )
-                )
-              }
-              disabled={
-                status !== "playing" ||
-                current.length === 0
-              }
-              className="h-10 min-w-[90px] rounded-xl border border-white/10 bg-[#2a2f45] px-4 text-sm font-bold text-white transition hover:bg-[#343a56] disabled:opacity-40"
-            >
-              حذف
-            </button>
+                  }
+                  disabled={
+                    current.length ===
+                    0
+                  }
+                  className="h-10 min-w-[90px] rounded-xl border border-white/10 bg-[#2a2f45] px-4 text-sm font-bold text-white transition hover:bg-[#343a56] disabled:opacity-40"
+                >
+                  حذف
+                </button>
 
-            <button
-              type="button"
-              onClick={submitGuess}
-              disabled={
-                status !== "playing" ||
-                current.length !==
-                  WORD_LENGTH
-              }
-              className="h-10 min-w-[90px] rounded-xl bg-gradient-to-r from-orange-400 to-pink-500 px-4 text-sm font-bold text-white transition hover:scale-[1.02] disabled:opacity-40"
-            >
-              إدخال
-            </button>
+                <button
+                  type="button"
+                  onClick={
+                    submitGuess
+                  }
+                  disabled={
+                    current.length !==
+                    WORD_LENGTH
+                  }
+                  className="h-10 min-w-[90px] rounded-xl bg-gradient-to-r from-orange-400 to-pink-500 px-4 text-sm font-bold text-white transition hover:scale-[1.02] disabled:opacity-40"
+                >
+                  إدخال
+                </button>
 
-            <button
-              type="button"
-              onClick={useHint}
-              disabled={
-                status !== "playing" ||
-                activeTeamHintUsed
-              }
-              className="h-10 min-w-[125px] rounded-xl border border-yellow-300/30 bg-yellow-400/10 px-4 text-sm font-bold text-yellow-100 transition hover:bg-yellow-400/20 disabled:opacity-40"
-            >
-              {activeTeamHintUsed
-                ? "المساعدة استخدمت"
-                : "💡 حذف حرف"}
-            </button>
+                <button
+                  type="button"
+                  onClick={useHint}
+                  disabled={
+                    activeTeamHintUsed
+                  }
+                  className="h-10 min-w-[125px] rounded-xl border border-yellow-300/30 bg-yellow-400/10 px-4 text-sm font-bold text-yellow-100 transition hover:bg-yellow-400/20 disabled:opacity-40"
+                >
+                  {activeTeamHintUsed
+                    ? "المساعدة استخدمت"
+                    : "💡 حذف حرف"}
+                </button>
 
-            <button
-              type="button"
-              onClick={() =>
-                onRoundEnd()
-              }
-              className="h-10 min-w-[105px] rounded-xl border border-white/10 bg-[#4c2b7a] px-4 text-sm font-bold text-white transition hover:bg-[#5a3392]"
-            >
-              إنهاء الجولة
-            </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    onRoundEnd()
+                  }
+                  className="h-10 min-w-[105px] rounded-xl border border-white/10 bg-[#4c2b7a] px-4 text-sm font-bold text-white transition hover:bg-[#5a3392]"
+                >
+                  إنهاء الجولة
+                </button>
+              </>
+            )}
+
+            {/* بعد خسارة الجميع */}
+            {status ===
+              "lost" && (
+              <button
+                type="button"
+                onClick={() =>
+                  onRoundEnd(
+                    "none"
+                  )
+                }
+                className="btn-primary min-w-[150px]"
+              >
+                إنهاء الجولة
+              </button>
+            )}
           </div>
         </div>
       </GameLayout>
