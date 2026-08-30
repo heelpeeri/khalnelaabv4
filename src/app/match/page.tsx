@@ -97,6 +97,78 @@ function getRoundsLabel(count: number) {
   return `${count} جولات`;
 }
 
+function drawRoundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) {
+  const r = Math.min(
+    radius,
+    width / 2,
+    height / 2
+  );
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x + r,
+    y
+  );
+
+  ctx.lineTo(
+    x + width - r,
+    y
+  );
+
+  ctx.quadraticCurveTo(
+    x + width,
+    y,
+    x + width,
+    y + r
+  );
+
+  ctx.lineTo(
+    x + width,
+    y + height - r
+  );
+
+  ctx.quadraticCurveTo(
+    x + width,
+    y + height,
+    x + width - r,
+    y + height
+  );
+
+  ctx.lineTo(
+    x + r,
+    y + height
+  );
+
+  ctx.quadraticCurveTo(
+    x,
+    y + height,
+    x,
+    y + height - r
+  );
+
+  ctx.lineTo(
+    x,
+    y + r
+  );
+
+  ctx.quadraticCurveTo(
+    x,
+    y,
+    x + r,
+    y
+  );
+
+  ctx.closePath();
+}
+
 function WinnerOverlay({
   show,
   winnerName,
@@ -126,58 +198,83 @@ function WinnerOverlay({
 }) {
   if (!show) return null;
 
-  const totalDraws = roundStats.filter(
-    (stat) => stat.winner === "none"
-  ).length;
+  const totalDraws =
+    roundStats.filter(
+      (stat) =>
+        stat.winner === "none"
+    ).length;
 
-  /*
-    نجمع نتائج الجولات حسب اللعبة.
-  */
-  const gameStats = roundStats.reduce<GameStat[]>(
-    (result, stat) => {
-      const existing = result.find(
-        (item) => item.game === stat.game
-      );
+  const gameStats =
+    roundStats.reduce<GameStat[]>(
+      (result, stat) => {
+        const existing =
+          result.find(
+            (item) =>
+              item.game === stat.game
+          );
 
-      if (existing) {
-        existing.total += 1;
+        if (existing) {
+          existing.total += 1;
 
-        if (stat.winner === "side1") {
-          existing.side1Wins += 1;
+          if (
+            stat.winner ===
+            "side1"
+          ) {
+            existing.side1Wins +=
+              1;
+          }
+
+          if (
+            stat.winner ===
+            "side2"
+          ) {
+            existing.side2Wins +=
+              1;
+          }
+
+          if (
+            stat.winner ===
+            "none"
+          ) {
+            existing.draws += 1;
+          }
+
+          return result;
         }
 
-        if (stat.winner === "side2") {
-          existing.side2Wins += 1;
-        }
+        result.push({
+          game: stat.game,
 
-        if (stat.winner === "none") {
-          existing.draws += 1;
-        }
+          side1Wins:
+            stat.winner ===
+            "side1"
+              ? 1
+              : 0,
+
+          side2Wins:
+            stat.winner ===
+            "side2"
+              ? 1
+              : 0,
+
+          draws:
+            stat.winner ===
+            "none"
+              ? 1
+              : 0,
+
+          total: 1,
+        });
 
         return result;
-      }
-
-      result.push({
-        game: stat.game,
-        side1Wins:
-          stat.winner === "side1" ? 1 : 0,
-        side2Wins:
-          stat.winner === "side2" ? 1 : 0,
-        draws:
-          stat.winner === "none" ? 1 : 0,
-        total: 1,
-      });
-
-      return result;
-    },
-    []
-  );
+      },
+      []
+    );
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/75 px-4 py-4 backdrop-blur-md">
       <div className="arcade-card w-full max-w-5xl p-5 text-center animate-fade-in-up sm:p-7">
 
-        {/* نهاية الجلسة */}
         <p className="text-xs font-black tracking-[0.22em] text-cyan-300/80 sm:text-sm">
           {mode === "quick"
             ? "انتهت اللعبة"
@@ -196,19 +293,21 @@ function WinnerOverlay({
             : `الفائز: ${winnerName}`}
         </p>
 
-        {/* النتيجة النهائية */}
+        {/* النتيجة */}
         <div className="mx-auto mt-6 grid max-w-3xl grid-cols-[1fr_auto_1fr] items-stretch gap-4">
 
           {/* فريق 1 */}
           <div
             className={`rounded-[26px] border p-4 transition-all sm:p-5 ${
-              side1Score >= side2Score
+              side1Score >=
+              side2Score
                 ? "scale-[1.02] border-fuchsia-300/80 bg-gradient-to-br from-fuchsia-500/40 via-pink-500/25 to-purple-500/20 shadow-[0_0_42px_rgba(217,70,239,0.42)]"
                 : "border-fuchsia-300/35 bg-fuchsia-500/15 shadow-[0_0_24px_rgba(217,70,239,0.22)]"
             }`}
           >
             <p className="truncate text-sm font-black text-fuchsia-100/90 sm:text-base">
-              {side1Name || "فريق 1"}
+              {side1Name ||
+                "فريق 1"}
             </p>
 
             <p className="mt-2 text-5xl font-black leading-none text-fuchsia-50 drop-shadow-[0_0_14px_rgba(244,114,182,0.35)] sm:text-6xl">
@@ -223,13 +322,15 @@ function WinnerOverlay({
           {/* فريق 2 */}
           <div
             className={`rounded-[26px] border p-4 transition-all sm:p-5 ${
-              side2Score >= side1Score
+              side2Score >=
+              side1Score
                 ? "scale-[1.02] border-cyan-300/80 bg-gradient-to-br from-cyan-400/40 via-sky-500/25 to-blue-500/20 shadow-[0_0_42px_rgba(34,211,238,0.42)]"
                 : "border-cyan-300/35 bg-cyan-400/15 shadow-[0_0_24px_rgba(34,211,238,0.22)]"
             }`}
           >
             <p className="truncate text-sm font-black text-cyan-100/90 sm:text-base">
-              {side2Name || "فريق 2"}
+              {side2Name ||
+                "فريق 2"}
             </p>
 
             <p className="mt-2 text-5xl font-black leading-none text-cyan-50 drop-shadow-[0_0_14px_rgba(34,211,238,0.35)] sm:text-6xl">
@@ -238,25 +339,31 @@ function WinnerOverlay({
           </div>
         </div>
 
-        {/* ملخص سريع */}
+        {/* ملخص */}
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm font-black sm:text-base">
           <span className="rounded-full border border-fuchsia-300/30 bg-fuchsia-500/15 px-4 py-2 text-fuchsia-100 shadow-[0_0_18px_rgba(217,70,239,0.18)]">
-            {side1Name || "فريق 1"}: {side1Score}
+            {side1Name ||
+              "فريق 1"}
+            : {side1Score}
           </span>
 
           {totalDraws > 0 && (
             <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-white/70">
-              تعادل: {totalDraws}
+              تعادل:{" "}
+              {totalDraws}
             </span>
           )}
 
           <span className="rounded-full border border-cyan-300/30 bg-cyan-400/15 px-4 py-2 text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.18)]">
-            {side2Name || "فريق 2"}: {side2Score}
+            {side2Name ||
+              "فريق 2"}
+            : {side2Score}
           </span>
         </div>
 
-        {/* إحصائيات الجلسة */}
-        {gameStats.length > 0 && (
+        {/* Stats */}
+        {gameStats.length >
+          0 && (
           <div className="mt-6 border-t border-white/10 pt-5">
 
             <div className="mb-4 flex items-center justify-between gap-3">
@@ -271,86 +378,100 @@ function WinnerOverlay({
               </div>
 
               <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-black text-white/65">
-                {getRoundsLabel(roundStats.length)}
+                {getRoundsLabel(
+                  roundStats.length
+                )}
               </div>
             </div>
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {gameStats.map((stat) => {
-                const side1Won =
-                  stat.side1Wins >
-                  stat.side2Wins;
+              {gameStats.map(
+                (stat) => {
+                  const side1Won =
+                    stat.side1Wins >
+                    stat.side2Wins;
 
-                const side2Won =
-                  stat.side2Wins >
-                  stat.side1Wins;
+                  const side2Won =
+                    stat.side2Wins >
+                    stat.side1Wins;
 
-                return (
-                  <div
-                    key={stat.game}
-                    className="rounded-[24px] border border-white/10 bg-white/[0.045] px-4 py-4 shadow-[0_0_18px_rgba(0,0,0,0.15)]"
-                  >
-                    <div className="flex items-center justify-between gap-3">
+                  return (
+                    <div
+                      key={
+                        stat.game
+                      }
+                      className="rounded-[24px] border border-white/10 bg-white/[0.045] px-4 py-4 shadow-[0_0_18px_rgba(0,0,0,0.15)]"
+                    >
+                      <div className="flex items-center justify-between gap-3">
 
-                      {/* النتيجة */}
-                      <div className="shrink-0">
-                        <div className="flex items-center gap-2">
+                        {/* نتيجة اللعبة */}
+                        <div className="shrink-0">
+                          <div className="flex items-center gap-2">
 
-                          {/* فريق 1 */}
-                          <span
-                            className={`flex h-12 min-w-[50px] items-center justify-center rounded-2xl border px-3 text-2xl font-black ${
-                              side1Won
-                                ? "border-fuchsia-300/70 bg-fuchsia-500/30 text-fuchsia-50 shadow-[0_0_22px_rgba(217,70,239,0.30)]"
-                                : "border-fuchsia-300/25 bg-fuchsia-500/12 text-fuchsia-100/75"
-                            }`}
-                          >
-                            {stat.side1Wins}
-                          </span>
+                            <span
+                              className={`flex h-12 min-w-[50px] items-center justify-center rounded-2xl border px-3 text-2xl font-black ${
+                                side1Won
+                                  ? "border-fuchsia-300/70 bg-fuchsia-500/30 text-fuchsia-50 shadow-[0_0_22px_rgba(217,70,239,0.30)]"
+                                  : "border-fuchsia-300/25 bg-fuchsia-500/10 text-fuchsia-100/75"
+                              }`}
+                            >
+                              {
+                                stat.side1Wins
+                              }
+                            </span>
 
-                          <span className="text-xl font-black text-white/25">
-                            -
-                          </span>
+                            <span className="text-xl font-black text-white/25">
+                              -
+                            </span>
 
-                          {/* فريق 2 */}
-                          <span
-                            className={`flex h-12 min-w-[50px] items-center justify-center rounded-2xl border px-3 text-2xl font-black ${
-                              side2Won
-                                ? "border-cyan-300/70 bg-cyan-400/30 text-cyan-50 shadow-[0_0_22px_rgba(34,211,238,0.30)]"
-                                : "border-cyan-300/25 bg-cyan-400/12 text-cyan-100/75"
-                            }`}
-                          >
-                            {stat.side2Wins}
-                          </span>
+                            <span
+                              className={`flex h-12 min-w-[50px] items-center justify-center rounded-2xl border px-3 text-2xl font-black ${
+                                side2Won
+                                  ? "border-cyan-300/70 bg-cyan-400/30 text-cyan-50 shadow-[0_0_22px_rgba(34,211,238,0.30)]"
+                                  : "border-cyan-300/25 bg-cyan-400/10 text-cyan-100/75"
+                              }`}
+                            >
+                              {
+                                stat.side2Wins
+                              }
+                            </span>
+                          </div>
+
+                          {stat.draws >
+                            0 && (
+                            <p className="mt-2 text-center text-xs font-bold text-white/45">
+                              {stat.draws ===
+                              1
+                                ? "تعادل واحد"
+                                : `${stat.draws} تعادل`}
+                            </p>
+                          )}
                         </div>
 
-                        {stat.draws > 0 && (
-                          <p className="mt-2 text-center text-xs font-bold text-white/45">
-                            {stat.draws === 1
-                              ? "تعادل واحد"
-                              : `${stat.draws} تعادل`}
+                        {/* اسم اللعبة */}
+                        <div className="min-w-0 text-right">
+                          <p className="truncate text-lg font-black text-white">
+                            {getGameName(
+                              stat.game
+                            )}
                           </p>
-                        )}
-                      </div>
 
-                      {/* اسم اللعبة */}
-                      <div className="min-w-0 text-right">
-                        <p className="truncate text-lg font-black text-white">
-                          {getGameName(stat.game)}
-                        </p>
-
-                        <p className="mt-1 text-sm font-bold text-white/40">
-                          {getRoundsLabel(stat.total)}
-                        </p>
+                          <p className="mt-1 text-sm font-bold text-white/40">
+                            {getRoundsLabel(
+                              stat.total
+                            )}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                }
+              )}
             </div>
           </div>
         )}
 
-        {/* الأزرار */}
+        {/* Actions */}
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
             type="button"
@@ -365,7 +486,7 @@ function WinnerOverlay({
           <button
             type="button"
             onClick={onShare}
-            className="rounded-2xl border border-emerald-300/40 bg-gradient-to-r from-emerald-400/20 to-cyan-400/20 px-6 py-3 font-black text-emerald-50 shadow-[0_0_22px_rgba(52,211,153,0.20)] transition hover:scale-[1.02] hover:border-emerald-300/60 hover:bg-emerald-400/25 active:scale-[0.98]"
+            className="rounded-2xl border border-emerald-300/40 bg-gradient-to-r from-emerald-400/20 to-cyan-400/20 px-6 py-3 font-black text-emerald-50 shadow-[0_0_22px_rgba(52,211,153,0.20)] transition hover:scale-[1.02] hover:border-emerald-300/60 active:scale-[0.98]"
           >
             📤 مشاركة النتيجة
           </button>
@@ -418,7 +539,9 @@ function TransitionOverlay({
         </p>
 
         <h1 className="mt-6 text-4xl font-black text-white">
-          {getGameName(nextRound.game)}
+          {getGameName(
+            nextRound.game
+          )}
         </h1>
 
         <p className="mt-5 text-white/60">
@@ -438,7 +561,9 @@ function RoundWinnerPicker({
   show: boolean;
   side1Name: string;
   side2Name: string;
-  onPick: (winner: WinnerType) => void;
+  onPick: (
+    winner: WinnerType
+  ) => void;
 }) {
   if (!show) return null;
 
@@ -465,7 +590,8 @@ function RoundWinnerPicker({
             }
             className="arcade-button px-6 py-4 text-lg"
           >
-            {side1Name || "فريق 1"}
+            {side1Name ||
+              "فريق 1"}
           </button>
 
           <button
@@ -475,7 +601,8 @@ function RoundWinnerPicker({
             }
             className="arcade-button px-6 py-4 text-lg"
           >
-            {side2Name || "فريق 2"}
+            {side2Name ||
+              "فريق 2"}
           </button>
         </div>
 
@@ -536,8 +663,10 @@ export default function MatchPage() {
   const [phase, setPhase] =
     useState<PhaseType>("setup");
 
-  const [countdown, setCountdown] =
-    useState(3);
+  const [
+    countdown,
+    setCountdown,
+  ] = useState(3);
 
   const [side1, setSide1] =
     useState("");
@@ -553,12 +682,16 @@ export default function MatchPage() {
   const [
     gameRounds,
     setGameRounds,
-  ] = useState<Record<string, number>>({});
+  ] = useState<
+    Record<string, number>
+  >({});
 
   const [
     quizCategories,
     setQuizCategories,
-  ] = useState<QuizCategoryKey[]>([]);
+  ] = useState<
+    QuizCategoryKey[]
+  >([]);
 
   const [
     timerEnabled,
@@ -573,8 +706,10 @@ export default function MatchPage() {
   const [queue, setQueue] =
     useState<Round[]>([]);
 
-  const [started, setStarted] =
-    useState(false);
+  const [
+    started,
+    setStarted,
+  ] = useState(false);
 
   const [index, setIndex] =
     useState(0);
@@ -592,7 +727,9 @@ export default function MatchPage() {
   const [
     roundStats,
     setRoundStats,
-  ] = useState<RoundStat[]>([]);
+  ] = useState<RoundStat[]>(
+    []
+  );
 
   const [
     showWinner,
@@ -612,67 +749,102 @@ export default function MatchPage() {
   const [
     roundResultWinner,
     setRoundResultWinner,
-  ] = useState<WinnerType>("none");
+  ] =
+    useState<WinnerType>(
+      "none"
+    );
 
-  const current = queue[index];
-  const nextRound = queue[index + 1];
+  const current =
+    queue[index];
+
+  const nextRound =
+    queue[index + 1];
 
   function buildQueue(): Round[] {
     const q: Round[] = [];
 
     const shuffledCategories =
-      shuffle(quizCategories);
+      shuffle(
+        quizCategories
+      );
 
-    selectedGames.forEach((game) => {
-      const count =
-        game === "quiz"
-          ? 1
-          : gameRounds[game] ||
-            getDefaultRounds(game);
+    selectedGames.forEach(
+      (game) => {
+        const count =
+          game === "quiz"
+            ? 1
+            : gameRounds[
+                game
+              ] ||
+              getDefaultRounds(
+                game
+              );
 
-      for (let i = 0; i < count; i++) {
-        q.push({
-          game,
+        for (
+          let i = 0;
+          i < count;
+          i++
+        ) {
+          q.push({
+            game,
 
-          category:
-            game === "quiz"
-              ? shuffledCategories[0] ?? null
-              : null,
-        });
+            category:
+              game ===
+              "quiz"
+                ? shuffledCategories[
+                    0
+                  ] ??
+                  null
+                : null,
+          });
+        }
       }
-    });
+    );
 
     return q;
   }
 
   function start() {
-    if (selectedGames.length === 0) {
+    if (
+      selectedGames.length ===
+      0
+    ) {
       alert("اختر لعبة");
       return;
     }
 
     if (
-      selectedGames.includes("quiz") &&
-      quizCategories.length === 0
+      selectedGames.includes(
+        "quiz"
+      ) &&
+      quizCategories.length ===
+        0
     ) {
-      alert("اختر فئة للأسئلة");
+      alert(
+        "اختر فئة للأسئلة"
+      );
       return;
     }
 
     const builtQueue =
       buildQueue();
 
-    setQueue(builtQueue);
+    setQueue(
+      builtQueue
+    );
 
     setStarted(false);
+
     setIndex(0);
 
     setSide1(
-      side1.trim() || "فريق 1"
+      side1.trim() ||
+        "فريق 1"
     );
 
     setSide2(
-      side2.trim() || "فريق 2"
+      side2.trim() ||
+        "فريق 2"
     );
 
     setSide1Score(0);
@@ -686,7 +858,9 @@ export default function MatchPage() {
       false
     );
 
-    setShowRoundResult(false);
+    setShowRoundResult(
+      false
+    );
 
     setRoundResultWinner(
       "none"
@@ -694,12 +868,15 @@ export default function MatchPage() {
 
     setCountdown(3);
 
-    setPhase("countdown");
+    setPhase(
+      "countdown"
+    );
   }
 
   useEffect(() => {
     if (
-      phase !== "countdown"
+      phase !==
+      "countdown"
     ) {
       return;
     }
@@ -717,18 +894,24 @@ export default function MatchPage() {
         }, 800);
 
       return () =>
-        clearTimeout(timer);
+        clearTimeout(
+          timer
+        );
     }
 
     const startTimer =
       setTimeout(() => {
         setStarted(true);
 
-        setPhase("playing");
+        setPhase(
+          "playing"
+        );
       }, 650);
 
     return () =>
-      clearTimeout(startTimer);
+      clearTimeout(
+        startTimer
+      );
   }, [
     phase,
     countdown,
@@ -753,25 +936,33 @@ export default function MatchPage() {
         "category"
       ) as QuizCategoryKey | null;
 
-    const validGames: GameType[] = [
-      "word",
-      "quiz",
-      "scramble",
-      "wheel",
-      "categories",
-      "draw",
-    ];
+    const validGames: GameType[] =
+      [
+        "word",
+        "quiz",
+        "scramble",
+        "wheel",
+        "categories",
+        "draw",
+      ];
 
     if (
-      urlMode === "session"
+      urlMode ===
+      "session"
     ) {
-      setMode("session");
+      setMode(
+        "session"
+      );
 
       setStarted(false);
 
-      setPhase("setup");
+      setPhase(
+        "setup"
+      );
 
-      setShowWinner(false);
+      setShowWinner(
+        false
+      );
 
       setShowRoundWinnerPicker(
         false
@@ -788,13 +979,19 @@ export default function MatchPage() {
 
     if (
       !game ||
-      !validGames.includes(game)
+      !validGames.includes(
+        game
+      )
     ) {
-      setMode("session");
+      setMode(
+        "session"
+      );
 
       setStarted(false);
 
-      setPhase("setup");
+      setPhase(
+        "setup"
+      );
 
       return;
     }
@@ -816,9 +1013,9 @@ export default function MatchPage() {
       game === "quiz" &&
       category
     ) {
-      setQuizCategories([
-        category,
-      ]);
+      setQuizCategories(
+        [category]
+      );
     }
 
     setSide1("");
@@ -826,7 +1023,9 @@ export default function MatchPage() {
 
     setStarted(false);
 
-    setPhase("setup");
+    setPhase(
+      "setup"
+    );
 
     setIndex(0);
 
@@ -862,7 +1061,9 @@ export default function MatchPage() {
       finalSide2Score
     );
 
-    setShowRoundResult(false);
+    setShowRoundResult(
+      false
+    );
 
     setShowRoundWinnerPicker(
       false
@@ -870,7 +1071,9 @@ export default function MatchPage() {
 
     setStarted(false);
 
-    setPhase("finished");
+    setPhase(
+      "finished"
+    );
 
     setShowWinner(true);
   }
@@ -891,17 +1094,22 @@ export default function MatchPage() {
       return;
     }
 
-    setPhase("transition");
+    setPhase(
+      "transition"
+    );
 
     setTimeout(() => {
       setIndex(
         (
           currentIndex
         ) =>
-          currentIndex + 1
+          currentIndex +
+          1
       );
 
-      setPhase("playing");
+      setPhase(
+        "playing"
+      );
     }, 1500);
   }
 
@@ -917,21 +1125,29 @@ export default function MatchPage() {
 
     const nextSide1Score =
       side1Score +
-      (finalWinner === "side1"
+      (finalWinner ===
+      "side1"
         ? 1
         : 0);
 
     const nextSide2Score =
       side2Score +
-      (finalWinner === "side2"
+      (finalWinner ===
+      "side2"
         ? 1
         : 0);
 
-    const newStat: RoundStat = {
-      game: current.game,
-      round: index + 1,
-      winner: finalWinner,
-    };
+    const newStat: RoundStat =
+      {
+        game:
+          current.game,
+
+        round:
+          index + 1,
+
+        winner:
+          finalWinner,
+      };
 
     setRoundStats(
       (previous) => [
@@ -968,7 +1184,9 @@ export default function MatchPage() {
       finalWinner
     );
 
-    setShowRoundResult(true);
+    setShowRoundResult(
+      true
+    );
 
     setTimeout(() => {
       setShowRoundResult(
@@ -1031,10 +1249,13 @@ export default function MatchPage() {
     setSide1Score(0);
     setSide2Score(0);
 
-    setPhase("setup");
+    setPhase(
+      "setup"
+    );
 
     if (
-      mode === "session"
+      mode ===
+      "session"
     ) {
       setSelectedGames([]);
 
@@ -1098,63 +1319,621 @@ export default function MatchPage() {
     "none";
 
   /*
-    مشاركة النتيجة.
+    إنشاء صورة المشاركة.
+  */
+  async function createResultShareImage() {
+    const canvas =
+      document.createElement(
+        "canvas"
+      );
+
+    /*
+      4:5
+      ممتاز للـ Instagram Feed
+      ومناسب للمشاركة في باقي التطبيقات.
+    */
+    canvas.width = 1080;
+    canvas.height = 1350;
+
+    const ctx =
+      canvas.getContext(
+        "2d"
+      );
+
+    if (!ctx) {
+      throw new Error(
+        "Canvas غير مدعوم"
+      );
+    }
+
+    const width =
+      canvas.width;
+
+    const height =
+      canvas.height;
+
+    /*
+      Background
+    */
+    const background =
+      ctx.createLinearGradient(
+        0,
+        0,
+        width,
+        height
+      );
+
+    background.addColorStop(
+      0,
+      "#06020e"
+    );
+
+    background.addColorStop(
+      0.5,
+      "#170628"
+    );
+
+    background.addColorStop(
+      1,
+      "#050914"
+    );
+
+    ctx.fillStyle =
+      background;
+
+    ctx.fillRect(
+      0,
+      0,
+      width,
+      height
+    );
+
+    /*
+      Fuchsia glow
+    */
+    const pinkGlow =
+      ctx.createRadialGradient(
+        150,
+        470,
+        20,
+        150,
+        470,
+        430
+      );
+
+    pinkGlow.addColorStop(
+      0,
+      "rgba(217,70,239,0.30)"
+    );
+
+    pinkGlow.addColorStop(
+      1,
+      "rgba(217,70,239,0)"
+    );
+
+    ctx.fillStyle =
+      pinkGlow;
+
+    ctx.fillRect(
+      0,
+      0,
+      width,
+      height
+    );
+
+    /*
+      Cyan glow
+    */
+    const cyanGlow =
+      ctx.createRadialGradient(
+        930,
+        500,
+        20,
+        930,
+        500,
+        430
+      );
+
+    cyanGlow.addColorStop(
+      0,
+      "rgba(34,211,238,0.25)"
+    );
+
+    cyanGlow.addColorStop(
+      1,
+      "rgba(34,211,238,0)"
+    );
+
+    ctx.fillStyle =
+      cyanGlow;
+
+    ctx.fillRect(
+      0,
+      0,
+      width,
+      height
+    );
+
+    /*
+      Main card
+    */
+    drawRoundedRect(
+      ctx,
+      65,
+      60,
+      950,
+      1230,
+      48
+    );
+
+    const cardGradient =
+      ctx.createLinearGradient(
+        65,
+        60,
+        1015,
+        1290
+      );
+
+    cardGradient.addColorStop(
+      0,
+      "rgba(33,8,57,0.96)"
+    );
+
+    cardGradient.addColorStop(
+      1,
+      "rgba(9,6,27,0.98)"
+    );
+
+    ctx.fillStyle =
+      cardGradient;
+
+    ctx.fill();
+
+    ctx.lineWidth = 5;
+
+    ctx.strokeStyle =
+      "rgba(34,211,238,0.65)";
+
+    ctx.stroke();
+
+    /*
+      RTL text
+    */
+    ctx.textAlign =
+      "center";
+
+    ctx.direction =
+      "rtl";
+
+    /*
+      Logo / Brand
+    */
+    ctx.fillStyle =
+      "#67e8f9";
+
+    ctx.font =
+      "900 35px Arial";
+
+    ctx.fillText(
+      "خل نلعب 🎮",
+      width / 2,
+      135
+    );
+
+    /*
+      Main result
+    */
+    ctx.fillStyle =
+      "#ffffff";
+
+    ctx.font =
+      "900 72px Arial";
+
+    ctx.fillText(
+      isDraw
+        ? "تعادل! 🤝"
+        : "كفووو! 🏆",
+      width / 2,
+      245
+    );
+
+    ctx.font =
+      "900 40px Arial";
+
+    ctx.fillStyle =
+      "#f5e9ff";
+
+    ctx.fillText(
+      isDraw
+        ? "الفريقين قدّها"
+        : `الفائز: ${finalWinnerName}`,
+      width / 2,
+      315
+    );
+
+    /*
+      Team 1 card
+    */
+    drawRoundedRect(
+      ctx,
+      105,
+      390,
+      390,
+      270,
+      38
+    );
+
+    const team1Gradient =
+      ctx.createLinearGradient(
+        105,
+        390,
+        495,
+        660
+      );
+
+    team1Gradient.addColorStop(
+      0,
+      "rgba(217,70,239,0.55)"
+    );
+
+    team1Gradient.addColorStop(
+      1,
+      "rgba(126,34,206,0.25)"
+    );
+
+    ctx.fillStyle =
+      team1Gradient;
+
+    ctx.fill();
+
+    ctx.strokeStyle =
+      "rgba(240,171,252,0.75)";
+
+    ctx.lineWidth = 3;
+
+    ctx.stroke();
+
+    ctx.fillStyle =
+      "#fae8ff";
+
+    ctx.font =
+      "900 32px Arial";
+
+    ctx.fillText(
+      side1 ||
+        "فريق 1",
+      300,
+      460
+    );
+
+    ctx.font =
+      "900 110px Arial";
+
+    ctx.fillText(
+      String(
+        side1Score
+      ),
+      300,
+      590
+    );
+
+    /*
+      Team 2 card
+    */
+    drawRoundedRect(
+      ctx,
+      585,
+      390,
+      390,
+      270,
+      38
+    );
+
+    const team2Gradient =
+      ctx.createLinearGradient(
+        585,
+        390,
+        975,
+        660
+      );
+
+    team2Gradient.addColorStop(
+      0,
+      "rgba(34,211,238,0.52)"
+    );
+
+    team2Gradient.addColorStop(
+      1,
+      "rgba(37,99,235,0.25)"
+    );
+
+    ctx.fillStyle =
+      team2Gradient;
+
+    ctx.fill();
+
+    ctx.strokeStyle =
+      "rgba(103,232,249,0.75)";
+
+    ctx.lineWidth = 3;
+
+    ctx.stroke();
+
+    ctx.fillStyle =
+      "#cffafe";
+
+    ctx.font =
+      "900 32px Arial";
+
+    ctx.fillText(
+      side2 ||
+        "فريق 2",
+      780,
+      460
+    );
+
+    ctx.font =
+      "900 110px Arial";
+
+    ctx.fillText(
+      String(
+        side2Score
+      ),
+      780,
+      590
+    );
+
+    /*
+      Dash
+    */
+    ctx.fillStyle =
+      "rgba(255,255,255,0.35)";
+
+    ctx.font =
+      "900 48px Arial";
+
+    ctx.fillText(
+      "-",
+      width / 2,
+      540
+    );
+
+    /*
+      Session details
+    */
+    const draws =
+      roundStats.filter(
+        (stat) =>
+          stat.winner ===
+          "none"
+      ).length;
+
+    ctx.fillStyle =
+      "#ffffff";
+
+    ctx.font =
+      "900 40px Arial";
+
+    ctx.fillText(
+      "نتيجة الجلسة",
+      width / 2,
+      755
+    );
+
+    ctx.fillStyle =
+      "rgba(255,255,255,0.68)";
+
+    ctx.font =
+      "700 28px Arial";
+
+    const roundText =
+      getRoundsLabel(
+        roundStats.length
+      );
+
+    const drawText =
+      draws === 0
+        ? "بدون تعادل"
+        : draws === 1
+          ? "تعادل واحد"
+          : `${draws} تعادل`;
+
+    ctx.fillText(
+      `${roundText}  •  ${drawText}`,
+      width / 2,
+      810
+    );
+
+    /*
+      CTA card
+    */
+    drawRoundedRect(
+      ctx,
+      145,
+      895,
+      790,
+      205,
+      38
+    );
+
+    ctx.fillStyle =
+      "rgba(255,255,255,0.055)";
+
+    ctx.fill();
+
+    ctx.strokeStyle =
+      "rgba(255,255,255,0.12)";
+
+    ctx.lineWidth = 2;
+
+    ctx.stroke();
+
+    ctx.fillStyle =
+      "#ffffff";
+
+    ctx.font =
+      "900 44px Arial";
+
+    ctx.fillText(
+      "تقدرون تتحدونا؟ 👀",
+      width / 2,
+      975
+    );
+
+    ctx.fillStyle =
+      "rgba(255,255,255,0.60)";
+
+    ctx.font =
+      "700 27px Arial";
+
+    ctx.fillText(
+      "العبوا خل نلعب وشوفوا مين يفوز",
+      width / 2,
+      1035
+    );
+
+    /*
+      Footer
+    */
+    ctx.fillStyle =
+      "#67e8f9";
+
+    ctx.font =
+      "900 38px Arial";
+
+    ctx.fillText(
+      "خل نلعب",
+      width / 2,
+      1180
+    );
+
+    ctx.fillStyle =
+      "rgba(255,255,255,0.38)";
+
+    ctx.font =
+      "600 23px Arial";
+
+    ctx.fillText(
+      window.location.host,
+      width / 2,
+      1230
+    );
+
+    /*
+      Canvas -> Blob
+    */
+    const blob =
+      await new Promise<
+        Blob | null
+      >((resolve) => {
+        canvas.toBlob(
+          resolve,
+          "image/png",
+          1
+        );
+      });
+
+    if (!blob) {
+      throw new Error(
+        "فشل إنشاء صورة النتيجة"
+      );
+    }
+
+    return new File(
+      [blob],
+      "khal-nelab-result.png",
+      {
+        type:
+          "image/png",
+      }
+    );
+  }
+
+  /*
+    مشاركة صورة النتيجة.
   */
   async function handleShareResult() {
-    const team1 =
-      side1 || "فريق 1";
-
-    const team2 =
-      side2 || "فريق 2";
-
-    const shareText = isDraw
-      ? `انتهت جلستنا في خل نلعب 🎮
-
-${team1} ${side1Score} - ${side2Score} ${team2}
-
-تعادل 🤝
-
-مين يفوز لو لعبنا مرة ثانية؟`
-      : `انتهت جلستنا في خل نلعب 🎮
-
-🏆 الفائز: ${finalWinnerName}
-
-${team1} ${side1Score} - ${side2Score} ${team2}
-
-تقدرون تتحدونا؟`;
-
-    const siteUrl =
-      window.location.origin;
-
     try {
-      if (navigator.share) {
+      const imageFile =
+        await createResultShareImage();
+
+      /*
+        iPhone / iPad / Android
+        والأجهزة التي تدعم
+        Web Share مع ملفات.
+      */
+      if (
+        navigator.share &&
+        navigator.canShare?.({
+          files: [
+            imageFile,
+          ],
+        })
+      ) {
         await navigator.share({
           title:
-            "نتيجة خل نلعب 🎮",
-          text: shareText,
-          url: siteUrl,
+            "نتيجتنا في خل نلعب 🎮",
+
+          text: isDraw
+            ? "تعادلنا في خل نلعب 🤝"
+            : `${finalWinnerName} فاز في خل نلعب 🏆`,
+
+          files: [
+            imageFile,
+          ],
         });
 
         return;
       }
 
-      await navigator.clipboard.writeText(
-        `${shareText}\n\n${siteUrl}`
+      /*
+        Fallback:
+        إذا المتصفح ما يدعم
+        مشاركة الصور مباشرة،
+        نحفظ الصورة.
+      */
+      const imageUrl =
+        URL.createObjectURL(
+          imageFile
+        );
+
+      const link =
+        document.createElement(
+          "a"
+        );
+
+      link.href =
+        imageUrl;
+
+      link.download =
+        "khal-nelab-result.png";
+
+      document.body.appendChild(
+        link
       );
 
-      alert(
-        "تم نسخ النتيجة للمشاركة"
+      link.click();
+
+      link.remove();
+
+      URL.revokeObjectURL(
+        imageUrl
       );
     } catch (error) {
       /*
-        إذا المستخدم قفل نافذة المشاركة
-        ما نسوي شيء.
+        إذا المستخدم قفل
+        Share Sheet ما نعرض خطأ.
       */
+      console.log(
+        "Share cancelled or failed",
+        error
+      );
     }
   }
 
   return (
     <main className="min-h-screen p-6 text-white">
+
       <Link
         href="/"
         className="
@@ -1187,7 +1966,9 @@ ${team1} ${side1Score} - ${side2Score} ${team2}
       {phase ===
         "countdown" && (
         <CountdownOverlay
-          countdown={countdown}
+          countdown={
+            countdown
+          }
         />
       )}
 
@@ -1204,14 +1985,22 @@ ${team1} ${side1Score} - ${side2Score} ${team2}
 
       {/* Final Winner */}
       <WinnerOverlay
-        show={showWinner}
+        show={
+          showWinner
+        }
         winnerName={
           finalWinnerName
         }
-        isDraw={isDraw}
+        isDraw={
+          isDraw
+        }
         mode={mode}
-        side1Name={side1}
-        side2Name={side2}
+        side1Name={
+          side1
+        }
+        side2Name={
+          side2
+        }
         side1Score={
           side1Score
         }
@@ -1221,8 +2010,12 @@ ${team1} ${side1Score} - ${side2Score} ${team2}
         roundStats={
           roundStats
         }
-        onRestart={restart}
-        onGoHome={goHome}
+        onRestart={
+          restart
+        }
+        onGoHome={
+          goHome
+        }
         onShare={
           handleShareResult
         }
@@ -1233,14 +2026,18 @@ ${team1} ${side1Score} - ${side2Score} ${team2}
         show={
           showRoundWinnerPicker
         }
-        side1Name={side1}
-        side2Name={side2}
+        side1Name={
+          side1
+        }
+        side2Name={
+          side2
+        }
         onPick={
           applyRoundWinner
         }
       />
 
-      {/* Round Result */}
+      {/* Round result */}
       <RoundResultOverlay
         show={
           showRoundResult
@@ -1294,21 +2091,28 @@ ${team1} ${side1Score} - ${side2Score} ${team2}
           setTimerSeconds={
             setTimerSeconds
           }
-          onStart={start}
+          onStart={
+            start
+          }
         />
       ) : (
         <div className="mx-auto max-w-5xl">
 
-          {/* Word */}
           {current?.game ===
             "word" && (
             <WordGame
               onRoundEnd={
                 endRound
               }
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
+              roundKey={
+                index
+              }
+              side1Name={
+                side1
+              }
+              side2Name={
+                side2
+              }
               side1Score={
                 side1Score
               }
@@ -1327,19 +2131,24 @@ ${team1} ${side1Score} - ${side2Score} ${team2}
             />
           )}
 
-          {/* Quiz */}
           {current?.game ===
             "quiz" && (
             <QuizGame
               onRoundEnd={
                 endRound
               }
-              roundKey={index}
+              roundKey={
+                index
+              }
               category={
                 current.category
               }
-              side1Name={side1}
-              side2Name={side2}
+              side1Name={
+                side1
+              }
+              side2Name={
+                side2
+              }
               currentRound={
                 index + 1
               }
@@ -1352,16 +2161,21 @@ ${team1} ${side1Score} - ${side2Score} ${team2}
             />
           )}
 
-          {/* Scramble */}
           {current?.game ===
             "scramble" && (
             <ScrambleGame
               onRoundEnd={
                 endRound
               }
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
+              roundKey={
+                index
+              }
+              side1Name={
+                side1
+              }
+              side2Name={
+                side2
+              }
               currentRound={
                 index + 1
               }
@@ -1374,16 +2188,21 @@ ${team1} ${side1Score} - ${side2Score} ${team2}
             />
           )}
 
-          {/* Wheel */}
           {current?.game ===
             "wheel" && (
             <WheelGame
               onRoundEnd={
                 endRound
               }
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
+              roundKey={
+                index
+              }
+              side1Name={
+                side1
+              }
+              side2Name={
+                side2
+              }
               currentRound={
                 index + 1
               }
@@ -1396,16 +2215,21 @@ ${team1} ${side1Score} - ${side2Score} ${team2}
             />
           )}
 
-          {/* Categories */}
           {current?.game ===
             "categories" && (
             <CategoriesGame
               onRoundEnd={
                 endRound
               }
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
+              roundKey={
+                index
+              }
+              side1Name={
+                side1
+              }
+              side2Name={
+                side2
+              }
               currentRound={
                 index + 1
               }
@@ -1418,16 +2242,21 @@ ${team1} ${side1Score} - ${side2Score} ${team2}
             />
           )}
 
-          {/* Proverb */}
           {current?.game ===
             "draw" && (
             <ProverbGame
               onRoundEnd={
                 endRound
               }
-              roundKey={index}
-              side1Name={side1}
-              side2Name={side2}
+              roundKey={
+                index
+              }
+              side1Name={
+                side1
+              }
+              side2Name={
+                side2
+              }
               currentRound={
                 index + 1
               }
@@ -1441,7 +2270,8 @@ ${team1} ${side1Score} - ${side2Score} ${team2}
           )}
 
           <p className="mt-5 text-center text-sm font-bold text-white/50">
-            الجولة {index + 1} من{" "}
+            الجولة{" "}
+            {index + 1} من{" "}
             {queue.length}
           </p>
         </div>
