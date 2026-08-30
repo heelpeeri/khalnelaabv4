@@ -85,6 +85,18 @@ function getGameName(game: GameType) {
   }
 }
 
+function getRoundsLabel(count: number) {
+  if (count === 1) {
+    return "جولة واحدة";
+  }
+
+  if (count === 2) {
+    return "جولتين";
+  }
+
+  return `${count} جولات`;
+}
+
 function WinnerOverlay({
   show,
   winnerName,
@@ -97,6 +109,7 @@ function WinnerOverlay({
   roundStats,
   onRestart,
   onGoHome,
+  onShare,
 }: {
   show: boolean;
   winnerName: string;
@@ -109,6 +122,7 @@ function WinnerOverlay({
   roundStats: RoundStat[];
   onRestart: () => void;
   onGoHome: () => void;
+  onShare: () => void;
 }) {
   if (!show) return null;
 
@@ -117,8 +131,7 @@ function WinnerOverlay({
   ).length;
 
   /*
-    نجمع كل جولات اللعبة الواحدة
-    في نتيجة واحدة.
+    نجمع نتائج الجولات حسب اللعبة.
   */
   const gameStats = roundStats.reduce<GameStat[]>(
     (result, stat) => {
@@ -162,7 +175,7 @@ function WinnerOverlay({
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/75 px-4 py-4 backdrop-blur-md">
-      <div className="arcade-card w-full max-w-4xl p-5 text-center animate-fade-in-up sm:p-7">
+      <div className="arcade-card w-full max-w-5xl p-5 text-center animate-fade-in-up sm:p-7">
 
         {/* نهاية الجلسة */}
         <p className="text-xs font-black tracking-[0.22em] text-cyan-300/80 sm:text-sm">
@@ -177,102 +190,92 @@ function WinnerOverlay({
             : "كفووو! 🏆"}
         </h1>
 
-        <p className="mt-2 text-xl font-black text-white sm:text-2xl">
+        <p className="mt-2 text-2xl font-black text-white sm:text-3xl">
           {isDraw
             ? "الفريقين قدّها"
             : `الفائز: ${winnerName}`}
         </p>
 
-        {/* النتيجة الرئيسية */}
-        <div className="mx-auto mt-5 grid max-w-2xl grid-cols-[1fr_auto_1fr] items-stretch gap-3">
+        {/* النتيجة النهائية */}
+        <div className="mx-auto mt-6 grid max-w-3xl grid-cols-[1fr_auto_1fr] items-stretch gap-4">
 
           {/* فريق 1 */}
           <div
-            className={`rounded-2xl border p-3 transition-all sm:p-4 ${
-              side1Score > side2Score
-                ? "scale-[1.02] border-fuchsia-300/70 bg-gradient-to-br from-fuchsia-500/35 via-pink-500/25 to-purple-500/20 shadow-[0_0_32px_rgba(217,70,239,0.35)]"
-                : "border-fuchsia-300/25 bg-fuchsia-500/10"
+            className={`rounded-[26px] border p-4 transition-all sm:p-5 ${
+              side1Score >= side2Score
+                ? "scale-[1.02] border-fuchsia-300/80 bg-gradient-to-br from-fuchsia-500/40 via-pink-500/25 to-purple-500/20 shadow-[0_0_42px_rgba(217,70,239,0.42)]"
+                : "border-fuchsia-300/35 bg-fuchsia-500/15 shadow-[0_0_24px_rgba(217,70,239,0.22)]"
             }`}
           >
-            <p className="truncate text-sm font-black text-fuchsia-100/80">
+            <p className="truncate text-sm font-black text-fuchsia-100/90 sm:text-base">
               {side1Name || "فريق 1"}
             </p>
 
-            <p className="mt-1 text-4xl font-black text-fuchsia-100 sm:text-5xl">
+            <p className="mt-2 text-5xl font-black leading-none text-fuchsia-50 drop-shadow-[0_0_14px_rgba(244,114,182,0.35)] sm:text-6xl">
               {side1Score}
             </p>
           </div>
 
-          <div className="flex items-center text-2xl font-black text-white/25">
+          <div className="flex items-center justify-center text-3xl font-black text-white/25">
             -
           </div>
 
           {/* فريق 2 */}
           <div
-            className={`rounded-2xl border p-3 transition-all sm:p-4 ${
-              side2Score > side1Score
-                ? "scale-[1.02] border-cyan-300/70 bg-gradient-to-br from-cyan-400/35 via-sky-500/25 to-blue-500/20 shadow-[0_0_32px_rgba(34,211,238,0.35)]"
-                : "border-cyan-300/25 bg-cyan-400/10"
+            className={`rounded-[26px] border p-4 transition-all sm:p-5 ${
+              side2Score >= side1Score
+                ? "scale-[1.02] border-cyan-300/80 bg-gradient-to-br from-cyan-400/40 via-sky-500/25 to-blue-500/20 shadow-[0_0_42px_rgba(34,211,238,0.42)]"
+                : "border-cyan-300/35 bg-cyan-400/15 shadow-[0_0_24px_rgba(34,211,238,0.22)]"
             }`}
           >
-            <p className="truncate text-sm font-black text-cyan-100/80">
+            <p className="truncate text-sm font-black text-cyan-100/90 sm:text-base">
               {side2Name || "فريق 2"}
             </p>
 
-            <p className="mt-1 text-4xl font-black text-cyan-100 sm:text-5xl">
+            <p className="mt-2 text-5xl font-black leading-none text-cyan-50 drop-shadow-[0_0_14px_rgba(34,211,238,0.35)] sm:text-6xl">
               {side2Score}
             </p>
           </div>
         </div>
 
         {/* ملخص سريع */}
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-bold text-white/55">
-          <span className="text-fuchsia-200">
-            {side1Name || "فريق 1"}: {side1Score} فوز
-          </span>
-
-          <span className="text-white/25">
-            •
-          </span>
-
-          <span className="text-cyan-200">
-            {side2Name || "فريق 2"}: {side2Score} فوز
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm font-black sm:text-base">
+          <span className="rounded-full border border-fuchsia-300/30 bg-fuchsia-500/15 px-4 py-2 text-fuchsia-100 shadow-[0_0_18px_rgba(217,70,239,0.18)]">
+            {side1Name || "فريق 1"}: {side1Score}
           </span>
 
           {totalDraws > 0 && (
-            <>
-              <span className="text-white/25">
-                •
-              </span>
-
-              <span>
-                {totalDraws} تعادل
-              </span>
-            </>
+            <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-white/70">
+              تعادل: {totalDraws}
+            </span>
           )}
+
+          <span className="rounded-full border border-cyan-300/30 bg-cyan-400/15 px-4 py-2 text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.18)]">
+            {side2Name || "فريق 2"}: {side2Score}
+          </span>
         </div>
 
-        {/* Stats حسب اللعبة */}
+        {/* إحصائيات الجلسة */}
         {gameStats.length > 0 && (
-          <div className="mt-5 border-t border-white/10 pt-4">
+          <div className="mt-6 border-t border-white/10 pt-5">
 
-            <div className="mb-3 flex items-center justify-between gap-3">
+            <div className="mb-4 flex items-center justify-between gap-3">
               <div className="text-right">
-                <p className="text-lg font-black text-white">
+                <p className="text-xl font-black text-white">
                   إحصائيات الجلسة
                 </p>
 
-                <p className="text-xs font-bold text-white/40">
+                <p className="text-sm font-bold text-white/40">
                   نتائج الألعاب
                 </p>
               </div>
 
-              <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white/55">
-                {roundStats.length} جولات
+              <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-black text-white/65">
+                {getRoundsLabel(roundStats.length)}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {gameStats.map((stat) => {
                 const side1Won =
                   stat.side1Wins >
@@ -285,57 +288,60 @@ function WinnerOverlay({
                 return (
                   <div
                     key={stat.game}
-                    className="flex min-h-[74px] items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.045] px-4 py-3"
+                    className="rounded-[24px] border border-white/10 bg-white/[0.045] px-4 py-4 shadow-[0_0_18px_rgba(0,0,0,0.15)]"
                   >
-                    {/* اللعبة */}
-                    <div className="min-w-0 text-right">
-                      <p className="truncate text-sm font-black text-white sm:text-base">
-                        {getGameName(
-                          stat.game
+                    <div className="flex items-center justify-between gap-3">
+
+                      {/* النتيجة */}
+                      <div className="shrink-0">
+                        <div className="flex items-center gap-2">
+
+                          {/* فريق 1 */}
+                          <span
+                            className={`flex h-12 min-w-[50px] items-center justify-center rounded-2xl border px-3 text-2xl font-black ${
+                              side1Won
+                                ? "border-fuchsia-300/70 bg-fuchsia-500/30 text-fuchsia-50 shadow-[0_0_22px_rgba(217,70,239,0.30)]"
+                                : "border-fuchsia-300/25 bg-fuchsia-500/12 text-fuchsia-100/75"
+                            }`}
+                          >
+                            {stat.side1Wins}
+                          </span>
+
+                          <span className="text-xl font-black text-white/25">
+                            -
+                          </span>
+
+                          {/* فريق 2 */}
+                          <span
+                            className={`flex h-12 min-w-[50px] items-center justify-center rounded-2xl border px-3 text-2xl font-black ${
+                              side2Won
+                                ? "border-cyan-300/70 bg-cyan-400/30 text-cyan-50 shadow-[0_0_22px_rgba(34,211,238,0.30)]"
+                                : "border-cyan-300/25 bg-cyan-400/12 text-cyan-100/75"
+                            }`}
+                          >
+                            {stat.side2Wins}
+                          </span>
+                        </div>
+
+                        {stat.draws > 0 && (
+                          <p className="mt-2 text-center text-xs font-bold text-white/45">
+                            {stat.draws === 1
+                              ? "تعادل واحد"
+                              : `${stat.draws} تعادل`}
+                          </p>
                         )}
-                      </p>
-
-                      <p className="mt-1 text-xs font-bold text-white/35">
-                        {stat.total === 1
-                          ? "جولة واحدة"
-                          : `${stat.total} جولات`}
-                      </p>
-                    </div>
-
-                    {/* النتيجة */}
-                    <div className="shrink-0 text-left">
-                      <div className="flex items-center gap-2">
-
-                        <span
-                          className={`flex h-9 min-w-[38px] items-center justify-center rounded-xl border px-2 text-lg font-black ${
-                            side1Won
-                              ? "border-fuchsia-300/60 bg-fuchsia-500/25 text-fuchsia-100 shadow-[0_0_14px_rgba(217,70,239,0.20)]"
-                              : "border-fuchsia-300/20 bg-fuchsia-500/10 text-fuchsia-100/65"
-                          }`}
-                        >
-                          {stat.side1Wins}
-                        </span>
-
-                        <span className="font-black text-white/25">
-                          -
-                        </span>
-
-                        <span
-                          className={`flex h-9 min-w-[38px] items-center justify-center rounded-xl border px-2 text-lg font-black ${
-                            side2Won
-                              ? "border-cyan-300/60 bg-cyan-400/25 text-cyan-100 shadow-[0_0_14px_rgba(34,211,238,0.20)]"
-                              : "border-cyan-300/20 bg-cyan-400/10 text-cyan-100/65"
-                          }`}
-                        >
-                          {stat.side2Wins}
-                        </span>
                       </div>
 
-                      {stat.draws > 0 && (
-                        <p className="mt-1 text-center text-[11px] font-bold text-white/40">
-                          {stat.draws} تعادل
+                      {/* اسم اللعبة */}
+                      <div className="min-w-0 text-right">
+                        <p className="truncate text-lg font-black text-white">
+                          {getGameName(stat.game)}
                         </p>
-                      )}
+
+                        <p className="mt-1 text-sm font-bold text-white/40">
+                          {getRoundsLabel(stat.total)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 );
@@ -344,8 +350,8 @@ function WinnerOverlay({
           </div>
         )}
 
-        {/* Actions */}
-        <div className="mt-5 flex flex-wrap justify-center gap-3">
+        {/* الأزرار */}
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
             type="button"
             onClick={onRestart}
@@ -354,6 +360,14 @@ function WinnerOverlay({
             {mode === "quick"
               ? "جرّب نفس اللعبة"
               : "تحدي جديد"}
+          </button>
+
+          <button
+            type="button"
+            onClick={onShare}
+            className="rounded-2xl border border-emerald-300/40 bg-gradient-to-r from-emerald-400/20 to-cyan-400/20 px-6 py-3 font-black text-emerald-50 shadow-[0_0_22px_rgba(52,211,153,0.20)] transition hover:scale-[1.02] hover:border-emerald-300/60 hover:bg-emerald-400/25 active:scale-[0.98]"
+          >
+            📤 مشاركة النتيجة
           </button>
 
           <button
@@ -451,8 +465,7 @@ function RoundWinnerPicker({
             }
             className="arcade-button px-6 py-4 text-lg"
           >
-            {side1Name ||
-              "فريق 1"}
+            {side1Name || "فريق 1"}
           </button>
 
           <button
@@ -462,8 +475,7 @@ function RoundWinnerPicker({
             }
             className="arcade-button px-6 py-4 text-lg"
           >
-            {side2Name ||
-              "فريق 2"}
+            {side2Name || "فريق 2"}
           </button>
         </div>
 
@@ -905,15 +917,13 @@ export default function MatchPage() {
 
     const nextSide1Score =
       side1Score +
-      (finalWinner ===
-      "side1"
+      (finalWinner === "side1"
         ? 1
         : 0);
 
     const nextSide2Score =
       side2Score +
-      (finalWinner ===
-      "side2"
+      (finalWinner === "side2"
         ? 1
         : 0);
 
@@ -1087,6 +1097,62 @@ export default function MatchPage() {
     roundResultWinner ===
     "none";
 
+  /*
+    مشاركة النتيجة.
+  */
+  async function handleShareResult() {
+    const team1 =
+      side1 || "فريق 1";
+
+    const team2 =
+      side2 || "فريق 2";
+
+    const shareText = isDraw
+      ? `انتهت جلستنا في خل نلعب 🎮
+
+${team1} ${side1Score} - ${side2Score} ${team2}
+
+تعادل 🤝
+
+مين يفوز لو لعبنا مرة ثانية؟`
+      : `انتهت جلستنا في خل نلعب 🎮
+
+🏆 الفائز: ${finalWinnerName}
+
+${team1} ${side1Score} - ${side2Score} ${team2}
+
+تقدرون تتحدونا؟`;
+
+    const siteUrl =
+      window.location.origin;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title:
+            "نتيجة خل نلعب 🎮",
+          text: shareText,
+          url: siteUrl,
+        });
+
+        return;
+      }
+
+      await navigator.clipboard.writeText(
+        `${shareText}\n\n${siteUrl}`
+      );
+
+      alert(
+        "تم نسخ النتيجة للمشاركة"
+      );
+    } catch (error) {
+      /*
+        إذا المستخدم قفل نافذة المشاركة
+        ما نسوي شيء.
+      */
+    }
+  }
+
   return (
     <main className="min-h-screen p-6 text-white">
       <Link
@@ -1117,6 +1183,7 @@ export default function MatchPage() {
         🏠 الرئيسية
       </Link>
 
+      {/* Countdown */}
       {phase ===
         "countdown" && (
         <CountdownOverlay
@@ -1124,6 +1191,7 @@ export default function MatchPage() {
         />
       )}
 
+      {/* Transition */}
       {phase ===
         "transition" &&
         nextRound && (
@@ -1134,6 +1202,7 @@ export default function MatchPage() {
           />
         )}
 
+      {/* Final Winner */}
       <WinnerOverlay
         show={showWinner}
         winnerName={
@@ -1154,8 +1223,12 @@ export default function MatchPage() {
         }
         onRestart={restart}
         onGoHome={goHome}
+        onShare={
+          handleShareResult
+        }
       />
 
+      {/* Manual Judge */}
       <RoundWinnerPicker
         show={
           showRoundWinnerPicker
@@ -1167,6 +1240,7 @@ export default function MatchPage() {
         }
       />
 
+      {/* Round Result */}
       <RoundResultOverlay
         show={
           showRoundResult
@@ -1184,8 +1258,12 @@ export default function MatchPage() {
           mode={mode}
           side1={side1}
           side2={side2}
-          setSide1={setSide1}
-          setSide2={setSide2}
+          setSide1={
+            setSide1
+          }
+          setSide2={
+            setSide2
+          }
           selectedGames={
             selectedGames
           }
@@ -1221,6 +1299,7 @@ export default function MatchPage() {
       ) : (
         <div className="mx-auto max-w-5xl">
 
+          {/* Word */}
           {current?.game ===
             "word" && (
             <WordGame
@@ -1248,6 +1327,7 @@ export default function MatchPage() {
             />
           )}
 
+          {/* Quiz */}
           {current?.game ===
             "quiz" && (
             <QuizGame
@@ -1272,6 +1352,7 @@ export default function MatchPage() {
             />
           )}
 
+          {/* Scramble */}
           {current?.game ===
             "scramble" && (
             <ScrambleGame
@@ -1293,6 +1374,7 @@ export default function MatchPage() {
             />
           )}
 
+          {/* Wheel */}
           {current?.game ===
             "wheel" && (
             <WheelGame
@@ -1314,6 +1396,7 @@ export default function MatchPage() {
             />
           )}
 
+          {/* Categories */}
           {current?.game ===
             "categories" && (
             <CategoriesGame
@@ -1335,6 +1418,7 @@ export default function MatchPage() {
             />
           )}
 
+          {/* Proverb */}
           {current?.game ===
             "draw" && (
             <ProverbGame
