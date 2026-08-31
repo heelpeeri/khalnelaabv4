@@ -84,73 +84,19 @@ export default function Home() {
 
       <div className="mx-auto max-w-[1450px]">
 
-        {/* ========================= */}
-        {/* Header */}
-        {/* ========================= */}
-
-        <header className="flex min-h-[132px] items-start justify-center">
-          <div className="relative z-10 flex flex-col items-center">
-            <Image
-              src="/logo.png"
-              alt="خل نلعب"
-              width={280}
-              height={200}
-              priority
-              className="h-auto w-[175px] object-contain drop-shadow-[0_0_30px_rgba(96,165,250,0.22)] sm:w-[190px]"
-            />
-
-            {/* Header actions */}
-            <div className="-mt-1 flex items-center justify-center gap-2">
-              <span className="rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-[11px] font-bold text-white/45 backdrop-blur-xl">
-                نسخة تجريبية
-              </span>
-
-              <Link
-                href="/guide"
-                className="
-                  group
-                  flex
-                  items-center
-                  gap-2
-                  rounded-full
-                  border
-                  border-cyan-300/30
-                  bg-cyan-400/[0.08]
-                  px-4
-                  py-1.5
-                  text-[12px]
-                  font-black
-                  text-cyan-50
-                  shadow-[0_0_20px_rgba(34,211,238,0.12)]
-                  backdrop-blur-xl
-                  transition-all
-                  duration-300
-                  hover:-translate-y-0.5
-                  hover:border-cyan-300/55
-                  hover:bg-cyan-400/[0.13]
-                  hover:shadow-[0_0_26px_rgba(34,211,238,0.20)]
-                "
-              >
-                <span>
-                  🎮
-                </span>
-
-                <span>
-                  طريقة اللعب
-                </span>
-
-                <span className="text-cyan-200/40 transition-transform duration-300 group-hover:-translate-x-0.5">
-                  ←
-                </span>
-              </Link>
-            </div>
-          </div>
+        {/* Logo */}
+        <header className="flex min-h-[112px] items-start justify-center">
+          <Image
+            src="/logo.png"
+            alt="خل نلعب"
+            width={280}
+            height={200}
+            priority
+            className="h-auto w-[175px] object-contain drop-shadow-[0_0_30px_rgba(96,165,250,0.22)] sm:w-[190px]"
+          />
         </header>
 
-        {/* ========================= */}
         {/* Main container */}
-        {/* ========================= */}
-
         <section
           className="
             relative
@@ -169,20 +115,46 @@ export default function Home() {
         >
           <div className="pointer-events-none absolute inset-x-14 top-0 h-px bg-gradient-to-r from-transparent via-purple-300/45 to-transparent" />
 
-          {/* ========================= */}
+          {/* Guide button */}
+          <Link
+            href="/guide"
+            className="
+              absolute
+              left-5
+              top-5
+              z-50
+              flex
+              items-center
+              gap-2
+              rounded-full
+              border
+              border-cyan-300/30
+              bg-[#130b24]/90
+              px-4
+              py-2.5
+              text-sm
+              font-black
+              text-white
+              shadow-[0_0_20px_rgba(34,211,238,0.12)]
+              backdrop-blur-xl
+              transition-all
+              duration-300
+              hover:-translate-y-0.5
+              hover:border-cyan-300/55
+              hover:bg-[#19102c]
+              hover:shadow-[0_0_26px_rgba(34,211,238,0.20)]
+            "
+          >
+            <span>🎮</span>
+
+            <span>
+              طريقة اللعب
+            </span>
+          </Link>
+
           {/* Session Mode */}
-          {/* ========================= */}
-
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-yellow-300/15 bg-yellow-300/[0.05] px-4 py-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-yellow-300 shadow-[0_0_8px_rgba(253,224,71,.8)]" />
-
-              <p className="text-xs font-black text-yellow-200/75">
-                جلسة كاملة
-              </p>
-            </div>
-
-            <h1 className="mt-2 text-4xl font-black sm:text-5xl">
+            <h1 className="text-4xl font-black sm:text-5xl">
               🏆 تحدي الجلسة
             </h1>
 
@@ -237,10 +209,7 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* ========================= */}
           {/* Divider */}
-          {/* ========================= */}
-
           <div className="mx-auto mt-4 flex max-w-4xl items-center gap-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-cyan-300/15" />
 
@@ -251,10 +220,7 @@ export default function Home() {
             <div className="h-px flex-1 bg-gradient-to-l from-transparent via-white/10 to-cyan-300/15" />
           </div>
 
-          {/* ========================= */}
           {/* Quick Games */}
-          {/* ========================= */}
-
           <div
             className="
               relative
@@ -312,17 +278,13 @@ export default function Home() {
               </p>
             </div>
 
-            {/* ========================= */}
             {/* Desktop Cards */}
-            {/* ========================= */}
-
             <div
               className="relative mx-auto hidden h-[292px] max-w-[920px] lg:block"
               onMouseLeave={() =>
                 setHoveredCard(null)
               }
             >
-              {/* floor glow */}
               <div className="pointer-events-none absolute bottom-3 left-1/2 h-14 w-[670px] -translate-x-1/2 rounded-full bg-purple-500/20 blur-[44px]" />
 
               <div className="absolute left-1/2 top-[49%]">
@@ -335,8 +297,7 @@ export default function Home() {
                     let spread = 0;
 
                     if (
-                      hoveredCard !==
-                      null
+                      hoveredCard !== null
                     ) {
                       if (
                         index <
@@ -482,7 +443,6 @@ export default function Home() {
 
                           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/[0.035]" />
 
-                          {/* Hover CTA */}
                           <div
                             className={`
                               pointer-events-none
@@ -519,10 +479,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* ========================= */}
             {/* Mobile / Tablet */}
-            {/* ========================= */}
-
             <div className="relative z-10 mt-4 grid grid-cols-2 gap-3 pb-2 sm:grid-cols-3 lg:hidden">
               {gameCards.map(
                 (card) => (
@@ -580,10 +537,7 @@ export default function Home() {
         </section>
       </div>
 
-      {/* ========================= */}
       {/* Animations */}
-      {/* ========================= */}
-
       <style>{`
         @keyframes gameCardIdle {
           0% {
