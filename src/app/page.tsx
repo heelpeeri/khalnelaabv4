@@ -83,38 +83,55 @@ export default function Home() {
       </div>
 
       <div className="mx-auto max-w-[1450px]">
+
         {/* Header */}
         <header className="relative flex min-h-[165px] items-start justify-center pb-4">
+          {/* Guide button */}
           <Link
             href="/guide"
             className="
               absolute
               left-0
-              top-6
+              top-5
               z-20
               flex
               items-center
-              gap-2
+              gap-3
               rounded-full
               border
-              border-white/10
-              bg-white/[0.035]
+              border-cyan-300/25
+              bg-[#11091f]/85
               px-5
               py-3
               text-sm
               font-black
-              text-white/80
+              text-white
+              shadow-[0_0_22px_rgba(34,211,238,0.12)]
               backdrop-blur-xl
               transition-all
               duration-300
-              hover:border-purple-300/25
-              hover:bg-white/[0.06]
-              hover:text-white
+              hover:-translate-y-0.5
+              hover:border-cyan-300/45
+              hover:bg-[#170d28]
+              hover:shadow-[0_0_28px_rgba(34,211,238,0.20)]
             "
           >
-            🎮 طريقة اللعب
+            <span className="text-lg">
+              🎮
+            </span>
+
+            <div className="text-right leading-tight">
+              <p>
+                طريقة اللعب
+              </p>
+
+              <p className="mt-0.5 text-[10px] font-bold text-white/40">
+                شرح سريع للألعاب
+              </p>
+            </div>
           </Link>
 
+          {/* Logo */}
           <div className="relative z-10 flex flex-col items-center">
             <Image
               src="/logo.png"
@@ -148,15 +165,23 @@ export default function Home() {
             lg:px-10
           "
         >
+          {/* top highlight */}
           <div className="pointer-events-none absolute inset-x-14 top-0 h-px bg-gradient-to-r from-transparent via-purple-300/45 to-transparent" />
 
+          {/* ========================= */}
           {/* Session Mode */}
-          <div className="text-center">
-            <p className="text-sm font-black text-yellow-300/65">
-              تبيها جلسة كاملة؟
-            </p>
+          {/* ========================= */}
 
-            <h1 className="mt-1 text-4xl font-black sm:text-5xl">
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-yellow-300/10 bg-yellow-300/[0.04] px-4 py-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-yellow-300 shadow-[0_0_8px_rgba(253,224,71,.8)]" />
+
+              <p className="text-xs font-black text-yellow-200/70">
+                جلسة كاملة
+              </p>
+            </div>
+
+            <h1 className="mt-3 text-4xl font-black sm:text-5xl">
               🏆 تحدي الجلسة
             </h1>
 
@@ -193,236 +218,346 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Separator */}
-          <div className="mx-auto mt-7 flex max-w-3xl items-center gap-4">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10" />
+          {/* ========================= */}
+          {/* Section divider */}
+          {/* ========================= */}
 
-            <div className="text-center">
-              <p className="text-lg font-black">
-                أو اختر لعبة وابدأ مباشرة
-              </p>
+          <div className="mx-auto mt-8 flex max-w-4xl items-center gap-4">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-white/15" />
+
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-xs font-black text-white/40">
+              أو
+            </div>
+
+            <div className="h-px flex-1 bg-gradient-to-l from-transparent via-white/10 to-white/15" />
+          </div>
+
+          {/* ========================= */}
+          {/* Quick Games */}
+          {/* ========================= */}
+
+          <div
+            className="
+              relative
+              mx-auto
+              mt-4
+              max-w-[1120px]
+              rounded-[30px]
+              border
+              border-cyan-300/[0.08]
+              bg-gradient-to-b
+              from-white/[0.025]
+              to-transparent
+              px-3
+              pb-3
+              pt-5
+              sm:px-5
+            "
+          >
+            {/* subtle cyan glow */}
+            <div className="pointer-events-none absolute left-1/2 top-0 h-28 w-[520px] -translate-x-1/2 rounded-full bg-cyan-400/[0.035] blur-[70px]" />
+
+            {/* Quick header */}
+            <div className="relative z-10 text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/15 bg-cyan-400/[0.05] px-4 py-1.5">
+                <span className="text-xs">
+                  ⚡
+                </span>
+
+                <span className="text-xs font-black text-cyan-200/75">
+                  لعبة سريعة
+                </span>
+              </div>
+
+              <h2 className="mt-2 text-xl font-black sm:text-2xl">
+                اختر لعبة وابدأ مباشرة
+              </h2>
 
               <p className="mt-1 text-xs font-bold text-white/35">
                 اضغط على أي بطاقة
               </p>
             </div>
 
-            <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/10" />
-          </div>
+            {/* ========================= */}
+            {/* Desktop Cards */}
+            {/* ========================= */}
 
-          {/* Desktop cards */}
-          <div
-            className="relative mx-auto mt-2 hidden h-[370px] max-w-[1000px] lg:block"
-            onMouseLeave={() => setHoveredCard(null)}
-          >
-            {/* Glow under cards */}
-            <div className="pointer-events-none absolute bottom-5 left-1/2 h-16 w-[720px] -translate-x-1/2 rounded-full bg-purple-500/20 blur-[48px]" />
+            <div
+              className="relative mx-auto mt-1 hidden h-[350px] max-w-[1000px] lg:block"
+              onMouseLeave={() =>
+                setHoveredCard(null)
+              }
+            >
+              {/* floor glow */}
+              <div className="pointer-events-none absolute bottom-5 left-1/2 h-16 w-[720px] -translate-x-1/2 rounded-full bg-purple-500/20 blur-[48px]" />
 
-            <div className="absolute left-1/2 top-[49%]">
-              {gameCards.map((card, index) => {
-                const active =
-                  hoveredCard === index;
+              <div className="absolute left-1/2 top-[49%]">
+                {gameCards.map(
+                  (
+                    card,
+                    index
+                  ) => {
+                    const active =
+                      hoveredCard ===
+                      index;
 
-                let spread = 0;
+                    let spread = 0;
 
-                if (hoveredCard !== null) {
-                  if (index < hoveredCard) {
-                    spread = -34;
-                  }
+                    if (
+                      hoveredCard !==
+                      null
+                    ) {
+                      if (
+                        index <
+                        hoveredCard
+                      ) {
+                        spread = -34;
+                      }
 
-                  if (index > hoveredCard) {
-                    spread = 34;
-                  }
-                }
-
-                const finalX =
-                  card.x + spread;
-
-                const finalY = active
-                  ? card.y - 42
-                  : card.y;
-
-                return (
-                  <Link
-                    key={card.title}
-                    href={card.href}
-                    aria-label={`ابدأ ${card.title}`}
-                    onMouseEnter={() =>
-                      setHoveredCard(index)
+                      if (
+                        index >
+                        hoveredCard
+                      ) {
+                        spread = 34;
+                      }
                     }
-                    onFocus={() =>
-                      setHoveredCard(index)
-                    }
-                    onBlur={() =>
-                      setHoveredCard(null)
-                    }
-                    className="
-                      absolute
-                      left-1/2
-                      top-1/2
-                      cursor-pointer
-                      outline-none
-                      will-change-transform
-                    "
-                    style={{
-                      width: "205px",
-                      height: "292px",
 
-                      zIndex: active
-                        ? 100
-                        : card.z,
+                    const finalX =
+                      card.x +
+                      spread;
 
-                      transform: `
-                        translate(-50%, -50%)
-                        translate3d(
-                          ${finalX}px,
-                          ${finalY}px,
-                          0
-                        )
-                        scale(
-                          ${
-                            active
-                              ? card.scale + 0.11
-                              : card.scale
-                          }
-                        )
-                      `,
+                    const finalY =
+                      active
+                        ? card.y -
+                          42
+                        : card.y;
 
-                      transition:
-                        "transform 700ms cubic-bezier(0.16, 1, 0.3, 1), filter 550ms ease, opacity 500ms ease",
-
-                      filter: active
-                        ? "drop-shadow(0 28px 28px rgba(0,0,0,.55)) drop-shadow(0 0 30px rgba(168,85,247,.34))"
-                        : "drop-shadow(0 15px 18px rgba(0,0,0,.30))",
-
-                      opacity:
-                        hoveredCard !== null &&
-                        !active
-                          ? 0.78
-                          : 1,
-                    }}
-                  >
-                    {/* 
-                      الـposition والـhover على العنصر الخارجي.
-                      الـidle animation على الداخلي عشان ما يتعارضون.
-                    */}
-                    <div
-                      className={`
-                        game-idle-card
-                        relative
-                        h-full
-                        w-full
-                        overflow-hidden
-                        rounded-[23px]
-                        border
-                        bg-[#11091f]
-
-                        ${
-                          active
-                            ? "game-idle-paused border-fuchsia-200/80 shadow-[0_0_0_1px_rgba(255,255,255,.08),0_0_40px_rgba(168,85,247,.28)]"
-                            : "border-yellow-200/35"
+                    return (
+                      <Link
+                        key={
+                          card.title
                         }
-                      `}
+                        href={
+                          card.href
+                        }
+                        aria-label={`ابدأ ${card.title}`}
+                        onMouseEnter={() =>
+                          setHoveredCard(
+                            index
+                          )
+                        }
+                        onFocus={() =>
+                          setHoveredCard(
+                            index
+                          )
+                        }
+                        onBlur={() =>
+                          setHoveredCard(
+                            null
+                          )
+                        }
+                        className="
+                          absolute
+                          left-1/2
+                          top-1/2
+                          cursor-pointer
+                          outline-none
+                          will-change-transform
+                        "
+                        style={{
+                          width:
+                            "205px",
+
+                          height:
+                            "292px",
+
+                          zIndex:
+                            active
+                              ? 100
+                              : card.z,
+
+                          transform: `
+                            translate(-50%, -50%)
+                            translate3d(
+                              ${finalX}px,
+                              ${finalY}px,
+                              0
+                            )
+                            scale(
+                              ${
+                                active
+                                  ? card.scale +
+                                    0.11
+                                  : card.scale
+                              }
+                            )
+                          `,
+
+                          transition:
+                            "transform 700ms cubic-bezier(0.16, 1, 0.3, 1), filter 550ms ease, opacity 500ms ease",
+
+                          filter:
+                            active
+                              ? "drop-shadow(0 28px 28px rgba(0,0,0,.55)) drop-shadow(0 0 30px rgba(168,85,247,.34))"
+                              : "drop-shadow(0 15px 18px rgba(0,0,0,.30))",
+
+                          opacity:
+                            hoveredCard !==
+                              null &&
+                            !active
+                              ? 0.76
+                              : 1,
+                        }}
+                      >
+                        {/* 
+                          Idle animation lives here,
+                          separate from hover transform.
+                        */}
+                        <div
+                          className={`
+                            game-idle-card
+                            relative
+                            h-full
+                            w-full
+                            overflow-hidden
+                            rounded-[23px]
+                            border
+                            bg-[#11091f]
+
+                            ${
+                              active
+                                ? "game-idle-paused border-fuchsia-200/80 shadow-[0_0_0_1px_rgba(255,255,255,.08),0_0_40px_rgba(168,85,247,.28)]"
+                                : "border-yellow-200/35"
+                            }
+                          `}
+                          style={{
+                            animationDelay:
+                              `${card.delay}s`,
+                          }}
+                        >
+                          <Image
+                            src={
+                              card.image
+                            }
+                            alt={
+                              card.title
+                            }
+                            fill
+                            sizes="205px"
+                            className={`
+                              object-cover
+                              transition-transform
+                              duration-700
+                              ease-out
+
+                              ${
+                                active
+                                  ? "scale-[1.03]"
+                                  : "scale-100"
+                              }
+                            `}
+                          />
+
+                          {/* surface shine */}
+                          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/[0.035]" />
+
+                          {/* Hover CTA */}
+                          <div
+                            className={`
+                              pointer-events-none
+                              absolute
+                              inset-x-3
+                              bottom-3
+                              rounded-full
+                              border
+                              border-white/10
+                              bg-black/60
+                              px-3
+                              py-2
+                              text-center
+                              text-xs
+                              font-black
+                              backdrop-blur-md
+                              transition-all
+                              duration-500
+
+                              ${
+                                active
+                                  ? "translate-y-0 opacity-100"
+                                  : "translate-y-3 opacity-0"
+                              }
+                            `}
+                          >
+                            العب الآن
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  }
+                )}
+              </div>
+            </div>
+
+            {/* ========================= */}
+            {/* Mobile / Tablet */}
+            {/* ========================= */}
+
+            <div className="relative z-10 mt-6 grid grid-cols-2 gap-3 pb-2 sm:grid-cols-3 lg:hidden">
+              {gameCards.map(
+                (
+                  card,
+                  index
+                ) => (
+                  <Link
+                    key={
+                      card.title
+                    }
+                    href={
+                      card.href
+                    }
+                    className="group"
+                  >
+                    <div
+                      className="
+                        game-mobile-card
+                        relative
+                        aspect-[3/4]
+                        overflow-hidden
+                        rounded-[20px]
+                        border
+                        border-white/10
+                        shadow-[0_12px_30px_rgba(0,0,0,.30)]
+                        transition-all
+                        duration-300
+                        group-active:scale-[0.97]
+                      "
                       style={{
                         animationDelay:
                           `${card.delay}s`,
                       }}
                     >
                       <Image
-                        src={card.image}
-                        alt={card.title}
+                        src={
+                          card.image
+                        }
+                        alt={
+                          card.title
+                        }
                         fill
-                        sizes="205px"
-                        className={`
-                          object-cover
-                          transition-transform
-                          duration-700
-                          ease-out
-
-                          ${
-                            active
-                              ? "scale-[1.03]"
-                              : "scale-100"
-                          }
-                        `}
+                        sizes="(max-width: 640px) 45vw, 30vw"
+                        className="object-cover"
                       />
 
-                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/[0.035]" />
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
 
-                      {/* Click hint */}
-                      <div
-                        className={`
-                          pointer-events-none
-                          absolute
-                          inset-x-3
-                          bottom-3
-                          rounded-full
-                          border
-                          border-white/10
-                          bg-black/60
-                          px-3
-                          py-2
-                          text-center
-                          text-xs
-                          font-black
-                          backdrop-blur-md
-                          transition-all
-                          duration-500
-
-                          ${
-                            active
-                              ? "translate-y-0 opacity-100"
-                              : "translate-y-3 opacity-0"
-                          }
-                        `}
-                      >
+                      <div className="pointer-events-none absolute inset-x-3 bottom-3 rounded-full border border-white/10 bg-black/55 px-3 py-2 text-center text-xs font-black backdrop-blur-md">
                         العب الآن
                       </div>
                     </div>
                   </Link>
-                );
-              })}
+                )
+              )}
             </div>
-          </div>
-
-          {/* Mobile */}
-          <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:hidden">
-            {gameCards.map((card) => (
-              <Link
-                key={card.title}
-                href={card.href}
-                className="group"
-              >
-                <div
-                  className="
-                    relative
-                    aspect-[3/4]
-                    overflow-hidden
-                    rounded-[20px]
-                    border
-                    border-white/10
-                    shadow-[0_12px_30px_rgba(0,0,0,.30)]
-                    transition-all
-                    duration-300
-                    group-active:scale-[0.97]
-                  "
-                >
-                  <Image
-                    src={card.image}
-                    alt={card.title}
-                    fill
-                    sizes="(max-width: 640px) 45vw, 30vw"
-                    className="object-cover"
-                  />
-
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-
-                  <div className="pointer-events-none absolute inset-x-3 bottom-3 rounded-full border border-white/10 bg-black/55 px-3 py-2 text-center text-xs font-black backdrop-blur-md">
-                    العب الآن
-                  </div>
-                </div>
-              </Link>
-            ))}
           </div>
         </section>
       </div>
@@ -451,12 +586,25 @@ export default function Home() {
           }
         }
 
+        @keyframes gameMobileIdle {
+          0% {
+            transform: translateY(0px);
+          }
+
+          50% {
+            transform: translateY(-3px);
+          }
+
+          100% {
+            transform: translateY(0px);
+          }
+        }
+
         .game-idle-card {
           animation-name: gameCardIdle;
           animation-duration: 6.5s;
           animation-timing-function: ease-in-out;
           animation-iteration-count: infinite;
-
           will-change: transform;
         }
 
@@ -464,8 +612,16 @@ export default function Home() {
           animation-play-state: paused;
         }
 
+        .game-mobile-card {
+          animation-name: gameMobileIdle;
+          animation-duration: 6s;
+          animation-timing-function: ease-in-out;
+          animation-iteration-count: infinite;
+        }
+
         @media (prefers-reduced-motion: reduce) {
-          .game-idle-card {
+          .game-idle-card,
+          .game-mobile-card {
             animation: none;
           }
         }
