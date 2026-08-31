@@ -1,10 +1,12 @@
 'use client';
 
+import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 const games = [
   {
-    icon: "🎡",
+    image: "/images/posters/Wheelgame.jpg",
     title: "لف وخمن",
     how: [
       "لف العجلة وشف وش تطلع لك",
@@ -15,11 +17,11 @@ const games = [
       "انتبه للإفلاس وتخطي الدور 👀",
     ],
     example:
-      "مثال: طلعت لك 300 واخترت حرف موجود مرتين؟ تاخذ 600 نقطة.",
+      "طلعت لك 300 واخترت حرف موجود مرتين؟ تاخذ 600 نقطة.",
   },
 
   {
-    icon: "💬",
+    image: "/images/posters/wordgame.jpg",
     title: "خمن الكلمة",
     how: [
       "كل مرة يكون الدور على فريق",
@@ -32,12 +34,12 @@ const games = [
       "أول فريق يجيب الكلمة الصح يفوز بالجولة",
     ],
     example:
-      "مثال: لو فيه حرف أخضر، خلاص عرفتم الحرف ومكانه. الأصفر موجود بس جرّبوه بمكان ثاني.",
+      "الحرف الأخضر خلاص عرفتم مكانه، والأصفر موجود بس جرّبوه بمكان ثاني.",
   },
 
   {
-    icon: "❓",
-    title: "الأسئلة",
+    image: "/images/posters/Quizgame.jpg",
+    title: "أسئلة وأجوبة",
     how: [
       "كل سؤال يبدأ فيه فريق",
       "حاولوا تجاوبون قبل ما يخلص الوقت",
@@ -49,7 +51,7 @@ const games = [
   },
 
   {
-    icon: "✏️",
+    image: "/images/posters/Proverbgame.jpg",
     title: "خمن المثل",
     how: [
       "بيطلع لكم لغز يمثل مثل معروف",
@@ -61,7 +63,7 @@ const games = [
   },
 
   {
-    icon: "🕵🏻‍♂️",
+    image: "/images/posters/Whogame.jpg",
     title: "منهو ذا؟",
     how: [
       "بيطلع لكم QR Code لشخصية",
@@ -73,11 +75,11 @@ const games = [
       "بعدها يجي دور الفريق الثاني بشخصية ثانية",
     ],
     example:
-      "مثال: طلعت لك شخصية معروفة؟ وصف شغلها أو شكلها أو شيء مشهورة فيه، بس لا تقول اسمها.",
+      "طلعت لك شخصية معروفة؟ وصف شغلها أو شكلها أو شيء مشهورة فيه، بس لا تقول اسمها.",
   },
 
   {
-    icon: "🌍",
+    image: "/images/posters/Categoriesgame.jpg",
     title: "إنسان حيوان نبات جماد بلاد",
     how: [
       "بيطلع حرف واحد للفريقين",
@@ -92,56 +94,347 @@ const games = [
 ];
 
 export default function GuidePage() {
+  const [flippedCard, setFlippedCard] =
+    useState<number | null>(null);
+
+  function toggleCard(index: number) {
+    setFlippedCard((current) =>
+      current === index ? null : index
+    );
+  }
+
   return (
-    <main className="min-h-screen p-6 text-white">
+    <main className="min-h-screen px-4 py-6 text-white sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
+        {/* Header */}
         <div className="flex items-center justify-between gap-4">
-          <h1 className="text-4xl font-black">
-            🎮 طريقة اللعب
-          </h1>
+          <div>
+            <p className="text-sm font-black text-cyan-300/60">
+              تعرف على الألعاب
+            </p>
+
+            <h1 className="mt-1 text-3xl font-black sm:text-4xl">
+              🎮 طريقة اللعب
+            </h1>
+
+            <p className="mt-2 text-sm font-bold text-white/40">
+              اضغط على أي بطاقة وشوف شرح اللعبة
+            </p>
+          </div>
 
           <Link
             href="/"
-            className="rounded-full bg-gradient-to-r from-[#119DFF] to-[#7A5CFF] px-6 py-3 font-black text-white"
+            className="
+              rounded-full
+              border
+              border-cyan-300/25
+              bg-gradient-to-r
+              from-[#119DFF]
+              to-[#7A5CFF]
+              px-5
+              py-3
+              text-sm
+              font-black
+              text-white
+              shadow-[0_0_22px_rgba(17,157,255,.18)]
+              transition-all
+              duration-300
+              hover:-translate-y-0.5
+              hover:shadow-[0_0_30px_rgba(17,157,255,.28)]
+            "
           >
             🏠 الرئيسية
           </Link>
         </div>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-2">
-          {games.map((game) => (
-            <div
-              key={game.title}
-              className="rounded-[32px] border border-purple-500/30 bg-black/20 p-8 backdrop-blur-xl"
-            >
-              <h2 className="text-3xl font-black">
-                {game.icon} {game.title}
-              </h2>
+        {/* Cards */}
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {games.map((game, index) => {
+            const flipped =
+              flippedCard === index;
 
-              <div className="mt-6 space-y-3">
-                {game.how.map((step, index) => (
+            return (
+              <button
+                key={game.title}
+                type="button"
+                onClick={() =>
+                  toggleCard(index)
+                }
+                aria-label={
+                  flipped
+                    ? `الرجوع إلى بوستر ${game.title}`
+                    : `عرض شرح ${game.title}`
+                }
+                className="
+                  group
+                  relative
+                  h-[500px]
+                  w-full
+                  cursor-pointer
+                  text-right
+                  outline-none
+                  [perspective:1400px]
+                  focus-visible:ring-2
+                  focus-visible:ring-cyan-300
+                  focus-visible:ring-offset-4
+                  focus-visible:ring-offset-[#080411]
+                "
+              >
+                {/* Flip wrapper */}
+                <div
+                  className="
+                    relative
+                    h-full
+                    w-full
+                    transition-transform
+                    duration-700
+                    [transform-style:preserve-3d]
+                  "
+                  style={{
+                    transform: flipped
+                      ? "rotateY(180deg)"
+                      : "rotateY(0deg)",
+                    transitionTimingFunction:
+                      "cubic-bezier(0.16, 1, 0.3, 1)",
+                  }}
+                >
+                  {/* ====================== */}
+                  {/* FRONT — Poster */}
+                  {/* ====================== */}
+
                   <div
-                    key={index}
-                    className="rounded-xl bg-white/5 p-3"
+                    className="
+                      absolute
+                      inset-0
+                      overflow-hidden
+                      rounded-[28px]
+                      border
+                      border-white/10
+                      bg-[#10081d]
+                      shadow-[0_20px_50px_rgba(0,0,0,.3)]
+                      transition-all
+                      duration-500
+                      [backface-visibility:hidden]
+
+                      group-hover:-translate-y-1
+                      group-hover:border-purple-300/30
+                      group-hover:shadow-[0_26px_60px_rgba(0,0,0,.38)]
+                    "
                   >
-                    {index + 1}. {step}
+                    <Image
+                      src={game.image}
+                      alt={game.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="
+                        object-cover
+                        transition-transform
+                        duration-700
+                        ease-out
+                        group-hover:scale-[1.025]
+                      "
+                    />
+
+                    {/* subtle bottom gradient */}
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+
+                    {/* Flip hint */}
+                    <div
+                      className="
+                        absolute
+                        inset-x-4
+                        bottom-4
+                        flex
+                        items-center
+                        justify-between
+                        gap-3
+                        rounded-2xl
+                        border
+                        border-white/10
+                        bg-black/55
+                        px-4
+                        py-3
+                        backdrop-blur-xl
+                      "
+                    >
+                      <div>
+                        <p className="font-black text-white">
+                          {game.title}
+                        </p>
+
+                        <p className="mt-0.5 text-xs font-bold text-white/45">
+                          اضغط وشوف طريقة اللعب
+                        </p>
+                      </div>
+
+                      <div
+                        className="
+                          flex
+                          h-10
+                          w-10
+                          shrink-0
+                          items-center
+                          justify-center
+                          rounded-full
+                          border
+                          border-cyan-300/20
+                          bg-cyan-400/10
+                          text-lg
+                          text-cyan-100
+                          transition-transform
+                          duration-500
+                          group-hover:rotate-12
+                        "
+                      >
+                        ↻
+                      </div>
+                    </div>
                   </div>
-                ))}
-              </div>
 
-              {game.example && (
-                <div className="mt-6 rounded-2xl border border-cyan-400/30 bg-cyan-400/10 p-4">
-                  <p className="font-black text-cyan-300">
-                    مثال:
-                  </p>
+                  {/* ====================== */}
+                  {/* BACK — Guide */}
+                  {/* ====================== */}
 
-                  <p className="mt-2 text-white/90">
-                    {game.example}
-                  </p>
+                  <div
+                    className="
+                      absolute
+                      inset-0
+                      overflow-hidden
+                      rounded-[28px]
+                      border
+                      border-cyan-300/20
+                      bg-gradient-to-b
+                      from-[#161027]
+                      via-[#10091e]
+                      to-[#0b0715]
+                      p-5
+                      shadow-[0_20px_60px_rgba(0,0,0,.4)]
+                      [backface-visibility:hidden]
+                    "
+                    style={{
+                      transform:
+                        "rotateY(180deg)",
+                    }}
+                  >
+                    {/* Back glow */}
+                    <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-cyan-400/10 blur-[80px]" />
+
+                    <div className="relative flex h-full flex-col">
+                      {/* Back header */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-xs font-black text-cyan-300/60">
+                            طريقة اللعب
+                          </p>
+
+                          <h2 className="mt-1 text-2xl font-black">
+                            {game.title}
+                          </h2>
+                        </div>
+
+                        <div
+                          className="
+                            flex
+                            h-10
+                            w-10
+                            shrink-0
+                            items-center
+                            justify-center
+                            rounded-full
+                            border
+                            border-white/10
+                            bg-white/[0.05]
+                            text-lg
+                          "
+                        >
+                          ↻
+                        </div>
+                      </div>
+
+                      {/* Steps */}
+                      <div className="mt-4 flex-1 space-y-2">
+                        {game.how.map(
+                          (step, stepIndex) => (
+                            <div
+                              key={
+                                stepIndex
+                              }
+                              className="
+                                flex
+                                items-start
+                                gap-3
+                                rounded-xl
+                                border
+                                border-white/[0.06]
+                                bg-white/[0.035]
+                                px-3
+                                py-2.5
+                              "
+                            >
+                              <div
+                                className="
+                                  flex
+                                  h-6
+                                  w-6
+                                  shrink-0
+                                  items-center
+                                  justify-center
+                                  rounded-full
+                                  border
+                                  border-cyan-300/15
+                                  bg-cyan-400/10
+                                  text-[11px]
+                                  font-black
+                                  text-cyan-100
+                                "
+                              >
+                                {stepIndex +
+                                  1}
+                              </div>
+
+                              <p className="pt-0.5 text-sm font-bold leading-6 text-white/75">
+                                {step}
+                              </p>
+                            </div>
+                          )
+                        )}
+                      </div>
+
+                      {/* Example */}
+                      {game.example && (
+                        <div
+                          className="
+                            mt-3
+                            rounded-xl
+                            border
+                            border-yellow-300/15
+                            bg-yellow-300/[0.06]
+                            px-3
+                            py-2.5
+                          "
+                        >
+                          <p className="text-xs font-black text-yellow-200/75">
+                            مثال
+                          </p>
+
+                          <p className="mt-1 text-xs font-bold leading-5 text-white/65">
+                            {
+                              game.example
+                            }
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Return */}
+                      <div className="mt-3 text-center text-[11px] font-bold text-white/30">
+                        اضغط مرة ثانية عشان ترجع للبوستر
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </div>
     </main>
