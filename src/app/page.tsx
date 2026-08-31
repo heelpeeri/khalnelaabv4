@@ -4,41 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-const quickGames = [
-  {
-    href: "/match?game=word",
-    title: "خمن الكلمة",
-    image: "/images/posters/wordgame.jpg",
-  },
-  {
-    href: "/match?game=wheel",
-    title: "لف وخمن",
-    image: "/images/posters/Wheelgame.jpg",
-  },
-  {
-    href: "/match?game=quiz",
-    title: "أسئلة وأجوبة",
-    image: "/images/posters/Quizgame.jpg",
-  },
+const gameCards = [
   {
     href: "/match?game=scramble",
-    title: "منهو ذا؟",
-    image: "/images/posters/Whogame.jpg",
-  },
-  {
-    href: "/match?game=draw",
-    title: "خمن المثل",
-    image: "/images/posters/Proverbgame.jpg",
-  },
-  {
-    href: "/match?game=categories",
-    title: "إنسان حيوان نبات جماد بلاد",
-    image: "/images/posters/Categoriesgame.jpg",
-  },
-];
-
-const sessionCards = [
-  {
     image: "/images/posters/Whogame.jpg",
     title: "منهو ذا؟",
     x: -310,
@@ -48,6 +16,7 @@ const sessionCards = [
     z: 10,
   },
   {
+    href: "/match?game=quiz",
     image: "/images/posters/Quizgame.jpg",
     title: "أسئلة وأجوبة",
     x: -205,
@@ -57,6 +26,7 @@ const sessionCards = [
     z: 20,
   },
   {
+    href: "/match?game=word",
     image: "/images/posters/wordgame.jpg",
     title: "خمن الكلمة",
     x: -102,
@@ -66,6 +36,7 @@ const sessionCards = [
     z: 30,
   },
   {
+    href: "/match?game=wheel",
     image: "/images/posters/Wheelgame.jpg",
     title: "لف وخمن",
     x: 0,
@@ -75,6 +46,7 @@ const sessionCards = [
     z: 40,
   },
   {
+    href: "/match?game=draw",
     image: "/images/posters/Proverbgame.jpg",
     title: "خمن المثل",
     x: 105,
@@ -84,6 +56,7 @@ const sessionCards = [
     z: 30,
   },
   {
+    href: "/match?game=categories",
     image: "/images/posters/Categoriesgame.jpg",
     title: "إنسان حيوان نبات جماد بلاد",
     x: 215,
@@ -95,8 +68,8 @@ const sessionCards = [
 ];
 
 export default function Home() {
-  const [showQuickGames, setShowQuickGames] = useState(false);
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [hoveredCard, setHoveredCard] =
+    useState<number | null>(null);
 
   return (
     <main className="relative min-h-screen overflow-x-hidden px-4 pb-8 pt-5 text-white sm:px-6 lg:px-8">
@@ -158,7 +131,7 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Main card */}
+        {/* Main */}
         <section
           className="
             relative
@@ -167,7 +140,7 @@ export default function Home() {
             border-purple-400/20
             bg-[#0c0617]/75
             px-5
-            pb-5
+            pb-7
             pt-7
             shadow-[0_35px_120px_rgba(0,0,0,0.38)]
             backdrop-blur-2xl
@@ -177,10 +150,10 @@ export default function Home() {
         >
           <div className="pointer-events-none absolute inset-x-14 top-0 h-px bg-gradient-to-r from-transparent via-purple-300/45 to-transparent" />
 
-          {/* Session header */}
+          {/* Session challenge */}
           <div className="text-center">
             <p className="text-sm font-black text-yellow-300/65">
-              الوضع الرئيسي
+              تبيها جلسة كاملة؟
             </p>
 
             <h1 className="mt-1 text-4xl font-black sm:text-5xl">
@@ -188,77 +161,152 @@ export default function Home() {
             </h1>
 
             <p className="mx-auto mt-3 max-w-2xl text-base font-medium leading-8 text-white/50">
-              اختر ألعابكم، سجلوا الفرق مرة وحدة، وكل جولة تقربكم من بطل
-              الجلسة.
+              اختاروا أكثر من لعبة، سجلوا الفرق مرة وحدة،
+              واجمعوا النقاط لين يطلع بطل الجلسة.
             </p>
+
+            <Link
+              href="/match?mode=session"
+              className="
+                mt-5
+                inline-flex
+                items-center
+                justify-center
+                rounded-full
+                border
+                border-yellow-200/45
+                bg-gradient-to-r
+                from-yellow-300
+                to-amber-400
+                px-11
+                py-3.5
+                font-black
+                text-[#241600]
+                shadow-[0_12px_38px_rgba(250,204,21,0.24)]
+                transition-all
+                duration-300
+                hover:-translate-y-1
+                hover:shadow-[0_18px_48px_rgba(250,204,21,0.35)]
+              "
+            >
+              ابدأ تحدي الجلسة
+            </Link>
           </div>
 
-          {/* Desktop card fan */}
+          {/* Divider */}
+          <div className="mx-auto mt-7 flex max-w-3xl items-center gap-4">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10" />
+
+            <div className="text-center">
+              <p className="text-lg font-black text-white">
+                أو اختر لعبة وابدأ مباشرة
+              </p>
+
+              <p className="mt-1 text-xs font-bold text-white/35">
+                اضغط على أي بطاقة
+              </p>
+            </div>
+
+            <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/10" />
+          </div>
+
+          {/* Desktop cards */}
           <div
-            className="relative mx-auto mt-1 hidden h-[365px] max-w-[980px] lg:block"
+            className="relative mx-auto mt-1 hidden h-[390px] max-w-[980px] lg:block"
             onMouseLeave={() => setHoveredCard(null)}
           >
-            {/* floor glow */}
-            <div className="pointer-events-none absolute bottom-4 left-1/2 h-20 w-[620px] -translate-x-1/2 rounded-full bg-purple-500/20 blur-[50px]" />
+            {/* Bottom glow */}
+            <div className="pointer-events-none absolute bottom-6 left-1/2 h-20 w-[650px] -translate-x-1/2 rounded-full bg-purple-500/20 blur-[52px]" />
 
-            <div className="absolute left-1/2 top-[47%]">
-              {sessionCards.map((card, index) => {
-                const active = hoveredCard === index;
+            <div className="absolute left-1/2 top-[49%]">
+              {gameCards.map((card, index) => {
+                const active =
+                  hoveredCard === index;
 
-                /*
-                  إذا اخترنا بطاقة:
-                  اللي يسارها يتحرك شوي يسار،
-                  واللي يمينها يتحرك شوي يمين.
-                */
                 let spread = 0;
 
                 if (hoveredCard !== null) {
                   if (index < hoveredCard) {
-                    spread = -20;
+                    spread = -28;
                   }
 
                   if (index > hoveredCard) {
-                    spread = 20;
+                    spread = 28;
                   }
                 }
 
-                const finalX = card.x + spread;
-                const finalY = active ? card.y - 38 : card.y;
+                const finalX =
+                  card.x + spread;
+
+                const finalY = active
+                  ? card.y - 45
+                  : card.y;
 
                 return (
-                  <div
+                  <Link
                     key={card.title}
-                    onMouseEnter={() => setHoveredCard(index)}
+                    href={card.href}
+                    aria-label={`ابدأ ${card.title}`}
+                    onMouseEnter={() =>
+                      setHoveredCard(index)
+                    }
+                    onFocus={() =>
+                      setHoveredCard(index)
+                    }
+                    onBlur={() =>
+                      setHoveredCard(null)
+                    }
                     className="
                       absolute
                       left-1/2
                       top-1/2
                       cursor-pointer
+                      outline-none
                       will-change-transform
                     "
                     style={{
                       width: "205px",
                       height: "292px",
 
-                      zIndex: active ? 100 : card.z,
+                      zIndex: active
+                        ? 100
+                        : card.z,
 
                       transform: `
                         translate(-50%, -50%)
-                        translate3d(${finalX}px, ${finalY}px, 0)
-                        rotate(${active ? 0 : card.rotate}deg)
-                        scale(${active ? card.scale + 0.11 : card.scale})
+                        translate3d(
+                          ${finalX}px,
+                          ${finalY}px,
+                          0
+                        )
+                        rotate(
+                          ${
+                            active
+                              ? 0
+                              : card.rotate
+                          }deg
+                        )
+                        scale(
+                          ${
+                            active
+                              ? card.scale +
+                                0.13
+                              : card.scale
+                          }
+                        )
                       `,
 
                       transition:
-                        "transform 560ms cubic-bezier(0.22, 1, 0.36, 1), filter 450ms ease, opacity 450ms ease",
+                        "transform 650ms cubic-bezier(0.16, 1, 0.3, 1), filter 500ms ease, opacity 500ms ease",
 
                       filter: active
-                        ? "drop-shadow(0 28px 26px rgba(0,0,0,.52)) drop-shadow(0 0 24px rgba(168,85,247,.32))"
+                        ? "drop-shadow(0 30px 28px rgba(0,0,0,.55)) drop-shadow(0 0 28px rgba(168,85,247,.36))"
                         : "drop-shadow(0 17px 18px rgba(0,0,0,.32))",
 
                       opacity:
-                        hoveredCard !== null && !active
-                          ? 0.82
+                        hoveredCard !== null &&
+                        !active
+                          ? 0.76
                           : 1,
                     }}
                   >
@@ -276,7 +324,7 @@ export default function Home() {
 
                         ${
                           active
-                            ? "border-fuchsia-200/70 shadow-[0_0_0_1px_rgba(255,255,255,.06),0_0_35px_rgba(168,85,247,.24)]"
+                            ? "border-fuchsia-200/80 shadow-[0_0_0_1px_rgba(255,255,255,.08),0_0_40px_rgba(168,85,247,.28)]"
                             : "border-yellow-200/35"
                         }
                       `}
@@ -294,196 +342,115 @@ export default function Home() {
 
                           ${
                             active
-                              ? "scale-[1.025]"
+                              ? "scale-[1.035]"
                               : "scale-100"
                           }
                         `}
                       />
 
-                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/[0.025]" />
+                      {/* subtle surface light */}
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/[0.035]" />
+
+                      {/* hover click hint */}
+                      <div
+                        className={`
+                          pointer-events-none
+                          absolute
+                          inset-x-3
+                          bottom-3
+                          rounded-full
+                          border
+                          border-white/10
+                          bg-black/55
+                          px-3
+                          py-2
+                          text-center
+                          text-xs
+                          font-black
+                          text-white
+                          backdrop-blur-md
+                          transition-all
+                          duration-500
+
+                          ${
+                            active
+                              ? "translate-y-0 opacity-100"
+                              : "translate-y-3 opacity-0"
+                          }
+                        `}
+                      >
+                        العب الآن
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
           </div>
 
-          {/* Mobile/tablet */}
-          <div className="mt-7 grid grid-cols-3 gap-3 lg:hidden">
-            {sessionCards.map((card) => (
-              <div
+          {/* Mobile / tablet */}
+          <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:hidden">
+            {gameCards.map((card) => (
+              <Link
                 key={card.title}
-                className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10"
+                href={card.href}
+                className="group"
               >
-                <Image
-                  src={card.image}
-                  alt={card.title}
-                  fill
-                  sizes="30vw"
-                  className="object-cover"
-                />
-              </div>
+                <div
+                  className="
+                    relative
+                    aspect-[3/4]
+                    overflow-hidden
+                    rounded-[20px]
+                    border
+                    border-white/10
+                    shadow-[0_12px_30px_rgba(0,0,0,.3)]
+                    transition-all
+                    duration-300
+                    group-active:scale-[0.97]
+                  "
+                >
+                  <Image
+                    src={card.image}
+                    alt={card.title}
+                    fill
+                    sizes="(max-width: 640px) 45vw, 30vw"
+                    className="object-cover"
+                  />
+
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+
+                  <div
+                    className="
+                      pointer-events-none
+                      absolute
+                      inset-x-3
+                      bottom-3
+                      rounded-full
+                      border
+                      border-white/10
+                      bg-black/50
+                      px-3
+                      py-2
+                      text-center
+                      text-xs
+                      font-black
+                      backdrop-blur-md
+                    "
+                  >
+                    العب الآن
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
 
-          {/* Start button */}
-          <div className="-mt-2 flex justify-center lg:-mt-1">
-            <Link
-              href="/match?mode=session"
-              className="
-                relative
-                z-50
-                rounded-full
-                border
-                border-yellow-200/45
-                bg-gradient-to-r
-                from-yellow-300
-                to-amber-400
-                px-12
-                py-4
-                font-black
-                text-[#241600]
-                shadow-[0_12px_38px_rgba(250,204,21,0.25)]
-                transition-all
-                duration-300
-                hover:-translate-y-1
-                hover:shadow-[0_18px_48px_rgba(250,204,21,0.36)]
-                active:translate-y-0
-              "
-            >
-              ابدأ تحدي الجلسة
-            </Link>
-          </div>
-
-          {/* Quick mode */}
-          <div
-            className="
-              relative
-              mt-6
-              rounded-[27px]
-              border
-              border-cyan-400/15
-              bg-gradient-to-r
-              from-[#100a20]/85
-              to-[#0b0a1d]/85
-              px-6
-              py-5
-              shadow-[0_18px_55px_rgba(0,0,0,0.20)]
-              backdrop-blur-xl
-            "
-          >
-            <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
-              {/* Icon */}
-              <div
-                className="
-                  flex
-                  h-16
-                  w-16
-                  shrink-0
-                  items-center
-                  justify-center
-                  rounded-2xl
-                  border
-                  border-cyan-300/20
-                  bg-cyan-400/10
-                  text-4xl
-                  shadow-[0_0_24px_rgba(34,211,238,0.12)]
-                "
-              >
-                ⚡
-              </div>
-
-              {/* Text */}
-              <div className="flex-1 text-center sm:text-right">
-                <p className="text-2xl font-black text-cyan-300">
-                  لعبة سريعة
-                </p>
-
-                <p className="mt-1 text-sm font-medium text-white/45">
-                  اختر لعبة وحدة وابدأ مباشرة.
-                </p>
-              </div>
-
-              {/* Button */}
-              <button
-                type="button"
-                onClick={() =>
-                  setShowQuickGames(
-                    (current) => !current
-                  )
-                }
-                className="
-                  min-w-[210px]
-                  rounded-full
-                  bg-gradient-to-r
-                  from-cyan-400
-                  to-blue-600
-                  px-8
-                  py-3.5
-                  font-black
-                  text-white
-                  shadow-[0_10px_30px_rgba(14,165,233,0.24)]
-                  transition-all
-                  duration-300
-                  hover:-translate-y-0.5
-                  hover:shadow-[0_15px_38px_rgba(14,165,233,0.34)]
-                "
-              >
-                {showQuickGames
-                  ? "إخفاء الألعاب"
-                  : "اختر لعبة سريعة"}
-              </button>
-            </div>
-
-            {/* Quick games */}
-            <div
-              className={`
-                grid
-                transition-all
-                duration-500
-                ease-out
-
-                ${
-                  showQuickGames
-                    ? "mt-5 max-h-[500px] grid-cols-3 gap-3 border-t border-white/10 pt-5 opacity-100 sm:grid-cols-6"
-                    : "max-h-0 overflow-hidden opacity-0"
-                }
-              `}
-            >
-              {quickGames.map((game) => (
-                <Link
-                  key={game.title}
-                  href={game.href}
-                  className="group"
-                >
-                  <div
-                    className="
-                      relative
-                      aspect-[3/4]
-                      overflow-hidden
-                      rounded-[18px]
-                      border
-                      border-white/10
-                      shadow-[0_10px_26px_rgba(0,0,0,.3)]
-                      transition-all
-                      duration-500
-                      ease-out
-                      group-hover:-translate-y-2
-                      group-hover:border-cyan-300/50
-                      group-hover:shadow-[0_18px_38px_rgba(34,211,238,.15)]
-                    "
-                  >
-                    <Image
-                      src={game.image}
-                      alt={game.title}
-                      fill
-                      sizes="150px"
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.035]"
-                    />
-                  </div>
-                </Link>
-              ))}
-            </div>
+          {/* Bottom hint */}
+          <div className="mx-auto mt-2 flex max-w-xl items-center justify-center gap-2 text-center text-xs font-bold text-white/25 lg:mt-0">
+            <span>⚡</span>
+            <span>
+              اختيار البطاقة يبدأ اللعبة السريعة مباشرة
+            </span>
           </div>
         </section>
       </div>
