@@ -9,8 +9,8 @@ const gameCards = [
     href: "/match?game=scramble",
     image: "/images/posters/Whogame.jpg",
     title: "منهو ذا؟",
-    x: -300,
-    y: 14,
+    x: -270,
+    y: 12,
     scale: 0.9,
     z: 10,
     delay: -1.2,
@@ -19,8 +19,8 @@ const gameCards = [
     href: "/match?game=quiz",
     image: "/images/posters/Quizgame.jpg",
     title: "أسئلة وأجوبة",
-    x: -180,
-    y: 7,
+    x: -162,
+    y: 6,
     scale: 0.94,
     z: 20,
     delay: -3.6,
@@ -29,7 +29,7 @@ const gameCards = [
     href: "/match?game=word",
     image: "/images/posters/wordgame.jpg",
     title: "خمن الكلمة",
-    x: -60,
+    x: -54,
     y: 1,
     scale: 0.98,
     z: 30,
@@ -39,7 +39,7 @@ const gameCards = [
     href: "/match?game=wheel",
     image: "/images/posters/Wheelgame.jpg",
     title: "لف وخمن",
-    x: 60,
+    x: 54,
     y: 1,
     scale: 0.98,
     z: 30,
@@ -49,8 +49,8 @@ const gameCards = [
     href: "/match?game=draw",
     image: "/images/posters/Proverbgame.jpg",
     title: "خمن المثل",
-    x: 180,
-    y: 7,
+    x: 162,
+    y: 6,
     scale: 0.94,
     z: 20,
     delay: -0.7,
@@ -59,8 +59,8 @@ const gameCards = [
     href: "/match?game=categories",
     image: "/images/posters/Categoriesgame.jpg",
     title: "إنسان حيوان نبات جماد بلاد",
-    x: 300,
-    y: 14,
+    x: 270,
+    y: 12,
     scale: 0.9,
     z: 10,
     delay: -2.9,
@@ -72,10 +72,10 @@ export default function Home() {
     useState<number | null>(null);
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden px-4 pb-8 pt-5 text-white sm:px-6 lg:px-8">
+    <main className="relative min-h-screen overflow-x-hidden px-4 pb-4 pt-3 text-white sm:px-6 lg:px-8">
       {/* Background */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-1/2 top-[-280px] h-[650px] w-[1000px] -translate-x-1/2 rounded-full bg-purple-600/20 blur-[160px]" />
+        <div className="absolute left-1/2 top-[-300px] h-[630px] w-[1000px] -translate-x-1/2 rounded-full bg-purple-600/20 blur-[160px]" />
 
         <div className="absolute -left-64 top-[30%] h-[500px] w-[500px] rounded-full bg-fuchsia-500/10 blur-[150px]" />
 
@@ -84,71 +84,73 @@ export default function Home() {
 
       <div className="mx-auto max-w-[1450px]">
 
+        {/* ========================= */}
         {/* Header */}
-        <header className="relative flex min-h-[165px] items-start justify-center pb-4">
-          {/* Guide button */}
-          <Link
-            href="/guide"
-            className="
-              absolute
-              left-0
-              top-5
-              z-20
-              flex
-              items-center
-              gap-3
-              rounded-full
-              border
-              border-cyan-300/25
-              bg-[#11091f]/85
-              px-5
-              py-3
-              text-sm
-              font-black
-              text-white
-              shadow-[0_0_22px_rgba(34,211,238,0.12)]
-              backdrop-blur-xl
-              transition-all
-              duration-300
-              hover:-translate-y-0.5
-              hover:border-cyan-300/45
-              hover:bg-[#170d28]
-              hover:shadow-[0_0_28px_rgba(34,211,238,0.20)]
-            "
-          >
-            <span className="text-lg">
-              🎮
-            </span>
+        {/* ========================= */}
 
-            <div className="text-right leading-tight">
-              <p>
-                طريقة اللعب
-              </p>
-
-              <p className="mt-0.5 text-[10px] font-bold text-white/40">
-                شرح سريع للألعاب
-              </p>
-            </div>
-          </Link>
-
-          {/* Logo */}
+        <header className="flex min-h-[132px] items-start justify-center">
           <div className="relative z-10 flex flex-col items-center">
             <Image
               src="/logo.png"
               alt="خل نلعب"
-              width={300}
-              height={220}
+              width={280}
+              height={200}
               priority
-              className="h-auto w-[210px] object-contain drop-shadow-[0_0_32px_rgba(96,165,250,0.22)] sm:w-[225px]"
+              className="h-auto w-[175px] object-contain drop-shadow-[0_0_30px_rgba(96,165,250,0.22)] sm:w-[190px]"
             />
 
-            <span className="-mt-1 rounded-full border border-white/10 bg-black/25 px-4 py-1.5 text-xs font-bold text-white/50 backdrop-blur-xl">
-              نسخة تجريبية
-            </span>
+            {/* Header actions */}
+            <div className="-mt-1 flex items-center justify-center gap-2">
+              <span className="rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-[11px] font-bold text-white/45 backdrop-blur-xl">
+                نسخة تجريبية
+              </span>
+
+              <Link
+                href="/guide"
+                className="
+                  group
+                  flex
+                  items-center
+                  gap-2
+                  rounded-full
+                  border
+                  border-cyan-300/30
+                  bg-cyan-400/[0.08]
+                  px-4
+                  py-1.5
+                  text-[12px]
+                  font-black
+                  text-cyan-50
+                  shadow-[0_0_20px_rgba(34,211,238,0.12)]
+                  backdrop-blur-xl
+                  transition-all
+                  duration-300
+                  hover:-translate-y-0.5
+                  hover:border-cyan-300/55
+                  hover:bg-cyan-400/[0.13]
+                  hover:shadow-[0_0_26px_rgba(34,211,238,0.20)]
+                "
+              >
+                <span>
+                  🎮
+                </span>
+
+                <span>
+                  طريقة اللعب
+                </span>
+
+                <span className="text-cyan-200/40 transition-transform duration-300 group-hover:-translate-x-0.5">
+                  ←
+                </span>
+              </Link>
+            </div>
           </div>
         </header>
 
+        {/* ========================= */}
         {/* Main container */}
+        {/* ========================= */}
+
         <section
           className="
             relative
@@ -157,15 +159,14 @@ export default function Home() {
             border-purple-400/20
             bg-[#0c0617]/75
             px-5
-            pb-7
-            pt-7
-            shadow-[0_35px_120px_rgba(0,0,0,0.38)]
+            pb-4
+            pt-5
+            shadow-[0_30px_100px_rgba(0,0,0,0.36)]
             backdrop-blur-2xl
             sm:px-8
             lg:px-10
           "
         >
-          {/* top highlight */}
           <div className="pointer-events-none absolute inset-x-14 top-0 h-px bg-gradient-to-r from-transparent via-purple-300/45 to-transparent" />
 
           {/* ========================= */}
@@ -173,27 +174,45 @@ export default function Home() {
           {/* ========================= */}
 
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-yellow-300/10 bg-yellow-300/[0.04] px-4 py-1.5">
+            <div className="inline-flex items-center gap-2 rounded-full border border-yellow-300/15 bg-yellow-300/[0.05] px-4 py-1">
               <span className="h-1.5 w-1.5 rounded-full bg-yellow-300 shadow-[0_0_8px_rgba(253,224,71,.8)]" />
 
-              <p className="text-xs font-black text-yellow-200/70">
+              <p className="text-xs font-black text-yellow-200/75">
                 جلسة كاملة
               </p>
             </div>
 
-            <h1 className="mt-3 text-4xl font-black sm:text-5xl">
+            <h1 className="mt-2 text-4xl font-black sm:text-5xl">
               🏆 تحدي الجلسة
             </h1>
 
-            <p className="mx-auto mt-3 max-w-2xl text-base font-medium leading-8 text-white/50">
-              اختاروا أكثر من لعبة، سجلوا الفرق مرة وحدة،
-              واجمعوا النقاط لين يطلع بطل الجلسة.
-            </p>
+            {/* Highlighted description */}
+            <div
+              className="
+                mx-auto
+                mt-2
+                max-w-2xl
+                rounded-2xl
+                border
+                border-yellow-300/[0.08]
+                bg-gradient-to-r
+                from-yellow-300/[0.035]
+                via-yellow-200/[0.06]
+                to-yellow-300/[0.035]
+                px-5
+                py-2
+              "
+            >
+              <p className="text-sm font-bold leading-6 text-yellow-50/65 sm:text-[15px]">
+                اختاروا أكثر من لعبة، سجلوا الفرق مرة وحدة،
+                واجمعوا النقاط لين يطلع بطل الجلسة.
+              </p>
+            </div>
 
             <Link
               href="/match?mode=session"
               className="
-                mt-5
+                mt-3
                 inline-flex
                 items-center
                 justify-center
@@ -203,15 +222,15 @@ export default function Home() {
                 bg-gradient-to-r
                 from-yellow-300
                 to-amber-400
-                px-11
-                py-3.5
+                px-10
+                py-3
                 font-black
                 text-[#241600]
-                shadow-[0_12px_38px_rgba(250,204,21,0.24)]
+                shadow-[0_10px_32px_rgba(250,204,21,0.24)]
                 transition-all
                 duration-300
                 hover:-translate-y-1
-                hover:shadow-[0_18px_48px_rgba(250,204,21,0.35)]
+                hover:shadow-[0_16px_42px_rgba(250,204,21,0.35)]
               "
             >
               ابدأ تحدي الجلسة
@@ -219,17 +238,17 @@ export default function Home() {
           </div>
 
           {/* ========================= */}
-          {/* Section divider */}
+          {/* Divider */}
           {/* ========================= */}
 
-          <div className="mx-auto mt-8 flex max-w-4xl items-center gap-4">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-white/15" />
+          <div className="mx-auto mt-4 flex max-w-4xl items-center gap-4">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-cyan-300/15" />
 
-            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-xs font-black text-white/40">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-[10px] font-black text-white/40">
               أو
             </div>
 
-            <div className="h-px flex-1 bg-gradient-to-l from-transparent via-white/10 to-white/15" />
+            <div className="h-px flex-1 bg-gradient-to-l from-transparent via-white/10 to-cyan-300/15" />
           </div>
 
           {/* ========================= */}
@@ -240,40 +259,55 @@ export default function Home() {
             className="
               relative
               mx-auto
-              mt-4
+              mt-3
               max-w-[1120px]
-              rounded-[30px]
+              rounded-[28px]
               border
-              border-cyan-300/[0.08]
+              border-cyan-300/[0.14]
               bg-gradient-to-b
-              from-white/[0.025]
+              from-cyan-400/[0.045]
+              via-white/[0.02]
               to-transparent
               px-3
-              pb-3
-              pt-5
+              pb-1
+              pt-3
+              shadow-[inset_0_1px_0_rgba(255,255,255,.025)]
               sm:px-5
             "
           >
-            {/* subtle cyan glow */}
-            <div className="pointer-events-none absolute left-1/2 top-0 h-28 w-[520px] -translate-x-1/2 rounded-full bg-cyan-400/[0.035] blur-[70px]" />
+            {/* Cyan glow */}
+            <div className="pointer-events-none absolute left-1/2 top-0 h-24 w-[560px] -translate-x-1/2 rounded-full bg-cyan-400/[0.055] blur-[65px]" />
 
             {/* Quick header */}
             <div className="relative z-10 text-center">
-              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/15 bg-cyan-400/[0.05] px-4 py-1.5">
-                <span className="text-xs">
+              <div
+                className="
+                  inline-flex
+                  items-center
+                  gap-2
+                  rounded-full
+                  border
+                  border-cyan-300/25
+                  bg-cyan-400/[0.09]
+                  px-5
+                  py-1.5
+                  shadow-[0_0_18px_rgba(34,211,238,.08)]
+                "
+              >
+                <span className="text-sm">
                   ⚡
                 </span>
 
-                <span className="text-xs font-black text-cyan-200/75">
+                <span className="text-sm font-black text-cyan-100">
                   لعبة سريعة
                 </span>
               </div>
 
-              <h2 className="mt-2 text-xl font-black sm:text-2xl">
+              <h2 className="mt-1.5 text-2xl font-black sm:text-[28px]">
                 اختر لعبة وابدأ مباشرة
               </h2>
 
-              <p className="mt-1 text-xs font-bold text-white/35">
+              <p className="mt-0.5 text-xs font-bold text-white/40">
                 اضغط على أي بطاقة
               </p>
             </div>
@@ -283,20 +317,17 @@ export default function Home() {
             {/* ========================= */}
 
             <div
-              className="relative mx-auto mt-1 hidden h-[350px] max-w-[1000px] lg:block"
+              className="relative mx-auto hidden h-[292px] max-w-[920px] lg:block"
               onMouseLeave={() =>
                 setHoveredCard(null)
               }
             >
               {/* floor glow */}
-              <div className="pointer-events-none absolute bottom-5 left-1/2 h-16 w-[720px] -translate-x-1/2 rounded-full bg-purple-500/20 blur-[48px]" />
+              <div className="pointer-events-none absolute bottom-3 left-1/2 h-14 w-[670px] -translate-x-1/2 rounded-full bg-purple-500/20 blur-[44px]" />
 
               <div className="absolute left-1/2 top-[49%]">
                 {gameCards.map(
-                  (
-                    card,
-                    index
-                  ) => {
+                  (card, index) => {
                     const active =
                       hoveredCard ===
                       index;
@@ -311,14 +342,14 @@ export default function Home() {
                         index <
                         hoveredCard
                       ) {
-                        spread = -34;
+                        spread = -28;
                       }
 
                       if (
                         index >
                         hoveredCard
                       ) {
-                        spread = 34;
+                        spread = 28;
                       }
                     }
 
@@ -328,18 +359,13 @@ export default function Home() {
 
                     const finalY =
                       active
-                        ? card.y -
-                          42
+                        ? card.y - 34
                         : card.y;
 
                     return (
                       <Link
-                        key={
-                          card.title
-                        }
-                        href={
-                          card.href
-                        }
+                        key={card.title}
+                        href={card.href}
                         aria-label={`ابدأ ${card.title}`}
                         onMouseEnter={() =>
                           setHoveredCard(
@@ -366,10 +392,10 @@ export default function Home() {
                         "
                         style={{
                           width:
-                            "205px",
+                            "185px",
 
                           height:
-                            "292px",
+                            "264px",
 
                           zIndex:
                             active
@@ -398,8 +424,8 @@ export default function Home() {
 
                           filter:
                             active
-                              ? "drop-shadow(0 28px 28px rgba(0,0,0,.55)) drop-shadow(0 0 30px rgba(168,85,247,.34))"
-                              : "drop-shadow(0 15px 18px rgba(0,0,0,.30))",
+                              ? "drop-shadow(0 26px 26px rgba(0,0,0,.55)) drop-shadow(0 0 28px rgba(168,85,247,.34))"
+                              : "drop-shadow(0 14px 16px rgba(0,0,0,.30))",
 
                           opacity:
                             hoveredCard !==
@@ -409,10 +435,6 @@ export default function Home() {
                               : 1,
                         }}
                       >
-                        {/* 
-                          Idle animation lives here,
-                          separate from hover transform.
-                        */}
                         <div
                           className={`
                             game-idle-card
@@ -420,13 +442,13 @@ export default function Home() {
                             h-full
                             w-full
                             overflow-hidden
-                            rounded-[23px]
+                            rounded-[21px]
                             border
                             bg-[#11091f]
 
                             ${
                               active
-                                ? "game-idle-paused border-fuchsia-200/80 shadow-[0_0_0_1px_rgba(255,255,255,.08),0_0_40px_rgba(168,85,247,.28)]"
+                                ? "game-idle-paused border-fuchsia-200/80 shadow-[0_0_0_1px_rgba(255,255,255,.08),0_0_36px_rgba(168,85,247,.28)]"
                                 : "border-yellow-200/35"
                             }
                           `}
@@ -443,7 +465,7 @@ export default function Home() {
                               card.title
                             }
                             fill
-                            sizes="205px"
+                            sizes="185px"
                             className={`
                               object-cover
                               transition-transform
@@ -458,7 +480,6 @@ export default function Home() {
                             `}
                           />
 
-                          {/* surface shine */}
                           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/[0.035]" />
 
                           {/* Hover CTA */}
@@ -502,12 +523,9 @@ export default function Home() {
             {/* Mobile / Tablet */}
             {/* ========================= */}
 
-            <div className="relative z-10 mt-6 grid grid-cols-2 gap-3 pb-2 sm:grid-cols-3 lg:hidden">
+            <div className="relative z-10 mt-4 grid grid-cols-2 gap-3 pb-2 sm:grid-cols-3 lg:hidden">
               {gameCards.map(
-                (
-                  card,
-                  index
-                ) => (
+                (card) => (
                   <Link
                     key={
                       card.title
@@ -562,7 +580,10 @@ export default function Home() {
         </section>
       </div>
 
+      {/* ========================= */}
       {/* Animations */}
+      {/* ========================= */}
+
       <style>{`
         @keyframes gameCardIdle {
           0% {
