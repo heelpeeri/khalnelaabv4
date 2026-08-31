@@ -428,7 +428,7 @@ export default function Home() {
       </div>
 
       {/* Animations */}
-      <style jsx global>{`
+      <style>{`
         @keyframes gameCardIdle {
           0% {
             transform: translate3d(0, 0, 0);
