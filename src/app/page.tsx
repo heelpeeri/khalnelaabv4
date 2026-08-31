@@ -9,61 +9,61 @@ const gameCards = [
     href: "/match?game=scramble",
     image: "/images/posters/Whogame.jpg",
     title: "منهو ذا؟",
-    x: -310,
-    y: 50,
-    rotate: -13,
-    scale: 0.84,
+    x: -300,
+    y: 14,
+    scale: 0.9,
     z: 10,
+    delay: -1.2,
   },
   {
     href: "/match?game=quiz",
     image: "/images/posters/Quizgame.jpg",
     title: "أسئلة وأجوبة",
-    x: -205,
-    y: 24,
-    rotate: -8,
-    scale: 0.9,
+    x: -180,
+    y: 7,
+    scale: 0.94,
     z: 20,
+    delay: -3.6,
   },
   {
     href: "/match?game=word",
     image: "/images/posters/wordgame.jpg",
     title: "خمن الكلمة",
-    x: -102,
-    y: 5,
-    rotate: -4,
-    scale: 0.96,
+    x: -60,
+    y: 1,
+    scale: 0.98,
     z: 30,
+    delay: -2.1,
   },
   {
     href: "/match?game=wheel",
     image: "/images/posters/Wheelgame.jpg",
     title: "لف وخمن",
-    x: 0,
-    y: -8,
-    rotate: 0,
-    scale: 1.04,
-    z: 40,
+    x: 60,
+    y: 1,
+    scale: 0.98,
+    z: 30,
+    delay: -4.4,
   },
   {
     href: "/match?game=draw",
     image: "/images/posters/Proverbgame.jpg",
     title: "خمن المثل",
-    x: 105,
-    y: 6,
-    rotate: 4,
-    scale: 0.96,
-    z: 30,
+    x: 180,
+    y: 7,
+    scale: 0.94,
+    z: 20,
+    delay: -0.7,
   },
   {
     href: "/match?game=categories",
     image: "/images/posters/Categoriesgame.jpg",
     title: "إنسان حيوان نبات جماد بلاد",
-    x: 215,
-    y: 28,
-    rotate: 9,
-    scale: 0.89,
-    z: 20,
+    x: 300,
+    y: 14,
+    scale: 0.9,
+    z: 10,
+    delay: -2.9,
   },
 ];
 
@@ -131,7 +131,7 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Main */}
+        {/* Main container */}
         <section
           className="
             relative
@@ -150,7 +150,7 @@ export default function Home() {
         >
           <div className="pointer-events-none absolute inset-x-14 top-0 h-px bg-gradient-to-r from-transparent via-purple-300/45 to-transparent" />
 
-          {/* Session challenge */}
+          {/* Session Mode */}
           <div className="text-center">
             <p className="text-sm font-black text-yellow-300/65">
               تبيها جلسة كاملة؟
@@ -193,12 +193,12 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Divider */}
+          {/* Separator */}
           <div className="mx-auto mt-7 flex max-w-3xl items-center gap-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10" />
 
             <div className="text-center">
-              <p className="text-lg font-black text-white">
+              <p className="text-lg font-black">
                 أو اختر لعبة وابدأ مباشرة
               </p>
 
@@ -212,11 +212,11 @@ export default function Home() {
 
           {/* Desktop cards */}
           <div
-            className="relative mx-auto mt-1 hidden h-[390px] max-w-[980px] lg:block"
+            className="relative mx-auto mt-2 hidden h-[370px] max-w-[1000px] lg:block"
             onMouseLeave={() => setHoveredCard(null)}
           >
-            {/* Bottom glow */}
-            <div className="pointer-events-none absolute bottom-6 left-1/2 h-20 w-[650px] -translate-x-1/2 rounded-full bg-purple-500/20 blur-[52px]" />
+            {/* Glow under cards */}
+            <div className="pointer-events-none absolute bottom-5 left-1/2 h-16 w-[720px] -translate-x-1/2 rounded-full bg-purple-500/20 blur-[48px]" />
 
             <div className="absolute left-1/2 top-[49%]">
               {gameCards.map((card, index) => {
@@ -227,11 +227,11 @@ export default function Home() {
 
                 if (hoveredCard !== null) {
                   if (index < hoveredCard) {
-                    spread = -28;
+                    spread = -34;
                   }
 
                   if (index > hoveredCard) {
-                    spread = 28;
+                    spread = 34;
                   }
                 }
 
@@ -239,7 +239,7 @@ export default function Home() {
                   card.x + spread;
 
                 const finalY = active
-                  ? card.y - 45
+                  ? card.y - 42
                   : card.y;
 
                 return (
@@ -279,39 +279,36 @@ export default function Home() {
                           ${finalY}px,
                           0
                         )
-                        rotate(
-                          ${
-                            active
-                              ? 0
-                              : card.rotate
-                          }deg
-                        )
                         scale(
                           ${
                             active
-                              ? card.scale +
-                                0.13
+                              ? card.scale + 0.11
                               : card.scale
                           }
                         )
                       `,
 
                       transition:
-                        "transform 650ms cubic-bezier(0.16, 1, 0.3, 1), filter 500ms ease, opacity 500ms ease",
+                        "transform 700ms cubic-bezier(0.16, 1, 0.3, 1), filter 550ms ease, opacity 500ms ease",
 
                       filter: active
-                        ? "drop-shadow(0 30px 28px rgba(0,0,0,.55)) drop-shadow(0 0 28px rgba(168,85,247,.36))"
-                        : "drop-shadow(0 17px 18px rgba(0,0,0,.32))",
+                        ? "drop-shadow(0 28px 28px rgba(0,0,0,.55)) drop-shadow(0 0 30px rgba(168,85,247,.34))"
+                        : "drop-shadow(0 15px 18px rgba(0,0,0,.30))",
 
                       opacity:
                         hoveredCard !== null &&
                         !active
-                          ? 0.76
+                          ? 0.78
                           : 1,
                     }}
                   >
+                    {/* 
+                      الـposition والـhover على العنصر الخارجي.
+                      الـidle animation على الداخلي عشان ما يتعارضون.
+                    */}
                     <div
                       className={`
+                        game-idle-card
                         relative
                         h-full
                         w-full
@@ -319,15 +316,17 @@ export default function Home() {
                         rounded-[23px]
                         border
                         bg-[#11091f]
-                        transition-all
-                        duration-500
 
                         ${
                           active
-                            ? "border-fuchsia-200/80 shadow-[0_0_0_1px_rgba(255,255,255,.08),0_0_40px_rgba(168,85,247,.28)]"
+                            ? "game-idle-paused border-fuchsia-200/80 shadow-[0_0_0_1px_rgba(255,255,255,.08),0_0_40px_rgba(168,85,247,.28)]"
                             : "border-yellow-200/35"
                         }
                       `}
+                      style={{
+                        animationDelay:
+                          `${card.delay}s`,
+                      }}
                     >
                       <Image
                         src={card.image}
@@ -342,16 +341,15 @@ export default function Home() {
 
                           ${
                             active
-                              ? "scale-[1.035]"
+                              ? "scale-[1.03]"
                               : "scale-100"
                           }
                         `}
                       />
 
-                      {/* subtle surface light */}
                       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/[0.035]" />
 
-                      {/* hover click hint */}
+                      {/* Click hint */}
                       <div
                         className={`
                           pointer-events-none
@@ -361,13 +359,12 @@ export default function Home() {
                           rounded-full
                           border
                           border-white/10
-                          bg-black/55
+                          bg-black/60
                           px-3
                           py-2
                           text-center
                           text-xs
                           font-black
-                          text-white
                           backdrop-blur-md
                           transition-all
                           duration-500
@@ -388,7 +385,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Mobile / tablet */}
+          {/* Mobile */}
           <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:hidden">
             {gameCards.map((card) => (
               <Link
@@ -404,7 +401,7 @@ export default function Home() {
                     rounded-[20px]
                     border
                     border-white/10
-                    shadow-[0_12px_30px_rgba(0,0,0,.3)]
+                    shadow-[0_12px_30px_rgba(0,0,0,.30)]
                     transition-all
                     duration-300
                     group-active:scale-[0.97]
@@ -420,40 +417,59 @@ export default function Home() {
 
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
 
-                  <div
-                    className="
-                      pointer-events-none
-                      absolute
-                      inset-x-3
-                      bottom-3
-                      rounded-full
-                      border
-                      border-white/10
-                      bg-black/50
-                      px-3
-                      py-2
-                      text-center
-                      text-xs
-                      font-black
-                      backdrop-blur-md
-                    "
-                  >
+                  <div className="pointer-events-none absolute inset-x-3 bottom-3 rounded-full border border-white/10 bg-black/55 px-3 py-2 text-center text-xs font-black backdrop-blur-md">
                     العب الآن
                   </div>
                 </div>
               </Link>
             ))}
           </div>
-
-          {/* Bottom hint */}
-          <div className="mx-auto mt-2 flex max-w-xl items-center justify-center gap-2 text-center text-xs font-bold text-white/25 lg:mt-0">
-            <span>⚡</span>
-            <span>
-              اختيار البطاقة يبدأ اللعبة السريعة مباشرة
-            </span>
-          </div>
         </section>
       </div>
+
+      {/* Animations */}
+      <style jsx global>{`
+        @keyframes gameCardIdle {
+          0% {
+            transform: translate3d(0, 0, 0);
+          }
+
+          25% {
+            transform: translate3d(0, -3px, 0);
+          }
+
+          50% {
+            transform: translate3d(0, -1px, 0);
+          }
+
+          75% {
+            transform: translate3d(0, 3px, 0);
+          }
+
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+        }
+
+        .game-idle-card {
+          animation-name: gameCardIdle;
+          animation-duration: 6.5s;
+          animation-timing-function: ease-in-out;
+          animation-iteration-count: infinite;
+
+          will-change: transform;
+        }
+
+        .game-idle-paused {
+          animation-play-state: paused;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .game-idle-card {
+            animation: none;
+          }
+        }
+      `}</style>
     </main>
   );
 }
