@@ -89,8 +89,7 @@ const games = [
 ];
 
 export default function GuidePage() {
-  const [flippedCard, setFlippedCard] =
-    useState<number | null>(null);
+  const [flippedCard, setFlippedCard] = useState<number | null>(null);
 
   function toggleCard(index: number) {
     setFlippedCard((current) =>
@@ -102,7 +101,10 @@ export default function GuidePage() {
     <main className="h-[100dvh] overflow-hidden px-4 py-3 text-white sm:px-6">
       <div className="mx-auto flex h-full max-w-6xl flex-col">
 
+        {/* ========================= */}
         {/* Header */}
+        {/* ========================= */}
+
         <header className="flex shrink-0 items-center justify-between gap-4 pb-3">
           <div>
             <h1 className="text-3xl font-black">
@@ -139,7 +141,10 @@ export default function GuidePage() {
           </Link>
         </header>
 
+        {/* ========================= */}
         {/* Cards */}
+        {/* ========================= */}
+
         <div
           className="
             grid
@@ -147,12 +152,12 @@ export default function GuidePage() {
             flex-1
             grid-cols-3
             grid-rows-2
-            gap-3
+            place-items-center
+            gap-4
           "
         >
           {games.map((game, index) => {
-            const flipped =
-              flippedCard === index;
+            const flipped = flippedCard === index;
 
             return (
               <button
@@ -167,8 +172,11 @@ export default function GuidePage() {
                 className="
                   group
                   relative
-                  min-h-0
-                  w-full
+                  aspect-[4/5]
+                  h-full
+                  max-h-full
+                  w-auto
+                  max-w-full
                   cursor-pointer
                   text-right
                   outline-none
@@ -177,7 +185,10 @@ export default function GuidePage() {
                   focus-visible:ring-cyan-300
                 "
               >
+                {/* ========================= */}
                 {/* Flip wrapper */}
+                {/* ========================= */}
+
                 <div
                   className="
                     relative
@@ -195,41 +206,41 @@ export default function GuidePage() {
                       "cubic-bezier(0.16, 1, 0.3, 1)",
                   }}
                 >
+                  {/* ========================= */}
                   {/* FRONT */}
+                  {/* ========================= */}
+
                   <div
                     className="
                       absolute
                       inset-0
                       overflow-hidden
-                      rounded-[24px]
-                      border
-                      border-white/10
+                      rounded-[20px]
                       bg-[#10081d]
-                      shadow-[0_16px_40px_rgba(0,0,0,.30)]
+                      shadow-[0_14px_35px_rgba(0,0,0,.28)]
                       transition-all
                       duration-500
                       [backface-visibility:hidden]
 
                       group-hover:-translate-y-1
-                      group-hover:border-purple-300/30
-                      group-hover:shadow-[0_22px_50px_rgba(0,0,0,.38)]
+                      group-hover:shadow-[0_20px_44px_rgba(0,0,0,.36)]
                     "
                   >
                     <Image
                       src={game.image}
                       alt={game.title}
                       fill
-                      sizes="33vw"
+                      sizes="(min-width: 1024px) 280px, 33vw"
                       className="
-                        object-cover
+                        object-contain
                         transition-transform
                         duration-700
                         ease-out
-                        group-hover:scale-[1.02]
+                        group-hover:scale-[1.01]
                       "
                     />
 
-                    {/* فقط إشارة Flip بسيطة */}
+                    {/* Flip icon */}
                     <div
                       className="
                         pointer-events-none
@@ -237,17 +248,17 @@ export default function GuidePage() {
                         bottom-3
                         left-3
                         flex
-                        h-9
-                        w-9
+                        h-8
+                        w-8
                         items-center
                         justify-center
                         rounded-full
                         border
                         border-white/10
                         bg-black/45
-                        text-sm
+                        text-xs
                         text-white/60
-                        opacity-60
+                        opacity-65
                         backdrop-blur-lg
                         transition-all
                         duration-300
@@ -258,13 +269,16 @@ export default function GuidePage() {
                     </div>
                   </div>
 
+                  {/* ========================= */}
                   {/* BACK */}
+                  {/* ========================= */}
+
                   <div
                     className="
                       absolute
                       inset-0
                       overflow-hidden
-                      rounded-[24px]
+                      rounded-[20px]
                       border
                       border-cyan-300/20
                       bg-gradient-to-b
@@ -272,17 +286,18 @@ export default function GuidePage() {
                       via-[#10091e]
                       to-[#0b0715]
                       p-4
-                      shadow-[0_18px_50px_rgba(0,0,0,.4)]
+                      shadow-[0_16px_44px_rgba(0,0,0,.4)]
                       [backface-visibility:hidden]
                     "
                     style={{
                       transform: "rotateY(180deg)",
                     }}
                   >
-                    {/* Glow */}
-                    <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-cyan-400/10 blur-[75px]" />
+                    {/* subtle glow */}
+                    <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-cyan-400/[0.08] blur-[75px]" />
 
                     <div className="relative flex h-full flex-col">
+
                       {/* Header */}
                       <div className="flex shrink-0 items-center justify-between gap-3">
                         <div>
@@ -290,58 +305,70 @@ export default function GuidePage() {
                             طريقة اللعب
                           </p>
 
-                          <h2 className="mt-0.5 text-xl font-black">
+                          <h2 className="mt-0.5 text-lg font-black xl:text-xl">
                             {game.title}
                           </h2>
                         </div>
 
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-sm">
+                        <div
+                          className="
+                            flex
+                            h-8
+                            w-8
+                            shrink-0
+                            items-center
+                            justify-center
+                            rounded-full
+                            border
+                            border-white/10
+                            bg-white/[0.05]
+                            text-sm
+                          "
+                        >
                           ↻
                         </div>
                       </div>
 
                       {/* Steps */}
-                      <div className="mt-3 flex-1 space-y-1.5">
-                        {game.how.map(
-                          (step, stepIndex) => (
+                      <div className="mt-3 min-h-0 flex-1 space-y-1.5">
+                        {game.how.map((step, stepIndex) => (
+                          <div
+                            key={stepIndex}
+                            className="
+                              flex
+                              items-start
+                              gap-2
+                              rounded-lg
+                              border
+                              border-white/[0.05]
+                              bg-white/[0.035]
+                              px-2.5
+                              py-1.5
+                            "
+                          >
                             <div
-                              key={stepIndex}
                               className="
                                 flex
-                                items-start
-                                gap-2
-                                rounded-lg
-                                border
-                                border-white/[0.05]
-                                bg-white/[0.035]
-                                px-2.5
-                                py-1.5
+                                h-5
+                                w-5
+                                shrink-0
+                                items-center
+                                justify-center
+                                rounded-full
+                                bg-cyan-400/10
+                                text-[9px]
+                                font-black
+                                text-cyan-100
                               "
                             >
-                              <div
-                                className="
-                                  flex
-                                  h-5
-                                  w-5
-                                  shrink-0
-                                  items-center
-                                  justify-center
-                                  rounded-full
-                                  bg-cyan-400/10
-                                  text-[9px]
-                                  font-black
-                                  text-cyan-100
-                                "
-                              >
-                                {stepIndex + 1}
-                              </div>
-
-                              <p className="text-[11px] font-bold leading-[18px] text-white/75">
-                                {step}
-                              </p>
+                              {stepIndex + 1}
                             </div>
-                          )
-                        )}
+
+                            <p className="text-[10px] font-bold leading-[16px] text-white/75 xl:text-[11px] xl:leading-[18px]">
+                              {step}
+                            </p>
+                          </div>
+                        ))}
                       </div>
 
                       {/* Example */}
