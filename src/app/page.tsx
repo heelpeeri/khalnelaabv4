@@ -19,7 +19,7 @@ type GameCard = {
 const GAME_CARDS: GameCard[] = [
   {
     href: "/match?game=scramble",
-    image: "/images/posters/Whogame.jpg",
+    image: "/images/posters/Whogame.png",
     title: "منهو ذا؟",
     x: -270,
     y: 12,
@@ -29,7 +29,7 @@ const GAME_CARDS: GameCard[] = [
   },
   {
     href: "/match?game=quiz",
-    image: "/images/posters/Quizgame.jpg",
+    image: "/images/posters/Quizgame.png",
     title: "أسئلة وأجوبة",
     x: -162,
     y: 6,
@@ -39,7 +39,7 @@ const GAME_CARDS: GameCard[] = [
   },
   {
     href: "/match?game=word",
-    image: "/images/posters/wordgame.jpg",
+    image: "/images/posters/wordgame.png",
     title: "خمن الكلمة",
     x: -54,
     y: 1,
@@ -49,7 +49,7 @@ const GAME_CARDS: GameCard[] = [
   },
   {
     href: "/match?game=wheel",
-    image: "/images/posters/Wheelgame.jpg",
+    image: "/images/posters/Wheelgame.png",
     title: "لف وخمن",
     x: 54,
     y: 1,
@@ -59,7 +59,7 @@ const GAME_CARDS: GameCard[] = [
   },
   {
     href: "/match?game=draw",
-    image: "/images/posters/Proverbgame.jpg",
+    image: "/images/posters/Proverbgame.png",
     title: "خمن المثل",
     x: 162,
     y: 6,
@@ -69,7 +69,7 @@ const GAME_CARDS: GameCard[] = [
   },
   {
     href: "/match?game=categories",
-    image: "/images/posters/Categoriesgame.jpg",
+    image: "/images/posters/Categoriesgame.png",
     title: "إنسان حيوان نبات جماد بلاد",
     x: 270,
     y: 12,
@@ -78,7 +78,6 @@ const GAME_CARDS: GameCard[] = [
     delay: -2.9,
   },
 ];
-
 const CARD_TRANSITION =
   "transform 700ms cubic-bezier(0.16, 1, 0.3, 1), filter 550ms ease, opacity 500ms ease";
 
