@@ -8,32 +8,32 @@ const GAMES = [
   {
     id: "word",
     name: "خمن الكلمة",
-    image: "/images/posters/wordgame.jpg",
+    image: "/images/posters/wordgame.png",
   },
   {
     id: "quiz",
     name: "أسئلة وأجوبة",
-    image: "/images/posters/Quizgame.jpg",
+    image: "/images/posters/Quizgame.png",
   },
   {
     id: "scramble",
     name: "منهو ذا؟",
-    image: "/images/posters/Whogame.jpg",
+    image: "/images/posters/Whogame.png",
   },
   {
     id: "wheel",
     name: "لف وخمن",
-    image: "/images/posters/Wheelgame.jpg",
+    image: "/images/posters/Wheelgame.png",
   },
   {
     id: "categories",
     name: "إنسان حيوان نبات جماد بلاد",
-    image: "/images/posters/Categoriesgame.jpg",
+    image: "/images/posters/Categoriesgame.png",
   },
   {
     id: "draw",
     name: "خمن المثل",
-    image: "/images/posters/Proverbgame.jpg",
+    image: "/images/posters/Proverbgame.png",
   },
 ];
 
