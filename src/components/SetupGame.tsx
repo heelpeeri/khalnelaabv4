@@ -37,7 +37,9 @@ const GAMES = [
   },
 ];
 
-function getRoundOptions(gameId: string) {
+function getRoundOptions(
+  gameId: string
+) {
   switch (gameId) {
     case "wheel":
       return [1, 3, 5];
@@ -56,7 +58,9 @@ function getRoundOptions(gameId: string) {
   }
 }
 
-function getDefaultRounds(gameId: string) {
+function getDefaultRounds(
+  gameId: string
+) {
   switch (gameId) {
     case "quiz":
       return 6;
@@ -73,66 +77,61 @@ function getDefaultRounds(gameId: string) {
   }
 }
 
-function getGameDescription(gameId: string) {
-  switch (gameId) {
-    case "word":
-      return "حاولوا تجيبون الكلمة قبل الفريق الثاني";
-
-    case "wheel":
-      return "لف العجلة، اختر حرف واجمع النقاط";
-
-    case "quiz":
-      return "6 أسئلة — 3 لكل فريق";
-
-    case "draw":
-      return "شوف اللغز وحاول تعرف المثل";
-
-    case "scramble":
-      return "وصف الشخصية وخلي فريقك يخمن منهو";
-
-    case "categories":
-      return "الفريقين يلعبون بنفس الوقت";
-
-    default:
-      return "";
-  }
-}
-
 export default function SetupGame({
   mode = "session",
+
   side1,
   side2,
+
   setSide1,
   setSide2,
+
   selectedGames,
   setSelectedGames,
+
   gameRounds,
   setGameRounds,
+
   quizCategories,
   setQuizCategories,
+
   timerEnabled,
   setTimerEnabled,
+
   timerSeconds,
   setTimerSeconds,
+
   onStart,
 }: any) {
   const clickSound =
-    useRef<HTMLAudioElement | null>(null);
+    useRef<HTMLAudioElement | null>(
+      null
+    );
 
   const isQuickMode =
     mode === "quick";
 
   function playClick() {
-    if (!clickSound.current) return;
+    if (!clickSound.current) {
+      return;
+    }
 
-    clickSound.current.currentTime = 0;
-    clickSound.current.play();
+    clickSound.current.currentTime =
+      0;
+
+    clickSound.current
+      .play()
+      .catch(() => {});
   }
 
-  function toggleGame(id: string) {
+  function toggleGame(
+    id: string
+  ) {
     playClick();
 
-    if (isQuickMode) return;
+    if (isQuickMode) {
+      return;
+    }
 
     if (
       selectedGames.includes(id)
@@ -155,6 +154,7 @@ export default function SetupGame({
     if (!gameRounds[id]) {
       setGameRounds({
         ...gameRounds,
+
         [id]:
           getDefaultRounds(id),
       });
@@ -198,6 +198,7 @@ export default function SetupGame({
 
   return (
     <div className="intro mx-auto w-full max-w-6xl pb-8 text-white">
+
       <audio
         ref={clickSound}
         src="/click.mp3"
@@ -256,6 +257,7 @@ export default function SetupGame({
       {/* ========================= */}
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
+
         {/* Team 1 */}
         <div
           className="
@@ -362,6 +364,7 @@ export default function SetupGame({
         "
       >
         <div className="flex flex-wrap items-center justify-between gap-4">
+
           <div className="text-right">
             <p className="font-black">
               ⏱️ المؤقت
@@ -429,6 +432,7 @@ export default function SetupGame({
 
         {timerEnabled && (
           <div className="mt-3">
+
             <input
               type="range"
               min={10}
@@ -464,7 +468,9 @@ export default function SetupGame({
       {/* ========================= */}
 
       <div className="mt-6">
+
         <div className="flex items-end justify-between gap-3">
+
           <div className="text-right">
             <h2 className="text-xl font-black">
               {isQuickMode
@@ -489,6 +495,10 @@ export default function SetupGame({
           )}
         </div>
 
+        {/* ========================= */}
+        {/* Poster cards */}
+        {/* ========================= */}
+
         <div
           className={`
             mt-4
@@ -497,7 +507,7 @@ export default function SetupGame({
 
             ${
               isQuickMode
-                ? "mx-auto max-w-[260px] grid-cols-1"
+                ? "mx-auto max-w-[250px] grid-cols-1"
                 : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
             }
           `}
@@ -518,14 +528,20 @@ export default function SetupGame({
                       game.id
                     )
                   }
+                  aria-label={
+                    isQuickMode
+                      ? game.name
+                      : active
+                        ? `إلغاء اختيار ${game.name}`
+                        : `اختيار ${game.name}`
+                  }
                   className={`
                     group
                     relative
-                    aspect-[3/4]
+                    aspect-[4/5]
                     overflow-hidden
-                    rounded-[20px]
+                    rounded-[18px]
                     border
-                    text-right
                     shadow-[0_12px_28px_rgba(0,0,0,.28)]
                     transition-all
                     duration-500
@@ -533,9 +549,9 @@ export default function SetupGame({
 
                     ${
                       isQuickMode
-                        ? "cursor-default border-cyan-300/35 shadow-[0_0_28px_rgba(34,211,238,.10)]"
+                        ? "cursor-default border-cyan-300/25 shadow-[0_0_26px_rgba(34,211,238,.08)]"
                         : active
-                          ? "-translate-y-1 border-cyan-300/55 shadow-[0_0_30px_rgba(34,211,238,.14)]"
+                          ? "-translate-y-1 border-cyan-300/60 shadow-[0_0_30px_rgba(34,211,238,.16)]"
                           : "border-white/10 opacity-70 hover:-translate-y-1 hover:border-white/25 hover:opacity-100"
                     }
                   `}
@@ -546,40 +562,31 @@ export default function SetupGame({
                     fill
                     sizes={
                       isQuickMode
-                        ? "260px"
+                        ? "250px"
                         : "(max-width: 640px) 45vw, 16vw"
                     }
                     className={`
                       object-cover
                       transition-transform
                       duration-700
+                      ease-out
 
                       ${
                         active
-                          ? "scale-[1.025]"
-                          : "group-hover:scale-[1.02]"
+                          ? "scale-[1.015]"
+                          : "group-hover:scale-[1.01]"
                       }
                     `}
                   />
 
-                  <div
-                    className="
-                      pointer-events-none
-                      absolute
-                      inset-0
-                      bg-gradient-to-t
-                      from-black/55
-                      via-transparent
-                      to-transparent
-                    "
-                  />
-
+                  {/* Selection indicator */}
                   {!isQuickMode && (
                     <div
                       className={`
                         absolute
                         left-3
                         top-3
+                        z-10
                         flex
                         h-8
                         w-8
@@ -590,12 +597,13 @@ export default function SetupGame({
                         text-sm
                         font-black
                         backdrop-blur-xl
-                        transition
+                        transition-all
+                        duration-300
 
                         ${
                           active
-                            ? "border-cyan-200/40 bg-cyan-400/80 text-[#04151a]"
-                            : "border-white/10 bg-black/40 text-white/40"
+                            ? "border-cyan-200/50 bg-cyan-400/90 text-[#04151a] shadow-[0_0_18px_rgba(34,211,238,.25)]"
+                            : "border-white/15 bg-black/45 text-white/65"
                         }
                       `}
                     >
@@ -604,18 +612,6 @@ export default function SetupGame({
                         : "+"}
                     </div>
                   )}
-
-                  <div className="absolute inset-x-3 bottom-3">
-                    <p className="text-sm font-black text-white">
-                      {game.name}
-                    </p>
-
-                    <p className="mt-0.5 text-[10px] font-bold leading-4 text-white/50">
-                      {getGameDescription(
-                        game.id
-                      )}
-                    </p>
-                  </div>
                 </button>
               );
             }
@@ -630,6 +626,7 @@ export default function SetupGame({
       {selectedGames.length >
         0 && (
         <div className="mt-5 space-y-3">
+
           {GAMES.filter((game) =>
             selectedGames.includes(
               game.id
@@ -652,6 +649,7 @@ export default function SetupGame({
                 "
               >
                 <div className="flex flex-wrap items-center justify-between gap-3">
+
                   <div className="text-right">
                     <p className="font-black">
                       {game.name}
@@ -665,9 +663,11 @@ export default function SetupGame({
                     </p>
                   </div>
 
+                  {/* Round buttons */}
                   {game.id !==
                     "quiz" && (
                     <div className="flex flex-wrap gap-2">
+
                       {roundOptions.map(
                         (round) => {
                           const selected =
@@ -720,10 +720,14 @@ export default function SetupGame({
                   )}
                 </div>
 
-                {/* Quiz categories */}
+                {/* ========================= */}
+                {/* Quiz Categories */}
+                {/* ========================= */}
+
                 {game.id ===
                   "quiz" && (
                   <div className="mt-3 flex flex-wrap gap-2">
+
                     {quizCategoryList.map(
                       (category) => {
                         const selected =
@@ -777,7 +781,7 @@ export default function SetupGame({
       )}
 
       {/* ========================= */}
-      {/* Start */}
+      {/* Start Button */}
       {/* ========================= */}
 
       <div className="mt-6 text-center">
