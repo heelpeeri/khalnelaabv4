@@ -6,7 +6,7 @@ import { useState } from "react";
 
 const games = [
   {
-    image: "/images/posters/Wheelgame.jpg",
+    image: "/images/posters/Wheelgame.png",
     title: "لف وخمن",
     how: [
       "لف العجلة وشف وش تطلع لك",
@@ -21,7 +21,7 @@ const games = [
   },
 
   {
-    image: "/images/posters/wordgame.jpg",
+    image: "/images/posters/wordgame.png",
     title: "خمن الكلمة",
     how: [
       "كل مرة يكون الدور على فريق",
@@ -35,7 +35,7 @@ const games = [
   },
 
   {
-    image: "/images/posters/Quizgame.jpg",
+    image: "/images/posters/Quizgame.png",
     title: "أسئلة وأجوبة",
     how: [
       "كل سؤال يبدأ فيه فريق",
@@ -48,7 +48,7 @@ const games = [
   },
 
   {
-    image: "/images/posters/Proverbgame.jpg",
+    image: "/images/posters/Proverbgame.png",
     title: "خمن المثل",
     how: [
       "بيطلع لكم لغز يمثل مثل معروف",
@@ -60,7 +60,7 @@ const games = [
   },
 
   {
-    image: "/images/posters/Whogame.jpg",
+    image: "/images/posters/Whogame.png",
     title: "منهو ذا؟",
     how: [
       "بيطلع QR Code لشخصية",
@@ -74,7 +74,7 @@ const games = [
   },
 
   {
-    image: "/images/posters/Categoriesgame.jpg",
+    image: "/images/posters/Categoriesgame.png",
     title: "إنسان حيوان نبات جماد بلاد",
     how: [
       "بيطلع حرف واحد للفريقين",
