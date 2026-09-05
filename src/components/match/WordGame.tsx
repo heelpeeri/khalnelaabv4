@@ -63,6 +63,7 @@ function evaluateGuess(
     }
   });
 
+  // ثانياً: الحروف الموجودة لكن في مكان مختلف
   guessLetters.forEach((letter, index) => {
     if (result[index] === "correct") {
       return;
@@ -110,7 +111,7 @@ function HelpModal({
 
         <div className="mt-5 space-y-3 text-sm leading-7 text-white/85 md:text-base">
           <p>
-            1. حاول تخمن الكلمة المكوّنة من 5 حروف.
+            1. يظهر لك تصنيف يساعدك على تخمين الكلمة المكوّنة من 5 حروف.
           </p>
 
           <p>
@@ -172,6 +173,9 @@ export default function WordGame({
   timerSeconds?: number;
 }) {
   const [answer, setAnswer] =
+    useState("");
+
+  const [category, setCategory] =
     useState("");
 
   const [guesses, setGuesses] =
@@ -253,7 +257,7 @@ export default function WordGame({
   function getFiveLetterWords() {
     return WORDS.filter(
       (word) =>
-        normalizeArabic(word).length ===
+        normalizeArabic(word.answer).length ===
         WORD_LENGTH
     );
   }
@@ -271,6 +275,7 @@ export default function WordGame({
       fiveLetterWords.length === 0
     ) {
       setAnswer("");
+      setCategory("");
 
       setFeedback(
         "ما فيه كلمات من 5 حروف في ملف الكلمات"
@@ -287,7 +292,8 @@ export default function WordGame({
         )
       ];
 
-    setAnswer(randomWord);
+    setAnswer(randomWord.answer);
+    setCategory(randomWord.category);
 
     setGuesses([]);
     setCurrent("");
@@ -457,7 +463,7 @@ export default function WordGame({
 
       return;
     }
-    
+
     if (
       nextGuesses.length >=
       MAX_TRIES
@@ -804,6 +810,19 @@ export default function WordGame({
                   ⏱️ {timeLeft}
                 </span>
               )}
+          </div>
+
+          {/* التصنيف */}
+          <div className="mt-1 flex justify-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-400/10 px-5 py-2 shadow-[0_0_18px_rgba(34,211,238,0.08)]">
+              <span className="text-xs font-bold text-white/45">
+                التصنيف
+              </span>
+
+              <span className="text-sm font-black text-cyan-100 sm:text-base">
+                {category}
+              </span>
+            </div>
           </div>
 
           {/* الرسائل المهمة فقط */}
