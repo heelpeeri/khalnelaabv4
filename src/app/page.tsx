@@ -80,7 +80,7 @@ const GAME_CARDS: GameCard[] = [
 ];
 
 const CARD_TRANSITION =
-  "transform 700ms cubic-bezier(0.16, 1, 0.3, 1), filter 550ms ease, opacity 500ms ease";
+  "transform 500ms cubic-bezier(0.16, 1, 0.3, 1), opacity 300ms ease";
 
 export default function Home() {
   const router = useRouter();
@@ -88,25 +88,59 @@ export default function Home() {
   const [hoveredCard, setHoveredCard] =
     useState<number | null>(null);
 
+  const [isLeaving, setIsLeaving] =
+    useState(false);
+
   useEffect(() => {
+    // نجهز الصفحتين فقط.
+    // ما نحتاج نسوي prefetch لكل query حق كل لعبة.
     router.prefetch("/match");
     router.prefetch("/guide");
   }, [router]);
 
+  function prepareNavigation() {
+    // Safari يتأخر أحيانًا وهو يفك طبقات animation/filter.
+    // نوقفها من pointer down قبل تنفيذ الانتقال.
+    setIsLeaving(true);
+    setHoveredCard(null);
+  }
+
   return (
-    <main className="relative min-h-screen overflow-x-hidden px-4 pb-4 pt-3 text-white sm:px-6 lg:px-8">
+    <main
+      className={`
+        relative
+        min-h-screen
+        overflow-x-hidden
+        px-4
+        pb-4
+        pt-3
+        text-white
+        sm:px-6
+        lg:px-8
 
-      {/* Background */}
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-1/2 top-[-300px] h-[630px] w-[1000px] -translate-x-1/2 rounded-full bg-purple-600/20 blur-[160px]" />
-
-        <div className="absolute -left-64 top-[30%] h-[500px] w-[500px] rounded-full bg-fuchsia-500/10 blur-[150px]" />
-
-        <div className="absolute -right-64 top-[25%] h-[500px] w-[500px] rounded-full bg-blue-500/10 blur-[150px]" />
-      </div>
-
+        ${isLeaving ? "home-leaving" : ""}
+      `}
+      style={{
+        backgroundImage: `
+          radial-gradient(
+            ellipse 700px 430px at 50% -100px,
+            rgba(126, 34, 206, 0.20),
+            transparent 72%
+          ),
+          radial-gradient(
+            ellipse 450px 500px at -8% 45%,
+            rgba(217, 70, 239, 0.07),
+            transparent 70%
+          ),
+          radial-gradient(
+            ellipse 450px 500px at 108% 42%,
+            rgba(59, 130, 246, 0.07),
+            transparent 70%
+          )
+        `,
+      }}
+    >
       <div className="mx-auto max-w-[1450px]">
-
         {/* ========================= */}
         {/* Logo */}
         {/* ========================= */}
@@ -118,7 +152,12 @@ export default function Home() {
             width={280}
             height={200}
             priority
-            className="h-auto w-[175px] object-contain drop-shadow-[0_0_30px_rgba(96,165,250,0.22)] sm:w-[190px]"
+            className="
+              h-auto
+              w-[175px]
+              object-contain
+              sm:w-[190px]
+            "
           />
         </header>
 
@@ -126,8 +165,21 @@ export default function Home() {
         {/* Main container */}
         {/* ========================= */}
 
-        <section className="relative rounded-[36px] border border-purple-400/20 bg-[#0c0617]/75 px-5 pb-4 pt-5 shadow-[0_30px_100px_rgba(0,0,0,0.36)] backdrop-blur-2xl sm:px-8 lg:px-10">
-
+        <section
+          className="
+            relative
+            rounded-[36px]
+            border
+            border-purple-400/20
+            bg-[#0c0617]/95
+            px-5
+            pb-4
+            pt-5
+            shadow-[0_26px_70px_rgba(0,0,0,0.32)]
+            sm:px-8
+            lg:px-10
+          "
+        >
           <div className="pointer-events-none absolute inset-x-14 top-0 h-px bg-gradient-to-r from-transparent via-purple-300/45 to-transparent" />
 
           {/* ========================= */}
@@ -136,7 +188,9 @@ export default function Home() {
 
           <Link
             href="/guide"
-            prefetch
+            prefetch={false}
+            onPointerDown={prepareNavigation}
+            onClick={prepareNavigation}
             className="
               absolute
               left-5
@@ -148,20 +202,19 @@ export default function Home() {
               rounded-full
               border
               border-cyan-300/30
-              bg-[#130b24]/90
+              bg-[#130b24]
               px-4
               py-2.5
               text-sm
               font-black
               text-white
-              shadow-[0_0_20px_rgba(34,211,238,0.12)]
-              backdrop-blur-xl
+              shadow-[0_0_18px_rgba(34,211,238,0.10)]
               transition-all
               duration-300
               hover:-translate-y-0.5
               hover:border-cyan-300/55
               hover:bg-[#19102c]
-              hover:shadow-[0_0_26px_rgba(34,211,238,0.20)]
+              hover:shadow-[0_0_22px_rgba(34,211,238,0.16)]
             "
           >
             <span>🎮</span>
@@ -186,7 +239,9 @@ export default function Home() {
 
             <Link
               href="/match?mode=session"
-              prefetch
+              prefetch={false}
+              onPointerDown={prepareNavigation}
+              onClick={prepareNavigation}
               className="
                 mt-3
                 inline-flex
@@ -202,11 +257,11 @@ export default function Home() {
                 py-3
                 font-black
                 text-[#241600]
-                shadow-[0_10px_32px_rgba(250,204,21,0.24)]
+                shadow-[0_10px_28px_rgba(250,204,21,0.20)]
                 transition-all
                 duration-300
                 hover:-translate-y-1
-                hover:shadow-[0_16px_42px_rgba(250,204,21,0.35)]
+                hover:shadow-[0_14px_34px_rgba(250,204,21,0.28)]
               "
             >
               ابدأ تحدي الجلسة
@@ -231,13 +286,40 @@ export default function Home() {
           {/* Quick Games */}
           {/* ========================= */}
 
-          <div className="relative mx-auto mt-3 max-w-[1120px] rounded-[28px] border border-cyan-300/[0.14] bg-gradient-to-b from-cyan-400/[0.045] via-white/[0.02] to-transparent px-3 pb-1 pt-3 shadow-[inset_0_1px_0_rgba(255,255,255,.025)] sm:px-5">
-
-            <div className="pointer-events-none absolute left-1/2 top-0 h-24 w-[560px] -translate-x-1/2 rounded-full bg-cyan-400/[0.055] blur-[65px]" />
-
+          <div
+            className="
+              relative
+              mx-auto
+              mt-3
+              max-w-[1120px]
+              rounded-[28px]
+              border
+              border-cyan-300/[0.14]
+              px-3
+              pb-1
+              pt-3
+              shadow-[inset_0_1px_0_rgba(255,255,255,.025)]
+              sm:px-5
+            "
+            style={{
+              backgroundImage: `
+                radial-gradient(
+                  ellipse 500px 150px at 50% 0%,
+                  rgba(34,211,238,0.055),
+                  transparent 75%
+                ),
+                linear-gradient(
+                  to bottom,
+                  rgba(34,211,238,0.035),
+                  rgba(255,255,255,0.018),
+                  transparent
+                )
+              `,
+            }}
+          >
             {/* Header */}
             <div className="relative z-10 text-center">
-              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-400/[0.09] px-5 py-1.5 shadow-[0_0_18px_rgba(34,211,238,.08)]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-400/[0.09] px-5 py-1.5 shadow-[0_0_16px_rgba(34,211,238,.07)]">
                 <span className="text-sm">
                   ⚡
                 </span>
@@ -266,8 +348,23 @@ export default function Home() {
                 setHoveredCard(null)
               }
             >
-              {/* Floor glow */}
-              <div className="pointer-events-none absolute bottom-3 left-1/2 h-14 w-[670px] -translate-x-1/2 rounded-full bg-purple-500/20 blur-[44px]" />
+              {/* Floor glow - بدون blur */}
+              <div
+                className="
+                  pointer-events-none
+                  absolute
+                  bottom-0
+                  left-1/2
+                  h-20
+                  w-[700px]
+                  -translate-x-1/2
+                  rounded-[50%]
+                "
+                style={{
+                  background:
+                    "radial-gradient(ellipse at center, rgba(168,85,247,0.16) 0%, rgba(168,85,247,0.05) 42%, transparent 72%)",
+                }}
+              />
 
               <div className="absolute left-1/2 top-[49%]">
                 {GAME_CARDS.map(
@@ -296,25 +393,31 @@ export default function Home() {
                       <Link
                         key={card.title}
                         href={card.href}
-                        prefetch
+                        prefetch={false}
                         aria-label={`ابدأ ${card.title}`}
+                        onPointerDown={
+                          prepareNavigation
+                        }
+                        onClick={
+                          prepareNavigation
+                        }
                         onMouseEnter={() => {
-                          setHoveredCard(
-                            index
-                          );
-
-                          router.prefetch(
-                            card.href
-                          );
+                          if (
+                            !isLeaving
+                          ) {
+                            setHoveredCard(
+                              index
+                            );
+                          }
                         }}
                         onFocus={() => {
-                          setHoveredCard(
-                            index
-                          );
-
-                          router.prefetch(
-                            card.href
-                          );
+                          if (
+                            !isLeaving
+                          ) {
+                            setHoveredCard(
+                              index
+                            );
+                          }
                         }}
                         onBlur={() =>
                           setHoveredCard(
@@ -322,12 +425,12 @@ export default function Home() {
                           )
                         }
                         className="
+                          home-card-link
                           absolute
                           left-1/2
                           top-1/2
                           cursor-pointer
                           outline-none
-                          will-change-transform
                         "
                         style={{
                           width: "190px",
@@ -357,15 +460,11 @@ export default function Home() {
                           transition:
                             CARD_TRANSITION,
 
-                          filter: active
-                            ? "drop-shadow(0 26px 26px rgba(0,0,0,.55)) drop-shadow(0 0 28px rgba(168,85,247,.34))"
-                            : "drop-shadow(0 14px 16px rgba(0,0,0,.30))",
-
                           opacity:
                             hoveredCard !==
                               null &&
                             !active
-                              ? 0.76
+                              ? 0.78
                               : 1,
                         }}
                       >
@@ -379,11 +478,13 @@ export default function Home() {
                             rounded-[20px]
                             border
                             bg-[#11091f]
+                            transition-shadow
+                            duration-300
 
                             ${
                               active
-                                ? "game-idle-paused border-fuchsia-200/80 shadow-[0_0_0_1px_rgba(255,255,255,.08),0_0_36px_rgba(168,85,247,.28)]"
-                                : "border-yellow-200/35"
+                                ? "game-idle-paused border-fuchsia-200/80 shadow-[0_22px_38px_rgba(0,0,0,.42),0_0_24px_rgba(168,85,247,.22)]"
+                                : "border-yellow-200/35 shadow-[0_12px_20px_rgba(0,0,0,.28)]"
                             }
                           `}
                           style={{
@@ -392,19 +493,23 @@ export default function Home() {
                           }}
                         >
                           <Image
-                            src={card.image}
-                            alt={card.title}
+                            src={
+                              card.image
+                            }
+                            alt={
+                              card.title
+                            }
                             fill
                             sizes="190px"
                             className={`
                               object-cover
                               transition-transform
-                              duration-700
+                              duration-500
                               ease-out
 
                               ${
                                 active
-                                  ? "scale-[1.03]"
+                                  ? "scale-[1.025]"
                                   : "scale-100"
                               }
                             `}
@@ -420,15 +525,14 @@ export default function Home() {
                               rounded-full
                               border
                               border-white/10
-                              bg-black/60
+                              bg-black/80
                               px-3
                               py-2
                               text-center
                               text-xs
                               font-black
-                              backdrop-blur-md
                               transition-all
-                              duration-500
+                              duration-300
 
                               ${
                                 active
@@ -457,7 +561,13 @@ export default function Home() {
                   <Link
                     key={card.title}
                     href={card.href}
-                    prefetch
+                    prefetch={false}
+                    onPointerDown={
+                      prepareNavigation
+                    }
+                    onClick={
+                      prepareNavigation
+                    }
                     className="group"
                   >
                     <div
@@ -469,8 +579,8 @@ export default function Home() {
                         rounded-[20px]
                         border
                         border-white/10
-                        shadow-[0_12px_30px_rgba(0,0,0,.30)]
-                        transition-all
+                        shadow-[0_10px_24px_rgba(0,0,0,.28)]
+                        transition-transform
                         duration-300
                         group-active:scale-[0.97]
                       "
@@ -480,14 +590,18 @@ export default function Home() {
                       }}
                     >
                       <Image
-                        src={card.image}
-                        alt={card.title}
+                        src={
+                          card.image
+                        }
+                        alt={
+                          card.title
+                        }
                         fill
                         sizes="(max-width: 640px) 45vw, 30vw"
                         className="object-cover"
                       />
 
-                      <div className="pointer-events-none absolute inset-x-3 bottom-3 rounded-full border border-white/10 bg-black/55 px-3 py-2 text-center text-xs font-black backdrop-blur-md">
+                      <div className="pointer-events-none absolute inset-x-3 bottom-3 rounded-full border border-white/10 bg-black/80 px-3 py-2 text-center text-xs font-black">
                         العب الآن
                       </div>
                     </div>
@@ -507,19 +621,11 @@ export default function Home() {
         @keyframes gameCardIdle {
           0%,
           100% {
-            transform: translate3d(0, 0, 0);
-          }
-
-          25% {
-            transform: translate3d(0, -3px, 0);
+            transform: translateY(0);
           }
 
           50% {
-            transform: translate3d(0, -1px, 0);
-          }
-
-          75% {
-            transform: translate3d(0, 3px, 0);
+            transform: translateY(-3px);
           }
         }
 
@@ -530,13 +636,12 @@ export default function Home() {
           }
 
           50% {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
           }
         }
 
         .game-idle-card {
-          animation: gameCardIdle 6.5s ease-in-out infinite;
-          will-change: transform;
+          animation: gameCardIdle 7s ease-in-out infinite;
         }
 
         .game-idle-paused {
@@ -544,13 +649,34 @@ export default function Home() {
         }
 
         .game-mobile-card {
-          animation: gameMobileIdle 6s ease-in-out infinite;
+          animation: gameMobileIdle 7s ease-in-out infinite;
+        }
+
+        /*
+          مهم لـ Safari:
+          نوقف كل الحركات فور الضغط قبل الانتقال.
+        */
+        .home-leaving .game-idle-card,
+        .home-leaving .game-mobile-card {
+          animation: none !important;
+        }
+
+        .home-leaving .home-card-link {
+          transition: none !important;
+        }
+
+        .home-leaving * {
+          scroll-behavior: auto !important;
         }
 
         @media (prefers-reduced-motion: reduce) {
           .game-idle-card,
           .game-mobile-card {
             animation: none;
+          }
+
+          .home-card-link {
+            transition: none !important;
           }
         }
       `}</style>
