@@ -92,15 +92,13 @@ export default function Home() {
     useState(false);
 
   useEffect(() => {
-    // نجهز الصفحتين فقط.
-    // ما نحتاج نسوي prefetch لكل query حق كل لعبة.
+   
     router.prefetch("/match");
     router.prefetch("/guide");
   }, [router]);
 
   function prepareNavigation() {
-    // Safari يتأخر أحيانًا وهو يفك طبقات animation/filter.
-    // نوقفها من pointer down قبل تنفيذ الانتقال.
+  
     setIsLeaving(true);
     setHoveredCard(null);
   }
