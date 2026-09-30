@@ -122,7 +122,10 @@ const ProverbGame = dynamic(GAME_LOADERS.draw, {
 });
 
 function isGameType(value: string | null): value is GameType {
-  return value !== null && VALID_GAMES.includes(value as GameType);
+  return (
+    value !== null &&
+    VALID_GAMES.includes(value as GameType)
+  );
 }
 
 function getDefaultRounds(game: GameType) {
@@ -136,15 +139,26 @@ function getGameName(game: GameType) {
 function getRoundsLabel(count: number) {
   if (count === 1) return "جولة واحدة";
   if (count === 2) return "جولتين";
+
   return `${count} جولات`;
 }
 
 function shuffle<T>(items: T[]) {
   const result = [...items];
 
-  for (let i = result.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
+  for (
+    let i = result.length - 1;
+    i > 0;
+    i -= 1
+  ) {
+    const j = Math.floor(
+      Math.random() * (i + 1)
+    );
+
+    [result[i], result[j]] = [
+      result[j],
+      result[i],
+    ];
   }
 
   return result;
@@ -156,20 +170,28 @@ function buildRoundQueue(
   quizCategories: QuizCategoryKey[]
 ): Round[] {
   const queue: Round[] = [];
-  const shuffledCategories = shuffle(quizCategories);
+
+  const shuffledCategories =
+    shuffle(quizCategories);
 
   selectedGames.forEach((game) => {
     const count =
       game === "quiz"
         ? 1
-        : gameRounds[game] || getDefaultRounds(game);
+        : gameRounds[game] ||
+          getDefaultRounds(game);
 
-    for (let i = 0; i < count; i += 1) {
+    for (
+      let i = 0;
+      i < count;
+      i += 1
+    ) {
       queue.push({
         game,
         category:
           game === "quiz"
-            ? shuffledCategories[0] ?? null
+            ? shuffledCategories[0] ??
+              null
             : null,
       });
     }
@@ -178,46 +200,70 @@ function buildRoundQueue(
   return queue;
 }
 
-function preloadGames(games: GameType[]) {
+function preloadGames(
+  games: GameType[]
+) {
   games.forEach((game) => {
     void GAME_LOADERS[game]();
   });
 }
 
-function getGameStats(roundStats: RoundStat[]) {
-  return roundStats.reduce<GameStat[]>((result, stat) => {
-    const existing = result.find(
-      (item) => item.game === stat.game
-    );
+function getGameStats(
+  roundStats: RoundStat[]
+) {
+  return roundStats.reduce<GameStat[]>(
+    (result, stat) => {
+      const existing =
+        result.find(
+          (item) =>
+            item.game === stat.game
+        );
 
-    if (existing) {
-      existing.total += 1;
+      if (existing) {
+        existing.total += 1;
 
-      if (stat.winner === "side1") {
-        existing.side1Wins += 1;
+        if (
+          stat.winner === "side1"
+        ) {
+          existing.side1Wins += 1;
+        }
+
+        if (
+          stat.winner === "side2"
+        ) {
+          existing.side2Wins += 1;
+        }
+
+        if (
+          stat.winner === "none"
+        ) {
+          existing.draws += 1;
+        }
+
+        return result;
       }
 
-      if (stat.winner === "side2") {
-        existing.side2Wins += 1;
-      }
-
-      if (stat.winner === "none") {
-        existing.draws += 1;
-      }
+      result.push({
+        game: stat.game,
+        side1Wins:
+          stat.winner === "side1"
+            ? 1
+            : 0,
+        side2Wins:
+          stat.winner === "side2"
+            ? 1
+            : 0,
+        draws:
+          stat.winner === "none"
+            ? 1
+            : 0,
+        total: 1,
+      });
 
       return result;
-    }
-
-    result.push({
-      game: stat.game,
-      side1Wins: stat.winner === "side1" ? 1 : 0,
-      side2Wins: stat.winner === "side2" ? 1 : 0,
-      draws: stat.winner === "none" ? 1 : 0,
-      total: 1,
-    });
-
-    return result;
-  }, []);
+    },
+    []
+  );
 }
 
 function WinnerOverlay({
@@ -249,11 +295,14 @@ function WinnerOverlay({
 }) {
   if (!show) return null;
 
-  const totalDraws = roundStats.filter(
-    (stat) => stat.winner === "none"
-  ).length;
+  const totalDraws =
+    roundStats.filter(
+      (stat) =>
+        stat.winner === "none"
+    ).length;
 
-  const gameStats = getGameStats(roundStats);
+  const gameStats =
+    getGameStats(roundStats);
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/75 px-4 py-4 backdrop-blur-md">
@@ -279,13 +328,15 @@ function WinnerOverlay({
         <div className="mx-auto mt-6 grid max-w-3xl grid-cols-[1fr_auto_1fr] items-stretch gap-4">
           <div
             className={`rounded-[26px] border p-4 transition-all sm:p-5 ${
-              side1Score >= side2Score
+              side1Score >=
+              side2Score
                 ? "scale-[1.02] border-fuchsia-300/80 bg-gradient-to-br from-fuchsia-500/40 via-pink-500/25 to-purple-500/20 shadow-[0_0_42px_rgba(217,70,239,0.42)]"
                 : "border-fuchsia-300/35 bg-fuchsia-500/15 shadow-[0_0_24px_rgba(217,70,239,0.22)]"
             }`}
           >
             <p className="truncate text-sm font-black text-fuchsia-100/90 sm:text-base">
-              {side1Name || "فريق 1"}
+              {side1Name ||
+                "فريق 1"}
             </p>
 
             <p className="mt-2 text-5xl font-black leading-none text-fuchsia-50 drop-shadow-[0_0_14px_rgba(244,114,182,0.35)] sm:text-6xl">
@@ -299,13 +350,15 @@ function WinnerOverlay({
 
           <div
             className={`rounded-[26px] border p-4 transition-all sm:p-5 ${
-              side2Score >= side1Score
+              side2Score >=
+              side1Score
                 ? "scale-[1.02] border-cyan-300/80 bg-gradient-to-br from-cyan-400/40 via-sky-500/25 to-blue-500/20 shadow-[0_0_42px_rgba(34,211,238,0.42)]"
                 : "border-cyan-300/35 bg-cyan-400/15 shadow-[0_0_24px_rgba(34,211,238,0.22)]"
             }`}
           >
             <p className="truncate text-sm font-black text-cyan-100/90 sm:text-base">
-              {side2Name || "فريق 2"}
+              {side2Name ||
+                "فريق 2"}
             </p>
 
             <p className="mt-2 text-5xl font-black leading-none text-cyan-50 drop-shadow-[0_0_14px_rgba(34,211,238,0.35)] sm:text-6xl">
@@ -316,17 +369,24 @@ function WinnerOverlay({
 
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm font-black sm:text-base">
           <span className="rounded-full border border-fuchsia-300/30 bg-fuchsia-500/15 px-4 py-2 text-fuchsia-100 shadow-[0_0_18px_rgba(217,70,239,0.18)]">
-            {side1Name || "فريق 1"}: {side1Score}
+            {side1Name ||
+              "فريق 1"}
+            :{" "}
+            {side1Score}
           </span>
 
           {totalDraws > 0 && (
             <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-white/70">
-              تعادل: {totalDraws}
+              تعادل:{" "}
+              {totalDraws}
             </span>
           )}
 
           <span className="rounded-full border border-cyan-300/30 bg-cyan-400/15 px-4 py-2 text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.18)]">
-            {side2Name || "فريق 2"}: {side2Score}
+            {side2Name ||
+              "فريق 2"}
+            :{" "}
+            {side2Score}
           </span>
         </div>
 
@@ -344,73 +404,91 @@ function WinnerOverlay({
               </div>
 
               <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-black text-white/65">
-                {getRoundsLabel(roundStats.length)}
+                {getRoundsLabel(
+                  roundStats.length
+                )}
               </div>
             </div>
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {gameStats.map((stat) => {
-                const side1Won =
-                  stat.side1Wins > stat.side2Wins;
+              {gameStats.map(
+                (stat) => {
+                  const side1Won =
+                    stat.side1Wins >
+                    stat.side2Wins;
 
-                const side2Won =
-                  stat.side2Wins > stat.side1Wins;
+                  const side2Won =
+                    stat.side2Wins >
+                    stat.side1Wins;
 
-                return (
-                  <div
-                    key={stat.game}
-                    className="rounded-[24px] border border-white/10 bg-white/[0.045] px-4 py-4 shadow-[0_0_18px_rgba(0,0,0,0.15)]"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="shrink-0">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`flex h-12 min-w-[50px] items-center justify-center rounded-2xl border px-3 text-2xl font-black ${
-                              side1Won
-                                ? "border-fuchsia-300/70 bg-fuchsia-500/30 text-fuchsia-50 shadow-[0_0_22px_rgba(217,70,239,0.30)]"
-                                : "border-fuchsia-300/25 bg-fuchsia-500/10 text-fuchsia-100/75"
-                            }`}
-                          >
-                            {stat.side1Wins}
-                          </span>
+                  return (
+                    <div
+                      key={
+                        stat.game
+                      }
+                      className="rounded-[24px] border border-white/10 bg-white/[0.045] px-4 py-4 shadow-[0_0_18px_rgba(0,0,0,0.15)]"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="shrink-0">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`flex h-12 min-w-[50px] items-center justify-center rounded-2xl border px-3 text-2xl font-black ${
+                                side1Won
+                                  ? "border-fuchsia-300/70 bg-fuchsia-500/30 text-fuchsia-50 shadow-[0_0_22px_rgba(217,70,239,0.30)]"
+                                  : "border-fuchsia-300/25 bg-fuchsia-500/10 text-fuchsia-100/75"
+                              }`}
+                            >
+                              {
+                                stat.side1Wins
+                              }
+                            </span>
 
-                          <span className="text-xl font-black text-white/25">
-                            -
-                          </span>
+                            <span className="text-xl font-black text-white/25">
+                              -
+                            </span>
 
-                          <span
-                            className={`flex h-12 min-w-[50px] items-center justify-center rounded-2xl border px-3 text-2xl font-black ${
-                              side2Won
-                                ? "border-cyan-300/70 bg-cyan-400/30 text-cyan-50 shadow-[0_0_22px_rgba(34,211,238,0.30)]"
-                                : "border-cyan-300/25 bg-cyan-400/10 text-cyan-100/75"
-                            }`}
-                          >
-                            {stat.side2Wins}
-                          </span>
+                            <span
+                              className={`flex h-12 min-w-[50px] items-center justify-center rounded-2xl border px-3 text-2xl font-black ${
+                                side2Won
+                                  ? "border-cyan-300/70 bg-cyan-400/30 text-cyan-50 shadow-[0_0_22px_rgba(34,211,238,0.30)]"
+                                  : "border-cyan-300/25 bg-cyan-400/10 text-cyan-100/75"
+                              }`}
+                            >
+                              {
+                                stat.side2Wins
+                              }
+                            </span>
+                          </div>
+
+                          {stat.draws >
+                            0 && (
+                            <p className="mt-2 text-center text-xs font-bold text-white/45">
+                              {stat.draws ===
+                              1
+                                ? "تعادل واحد"
+                                : `${stat.draws} تعادل`}
+                            </p>
+                          )}
                         </div>
 
-                        {stat.draws > 0 && (
-                          <p className="mt-2 text-center text-xs font-bold text-white/45">
-                            {stat.draws === 1
-                              ? "تعادل واحد"
-                              : `${stat.draws} تعادل`}
+                        <div className="min-w-0 text-right">
+                          <p className="truncate text-lg font-black text-white">
+                            {getGameName(
+                              stat.game
+                            )}
                           </p>
-                        )}
-                      </div>
 
-                      <div className="min-w-0 text-right">
-                        <p className="truncate text-lg font-black text-white">
-                          {getGameName(stat.game)}
-                        </p>
-
-                        <p className="mt-1 text-sm font-bold text-white/40">
-                          {getRoundsLabel(stat.total)}
-                        </p>
+                          <p className="mt-1 text-sm font-bold text-white/40">
+                            {getRoundsLabel(
+                              stat.total
+                            )}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                }
+              )}
             </div>
           </div>
         )}
@@ -418,7 +496,9 @@ function WinnerOverlay({
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
             type="button"
-            onClick={onRestart}
+            onClick={
+              onRestart
+            }
             className="arcade-button"
           >
             {mode === "quick"
@@ -428,7 +508,9 @@ function WinnerOverlay({
 
           <button
             type="button"
-            onClick={onShare}
+            onClick={
+              onShare
+            }
             className="rounded-2xl border border-emerald-300/40 bg-gradient-to-r from-emerald-400/20 to-cyan-400/20 px-6 py-3 font-black text-emerald-50 shadow-[0_0_22px_rgba(52,211,153,0.20)] transition hover:scale-[1.02] hover:border-emerald-300/60 active:scale-[0.98]"
           >
             📤 مشاركة النتيجة
@@ -436,7 +518,9 @@ function WinnerOverlay({
 
           <button
             type="button"
-            onClick={onGoHome}
+            onClick={
+              onGoHome
+            }
             className="btn-secondary"
           >
             القائمة الرئيسية
@@ -482,7 +566,9 @@ function TransitionOverlay({
         </p>
 
         <h1 className="mt-6 text-4xl font-black text-white">
-          {getGameName(nextRound.game)}
+          {getGameName(
+            nextRound.game
+          )}
         </h1>
 
         <p className="mt-5 text-white/60">
@@ -502,7 +588,9 @@ function RoundWinnerPicker({
   show: boolean;
   side1Name: string;
   side2Name: string;
-  onPick: (winner: WinnerType) => void;
+  onPick: (
+    winner: WinnerType
+  ) => void;
 }) {
   if (!show) return null;
 
@@ -518,30 +606,43 @@ function RoundWinnerPicker({
         </h1>
 
         <p className="mt-3 text-lg font-bold text-white/70">
-          اختر الفائز في هذه الجولة
+          اختر الفائز في هذه
+          الجولة
         </p>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <button
             type="button"
-            onClick={() => onPick("side1")}
+            onClick={() =>
+              onPick(
+                "side1"
+              )
+            }
             className="arcade-button px-6 py-4 text-lg"
           >
-            {side1Name || "فريق 1"}
+            {side1Name ||
+              "فريق 1"}
           </button>
 
           <button
             type="button"
-            onClick={() => onPick("side2")}
+            onClick={() =>
+              onPick(
+                "side2"
+              )
+            }
             className="arcade-button px-6 py-4 text-lg"
           >
-            {side2Name || "فريق 2"}
+            {side2Name ||
+              "فريق 2"}
           </button>
         </div>
 
         <button
           type="button"
-          onClick={() => onPick("none")}
+          onClick={() =>
+            onPick("none")
+          }
           className="btn-secondary mt-4 w-full px-6 py-4 text-lg"
         >
           لا أحد
@@ -585,70 +686,44 @@ function RoundResultOverlay({
   );
 }
 
-/* ========================= */
-/* Session Battle Bar */
-/* ========================= */
-
 function SessionBattleBar({
   side1Name,
   side2Name,
-  side1Score,
-  side2Score,
   side1Control,
   nextGame,
 }: {
   side1Name: string;
   side2Name: string;
-  side1Score: number;
-  side2Score: number;
   side1Control: number;
   nextGame?: GameType;
 }) {
-  const boundaryPosition = 100 - side1Control;
+  const boundaryPosition =
+    100 - side1Control;
 
-  const markerPosition = Math.max(
-    3,
-    Math.min(97, boundaryPosition)
-  );
+  const markerPosition =
+    Math.max(
+      3,
+      Math.min(
+        97,
+        boundaryPosition
+      )
+    );
 
   return (
-    <div
-      className="
-        mb-3
-        rounded-[18px]
-        border border-violet-300/10
-        bg-[#12081f]/95
-        px-4 py-2.5
-
-        sm:fixed
-        sm:left-1/2
-        sm:top-4
-        sm:z-[50]
-        sm:mb-0
-        sm:w-[min(760px,calc(100%-230px))]
-        sm:-translate-x-1/2
-        sm:px-5
-        sm:py-2.5
-      "
-    >
-      {/* المعلومات */}
+    <div className="mb-3 rounded-[18px] border border-violet-300/10 bg-[#12081f]/95 px-4 py-2.5 md:fixed md:left-1/2 md:top-4 md:z-[50] md:mb-0 md:w-[min(760px,calc(100%_-_320px))] md:-translate-x-1/2 md:px-5 md:py-2.5">
       <div
         className="mb-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3"
         dir="ltr"
       >
-        {/* فريق 2 */}
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="text-lg font-black leading-none text-cyan-300">
-            {side2Score}
-          </span>
+        <p className="min-w-0 truncate text-left text-xs font-black text-cyan-100/65 sm:text-sm">
+          {side2Name ||
+            "فريق 2"}
+        </p>
 
-          <span className="truncate text-xs font-black text-cyan-100/65 sm:text-sm">
-            {side2Name || "فريق 2"}
-          </span>
-        </div>
-
-        {/* اللعبة الجاية */}
-        <div className="min-w-0 text-center" dir="rtl">
+        <div
+          className="min-w-0 text-center"
+          dir="rtl"
+        >
           {nextGame ? (
             <>
               <p className="text-[9px] font-black tracking-[0.12em] text-white/30">
@@ -656,7 +731,9 @@ function SessionBattleBar({
               </p>
 
               <p className="mt-0.5 max-w-[240px] truncate text-xs font-black text-white/80 sm:text-sm">
-                {getGameName(nextGame)}
+                {getGameName(
+                  nextGame
+                )}
               </p>
             </>
           ) : (
@@ -666,69 +743,35 @@ function SessionBattleBar({
               </p>
 
               <p className="mt-0.5 text-xs font-black text-amber-100/85 sm:text-sm">
-                🏆 بعدها النتيجة
+                🏆 بعدها
+                النتيجة
               </p>
             </>
           )}
         </div>
 
-        {/* فريق 1 */}
-        <div className="flex min-w-0 items-center justify-end gap-2">
-          <span className="truncate text-xs font-black text-violet-100/70 sm:text-sm">
-            {side1Name || "فريق 1"}
-          </span>
-
-          <span className="text-lg font-black leading-none text-violet-300">
-            {side1Score}
-          </span>
-        </div>
+        <p className="min-w-0 truncate text-right text-xs font-black text-violet-100/70 sm:text-sm">
+          {side1Name ||
+            "فريق 1"}
+        </p>
       </div>
 
-      {/* شريط السيطرة */}
       <div className="relative">
-        <div className="relative h-2.5 overflow-hidden rounded-full border border-white/[0.08] bg-[#071a2a] sm:h-3">
-          {/* فريق 2 - السماوي */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0891b2] via-[#0ea5b7] to-[#22b8cf]" />
-
-          {/* فريق 1 - بنفسجي فوشي غامق */}
+        <div className="relative h-2.5 overflow-hidden rounded-full border border-white/[0.08] bg-gradient-to-r from-[#0891b2] via-[#0ea5b7] to-[#22b8cf] shadow-[inset_0_2px_6px_rgba(0,0,0,.38)] sm:h-3">
           <div
-            className="
-              absolute inset-y-0 right-0
-              bg-gradient-to-l
-              from-[#6d28d9]
-              via-[#8b3fc0]
-              to-[#ad4bb8]
-              transition-[width]
-              duration-700
-              ease-out
-            "
+            className="absolute inset-y-0 right-0 bg-gradient-to-l from-[#5b21b6] via-[#7c3aed] to-[#a855f7] transition-[width] duration-700 ease-out"
             style={{
               width: `${side1Control}%`,
             }}
           />
 
-          {/* نقطة التعادل */}
           <div className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/20" />
+
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/15" />
         </div>
 
-        {/* الكأس */}
         <div
-          className="
-            pointer-events-none
-            absolute top-1/2 z-20
-            flex h-5 w-5
-            -translate-x-1/2 -translate-y-1/2
-            items-center justify-center
-            rounded-full
-            border border-violet-300/20
-            bg-[#150b23]
-            text-[9px]
-            shadow-[0_0_8px_rgba(139,92,246,.18)]
-            transition-[left]
-            duration-700
-            ease-out
-            sm:h-6 sm:w-6 sm:text-[10px]
-          "
+          className="pointer-events-none absolute top-1/2 z-20 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-violet-300/20 bg-[#150b23] text-[9px] shadow-[0_0_8px_rgba(139,92,246,.18)] transition-[left] duration-700 ease-out sm:h-6 sm:w-6 sm:text-[10px]"
           style={{
             left: `${markerPosition}%`,
           }}
@@ -739,6 +782,20 @@ function SessionBattleBar({
     </div>
   );
 }
+
+type ShareRoundStat = {
+  winner: WinnerType;
+};
+
+type ShareResultData = {
+  isDraw: boolean;
+  finalWinnerName: string;
+  side1: string;
+  side2: string;
+  side1Score: number;
+  side2Score: number;
+  roundStats: ShareRoundStat[];
+};
 
 function drawRoundedRect(
   ctx: CanvasRenderingContext2D,
@@ -755,8 +812,16 @@ function drawRoundedRect(
   );
 
   ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + width - r, y);
+
+  ctx.moveTo(
+    x + r,
+    y
+  );
+
+  ctx.lineTo(
+    x + width - r,
+    y
+  );
 
   ctx.quadraticCurveTo(
     x + width,
@@ -777,7 +842,10 @@ function drawRoundedRect(
     y + height
   );
 
-  ctx.lineTo(x + r, y + height);
+  ctx.lineTo(
+    x + r,
+    y + height
+  );
 
   ctx.quadraticCurveTo(
     x,
@@ -786,7 +854,10 @@ function drawRoundedRect(
     y + height - r
   );
 
-  ctx.lineTo(x, y + r);
+  ctx.lineTo(
+    x,
+    y + r
+  );
 
   ctx.quadraticCurveTo(
     x,
@@ -808,13 +879,17 @@ async function createResultShareImage({
   roundStats,
 }: ShareResultData) {
   const canvas =
-    document.createElement("canvas");
+    document.createElement(
+      "canvas"
+    );
 
   canvas.width = 1080;
   canvas.height = 1350;
 
   const ctx =
-    canvas.getContext("2d");
+    canvas.getContext(
+      "2d"
+    );
 
   if (!ctx) {
     throw new Error(
@@ -827,7 +902,6 @@ async function createResultShareImage({
     height,
   } = canvas;
 
-  // Background
   const background =
     ctx.createLinearGradient(
       0,
@@ -861,7 +935,6 @@ async function createResultShareImage({
     height
   );
 
-  // Pink glow
   const pinkGlow =
     ctx.createRadialGradient(
       150,
@@ -892,7 +965,6 @@ async function createResultShareImage({
     height
   );
 
-  // Cyan glow
   const cyanGlow =
     ctx.createRadialGradient(
       930,
@@ -923,7 +995,6 @@ async function createResultShareImage({
     height
   );
 
-  // Main card
   drawRoundedRect(
     ctx,
     65,
@@ -969,7 +1040,6 @@ async function createResultShareImage({
   ctx.direction =
     "rtl";
 
-  // Brand
   ctx.fillStyle =
     "#67e8f9";
 
@@ -982,7 +1052,6 @@ async function createResultShareImage({
     135
   );
 
-  // Main result
   ctx.fillStyle =
     "#ffffff";
 
@@ -1011,7 +1080,6 @@ async function createResultShareImage({
     315
   );
 
-  // Team 1
   drawRoundedRect(
     ctx,
     105,
@@ -1058,7 +1126,8 @@ async function createResultShareImage({
     "900 32px Arial";
 
   ctx.fillText(
-    side1 || "فريق 1",
+    side1 ||
+      "فريق 1",
     300,
     460
   );
@@ -1067,12 +1136,13 @@ async function createResultShareImage({
     "900 110px Arial";
 
   ctx.fillText(
-    String(side1Score),
+    String(
+      side1Score
+    ),
     300,
     590
   );
 
-  // Team 2
   drawRoundedRect(
     ctx,
     585,
@@ -1119,7 +1189,8 @@ async function createResultShareImage({
     "900 32px Arial";
 
   ctx.fillText(
-    side2 || "فريق 2",
+    side2 ||
+      "فريق 2",
     780,
     460
   );
@@ -1128,12 +1199,13 @@ async function createResultShareImage({
     "900 110px Arial";
 
   ctx.fillText(
-    String(side2Score),
+    String(
+      side2Score
+    ),
     780,
     590
   );
 
-  // Separator
   ctx.fillStyle =
     "rgba(255,255,255,0.35)";
 
@@ -1146,7 +1218,6 @@ async function createResultShareImage({
     540
   );
 
-  // Session details
   const draws =
     roundStats.filter(
       (stat) =>
@@ -1190,7 +1261,6 @@ async function createResultShareImage({
     810
   );
 
-  // CTA
   drawRoundedRect(
     ctx,
     145,
@@ -1236,7 +1306,6 @@ async function createResultShareImage({
     1035
   );
 
-  // Footer
   ctx.fillStyle =
     "#67e8f9";
 
@@ -1288,68 +1357,111 @@ async function createResultShareImage({
 }
 
 export default function MatchPage() {
-  const router = useRouter();
+  const router =
+    useRouter();
 
   const transitionTimer =
-    useRef<ReturnType<typeof setTimeout> | null>(
-      null
-    );
+    useRef<
+      ReturnType<
+        typeof setTimeout
+      > | null
+    >(null);
 
   const roundResultTimer =
-    useRef<ReturnType<typeof setTimeout> | null>(
-      null
+    useRef<
+      ReturnType<
+        typeof setTimeout
+      > | null
+    >(null);
+
+  const [
+    mode,
+    setMode,
+  ] =
+    useState<ModeType>(
+      "session"
     );
 
-  const [mode, setMode] =
-    useState<ModeType>("session");
+  const [
+    phase,
+    setPhase,
+  ] =
+    useState<PhaseType>(
+      "setup"
+    );
 
-  const [phase, setPhase] =
-    useState<PhaseType>("setup");
+  const [
+    countdown,
+    setCountdown,
+  ] = useState(3);
 
-  const [countdown, setCountdown] =
-    useState(3);
+  const [
+    side1,
+    setSide1,
+  ] = useState("");
 
-  const [side1, setSide1] =
-    useState("");
-
-  const [side2, setSide2] =
-    useState("");
+  const [
+    side2,
+    setSide2,
+  ] = useState("");
 
   const [
     selectedGames,
     setSelectedGames,
-  ] = useState<GameType[]>([]);
+  ] =
+    useState<GameType[]>(
+      []
+    );
 
   const [
     gameRounds,
     setGameRounds,
-  ] = useState<Record<string, number>>(
-    {}
-  );
+  ] =
+    useState<
+      Record<
+        string,
+        number
+      >
+    >({});
 
   const [
     quizCategories,
     setQuizCategories,
-  ] = useState<QuizCategoryKey[]>([]);
+  ] =
+    useState<
+      QuizCategoryKey[]
+    >([]);
 
   const [
     timerEnabled,
     setTimerEnabled,
-  ] = useState(false);
+  ] =
+    useState(false);
 
   const [
     timerSeconds,
     setTimerSeconds,
-  ] = useState(30);
+  ] =
+    useState(30);
 
-  const [queue, setQueue] =
-    useState<Round[]>([]);
+  const [
+    queue,
+    setQueue,
+  ] =
+    useState<Round[]>(
+      []
+    );
 
-  const [started, setStarted] =
+  const [
+    started,
+    setStarted,
+  ] =
     useState(false);
 
-  const [index, setIndex] =
-    useState(0);
+  const [
+    index,
+    setIndex,
+  ] = useState(0);
 
   const [
     side1Score,
@@ -1364,66 +1476,65 @@ export default function MatchPage() {
   const [
     roundStats,
     setRoundStats,
-  ] = useState<RoundStat[]>([]);
+  ] =
+    useState<
+      RoundStat[]
+    >([]);
 
   const [
     showWinner,
     setShowWinner,
-  ] = useState(false);
+  ] =
+    useState(false);
 
   const [
     showRoundWinnerPicker,
     setShowRoundWinnerPicker,
-  ] = useState(false);
+  ] =
+    useState(false);
 
   const [
     showRoundResult,
     setShowRoundResult,
-  ] = useState(false);
+  ] =
+    useState(false);
 
   const [
     roundResultWinner,
     setRoundResultWinner,
-  ] = useState<WinnerType>("none");
+  ] =
+    useState<WinnerType>(
+      "none"
+    );
 
   const current =
     queue[index];
 
   const nextRound =
-    queue[index + 1];
+    queue[
+      index + 1
+    ];
 
-  /*
-    نبحث عن اللعبة المختلفة القادمة،
-    وليس الجولة القادمة فقط.
-  */
   const nextDifferentGame =
     current
       ? queue
-          .slice(index + 1)
+          .slice(
+            index + 1
+          )
           .find(
-            (round) =>
+            (
+              round
+            ) =>
               round.game !==
               current.game
           )?.game
       : undefined;
 
-  /*
-    شريط السيطرة.
-
-    يبدأ 50 / 50.
-    مقدار الحركة يعتمد على
-    عدد جولات الجلسة كاملة.
-
-    مثال:
-    8 جولات = كل نقطة فرق تحرك 6.25%.
-  */
   const battleStep =
     queue.length > 0
-      ? 50 / queue.length
+      ? 50 /
+        queue.length
       : 0;
-
-  const battleDifference =
-    side1Score - side2Score;
 
   const side1Control =
     Math.max(
@@ -1431,13 +1542,16 @@ export default function MatchPage() {
       Math.min(
         100,
         50 +
-          battleDifference *
+          (side1Score -
+            side2Score) *
             battleStep
       )
     );
 
   function clearFlowTimers() {
-    if (transitionTimer.current) {
+    if (
+      transitionTimer.current
+    ) {
       clearTimeout(
         transitionTimer.current
       );
@@ -1446,7 +1560,9 @@ export default function MatchPage() {
         null;
     }
 
-    if (roundResultTimer.current) {
+    if (
+      roundResultTimer.current
+    ) {
       clearTimeout(
         roundResultTimer.current
       );
@@ -1460,24 +1576,36 @@ export default function MatchPage() {
     clearFlowTimers();
 
     setStarted(false);
+
     setIndex(0);
+
     setQueue([]);
 
     setSide1Score(0);
+
     setSide2Score(0);
 
     setRoundStats([]);
 
     setShowWinner(false);
-    setShowRoundWinnerPicker(false);
-    setShowRoundResult(false);
+
+    setShowRoundWinnerPicker(
+      false
+    );
+
+    setShowRoundResult(
+      false
+    );
 
     setRoundResultWinner(
       "none"
     );
 
     setCountdown(3);
-    setPhase("setup");
+
+    setPhase(
+      "setup"
+    );
   }
 
   function start() {
@@ -1485,7 +1613,10 @@ export default function MatchPage() {
       selectedGames.length ===
       0
     ) {
-      alert("اختر لعبة");
+      alert(
+        "اختر لعبة"
+      );
+
       return;
     }
 
@@ -1510,10 +1641,6 @@ export default function MatchPage() {
         quizCategories
       );
 
-    /*
-      تحميل الألعاب يبدأ هنا،
-      أثناء العد التنازلي.
-    */
     preloadGames(
       selectedGames
     );
@@ -1525,6 +1652,7 @@ export default function MatchPage() {
     );
 
     setStarted(false);
+
     setIndex(0);
 
     setSide1(
@@ -1538,20 +1666,30 @@ export default function MatchPage() {
     );
 
     setSide1Score(0);
+
     setSide2Score(0);
 
     setRoundStats([]);
 
     setShowWinner(false);
-    setShowRoundWinnerPicker(false);
-    setShowRoundResult(false);
+
+    setShowRoundWinnerPicker(
+      false
+    );
+
+    setShowRoundResult(
+      false
+    );
 
     setRoundResultWinner(
       "none"
     );
 
     setCountdown(3);
-    setPhase("countdown");
+
+    setPhase(
+      "countdown"
+    );
   }
 
   function finishSession(
@@ -1568,8 +1706,13 @@ export default function MatchPage() {
       finalSide2Score
     );
 
-    setShowRoundResult(false);
-    setShowRoundWinnerPicker(false);
+    setShowRoundResult(
+      false
+    );
+
+    setShowRoundWinnerPicker(
+      false
+    );
 
     setStarted(false);
 
@@ -1577,7 +1720,9 @@ export default function MatchPage() {
       "finished"
     );
 
-    setShowWinner(true);
+    setShowWinner(
+      true
+    );
   }
 
   function goToNextRound(
@@ -1597,9 +1742,13 @@ export default function MatchPage() {
     }
 
     const upcomingRound =
-      queue[index + 1];
+      queue[
+        index + 1
+      ];
 
-    if (upcomingRound) {
+    if (
+      upcomingRound
+    ) {
       preloadGames([
         upcomingRound.game,
       ]);
@@ -1610,28 +1759,37 @@ export default function MatchPage() {
     );
 
     transitionTimer.current =
-      setTimeout(() => {
-        setIndex(
-          (currentIndex) =>
-            currentIndex + 1
-        );
+      setTimeout(
+        () => {
+          setIndex(
+            (
+              currentIndex
+            ) =>
+              currentIndex +
+              1
+          );
 
-        setPhase(
-          "playing"
-        );
+          setPhase(
+            "playing"
+          );
 
-        transitionTimer.current =
-          null;
-      }, 1500);
+          transitionTimer.current =
+            null;
+        },
+        1500
+      );
   }
 
   function applyRoundWinner(
     winner?: WinnerType
   ) {
-    if (!current) return;
+    if (!current) {
+      return;
+    }
 
     const finalWinner =
-      winner ?? "none";
+      winner ??
+      "none";
 
     const nextSide1Score =
       side1Score +
@@ -1648,13 +1806,17 @@ export default function MatchPage() {
         : 0);
 
     setRoundStats(
-      (previous) => [
+      (
+        previous
+      ) => [
         ...previous,
         {
           game:
             current.game,
+
           round:
             index + 1,
+
           winner:
             finalWinner,
         },
@@ -1694,25 +1856,30 @@ export default function MatchPage() {
     );
 
     roundResultTimer.current =
-      setTimeout(() => {
-        setShowRoundResult(
-          false
-        );
+      setTimeout(
+        () => {
+          setShowRoundResult(
+            false
+          );
 
-        roundResultTimer.current =
-          null;
+          roundResultTimer.current =
+            null;
 
-        goToNextRound(
-          nextSide1Score,
-          nextSide2Score
-        );
-      }, 2500);
+          goToNextRound(
+            nextSide1Score,
+            nextSide2Score
+          );
+        },
+        2500
+      );
   }
 
   function endRound(
     winner?: WinnerType
   ) {
-    if (!current) return;
+    if (!current) {
+      return;
+    }
 
     if (
       winner !==
@@ -1734,17 +1901,29 @@ export default function MatchPage() {
     resetRoundFlow();
 
     if (
-      mode === "session"
+      mode ===
+      "session"
     ) {
-      setSelectedGames([]);
-      setGameRounds({});
-      setQuizCategories([]);
+      setSelectedGames(
+        []
+      );
+
+      setGameRounds(
+        {}
+      );
+
+      setQuizCategories(
+        []
+      );
     }
   }
 
   function goHome() {
     clearFlowTimers();
-    router.push("/");
+
+    router.push(
+      "/"
+    );
   }
 
   useEffect(() => {
@@ -1759,23 +1938,38 @@ export default function MatchPage() {
       countdown > 0
     ) {
       const timer =
-        setTimeout(() => {
-          setCountdown(
-            (currentCountdown) =>
-              currentCountdown -
-              1
-          );
-        }, 800);
+        setTimeout(
+          () => {
+            setCountdown(
+              (
+                currentCountdown
+              ) =>
+                currentCountdown -
+                1
+            );
+          },
+          800
+        );
 
       return () =>
-        clearTimeout(timer);
+        clearTimeout(
+          timer
+        );
     }
 
     const startTimer =
-      setTimeout(() => {
-        setStarted(true);
-        setPhase("playing");
-      }, 650);
+      setTimeout(
+        () => {
+          setStarted(
+            true
+          );
+
+          setPhase(
+            "playing"
+          );
+        },
+        650
+      );
 
     return () =>
       clearTimeout(
@@ -1793,10 +1987,14 @@ export default function MatchPage() {
       );
 
     const urlMode =
-      params.get("mode");
+      params.get(
+        "mode"
+      );
 
     const gameParam =
-      params.get("game");
+      params.get(
+        "game"
+      );
 
     const category =
       params.get(
@@ -1838,7 +2036,9 @@ export default function MatchPage() {
       gameParam ===
         "quiz" &&
         category
-        ? [category]
+        ? [
+            category,
+          ]
         : []
     );
   }, []);
@@ -1900,36 +2100,46 @@ export default function MatchPage() {
   async function handleShareResult() {
     try {
       const imageFile =
-        await createResultShareImage({
-          isDraw,
-          finalWinnerName,
-          side1,
-          side2,
-          side1Score,
-          side2Score,
-          roundStats,
-        });
+        await createResultShareImage(
+          {
+            isDraw,
+
+            finalWinnerName,
+
+            side1,
+            side2,
+
+            side1Score,
+            side2Score,
+
+            roundStats,
+          }
+        );
 
       if (
         navigator.share &&
-        navigator.canShare?.({
-          files: [
-            imageFile,
-          ],
-        })
+        navigator.canShare?.(
+          {
+            files: [
+              imageFile,
+            ],
+          }
+        )
       ) {
-        await navigator.share({
-          title:
-            "نتيجتنا في خل نلعب 🎮",
+        await navigator.share(
+          {
+            title:
+              "نتيجتنا في خل نلعب 🎮",
 
-          text: isDraw
-            ? "تعادلنا في خل نلعب 🤝"
-            : `${finalWinnerName} فاز في خل نلعب 🏆`,
+            text: isDraw
+              ? "تعادلنا في خل نلعب 🤝"
+              : `${finalWinnerName} فاز في خل نلعب 🏆`,
 
-          files: [
-            imageFile,
-          ],
-        });
+            files: [
+              imageFile,
+            ],
+          }
+        );
 
         return;
       }
@@ -1955,12 +2165,15 @@ export default function MatchPage() {
       );
 
       link.click();
+
       link.remove();
 
       URL.revokeObjectURL(
         imageUrl
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       console.log(
         "Share cancelled or failed",
         error
@@ -1971,15 +2184,21 @@ export default function MatchPage() {
   const commonGameProps = {
     onRoundEnd:
       endRound,
+
     roundKey:
       index,
+
     side1Name:
       side1,
+
     side2Name:
       side2,
+
     currentRound:
       index + 1,
+
     timerEnabled,
+
     timerSeconds,
   };
 
@@ -2192,11 +2411,6 @@ export default function MatchPage() {
         />
       ) : (
         <div className="mx-auto max-w-5xl">
-          {/*
-            مهم:
-            الشريط يظهر فقط في تحدي الجلسة.
-            Quick Mode ما يظهر فيه نهائيًا.
-          */}
           {mode ===
             "session" &&
             current && (
@@ -2206,12 +2420,6 @@ export default function MatchPage() {
                 }
                 side2Name={
                   side2
-                }
-                side1Score={
-                  side1Score
-                }
-                side2Score={
-                  side2Score
                 }
                 side1Control={
                   side1Control
