@@ -84,16 +84,12 @@ export default function GameLayout({
           border border-white/10
           bg-[#121028]/80
           p-3
-          pt-3
           text-center
           shadow-[0_0_30px_rgba(0,0,0,0.35)]
           backdrop-blur-xl
-
           sm:rounded-[28px]
           sm:p-3
-
           lg:p-4
-          lg:pt-8
         "
       >
 
