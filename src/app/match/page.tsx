@@ -2436,7 +2436,13 @@ export default function MatchPage() {
           }
         />
       ) : (
-        <div className="mx-auto max-w-5xl">
+       <div
+  className={`mx-auto max-w-5xl ${
+    mode === "session"
+      ? "md:pt-7"
+      : ""
+  }`}
+>
           {mode ===
             "session" &&
             current && (
