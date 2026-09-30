@@ -697,81 +697,107 @@ function SessionBattleBar({
   side1Control: number;
   nextGame?: GameType;
 }) {
-  const boundaryPosition =
-    100 - side1Control;
+  const boundaryPosition = 100 - side1Control;
 
-  const markerPosition =
-    Math.max(
-      3,
-      Math.min(
-        97,
-        boundaryPosition
-      )
-    );
+  const markerPosition = Math.max(
+    3,
+    Math.min(97, boundaryPosition)
+  );
 
   return (
-    <div className="mb-3 rounded-[18px] border border-violet-300/10 bg-[#12081f]/95 px-4 py-2.5 md:fixed md:left-1/2 md:top-4 md:z-[50] md:mb-0 md:w-[min(760px,calc(100%_-_320px))] md:-translate-x-1/2 md:px-5 md:py-2.5">
+    <div
+      className="
+        mb-3
+        rounded-2xl
+        border border-white/[0.08]
+        bg-[#10081c]/95
+        px-3 py-2
+
+        md:fixed
+        md:left-1/2
+        md:top-3
+        md:z-[50]
+        md:mb-0
+        md:w-[min(670px,calc(100%_-_340px))]
+        md:-translate-x-1/2
+      "
+    >
+      {/* الأسماء + اللعبة الجاية */}
       <div
-        className="mb-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3"
+        className="mb-1.5 grid grid-cols-[1fr_auto_1fr] items-center gap-2"
         dir="ltr"
       >
-        <p className="min-w-0 truncate text-left text-xs font-black text-cyan-100/65 sm:text-sm">
-          {side2Name ||
-            "فريق 2"}
+        <p className="min-w-0 truncate text-left text-[11px] font-black text-cyan-100/60 sm:text-xs">
+          {side2Name || "فريق 2"}
         </p>
 
         <div
-          className="min-w-0 text-center"
+          className="flex min-w-0 items-center justify-center gap-1.5"
           dir="rtl"
         >
           {nextGame ? (
             <>
-              <p className="text-[9px] font-black tracking-[0.12em] text-white/30">
-                اللعبة الجاية
-              </p>
+              <span className="text-[9px] font-bold text-white/25">
+                التالي:
+              </span>
 
-              <p className="mt-0.5 max-w-[240px] truncate text-xs font-black text-white/80 sm:text-sm">
-                {getGameName(
-                  nextGame
-                )}
-              </p>
+              <span className="max-w-[220px] truncate text-[11px] font-black text-white/75 sm:text-xs">
+                {getGameName(nextGame)}
+              </span>
             </>
           ) : (
-            <>
-              <p className="text-[9px] font-black tracking-[0.12em] text-amber-200/40">
-                آخر لعبة
-              </p>
-
-              <p className="mt-0.5 text-xs font-black text-amber-100/85 sm:text-sm">
-                🏆 بعدها
-                النتيجة
-              </p>
-            </>
+            <span className="text-[11px] font-black text-amber-100/80 sm:text-xs">
+              🏆 آخر لعبة
+            </span>
           )}
         </div>
 
-        <p className="min-w-0 truncate text-right text-xs font-black text-violet-100/70 sm:text-sm">
-          {side1Name ||
-            "فريق 1"}
+        <p className="min-w-0 truncate text-right text-[11px] font-black text-violet-100/65 sm:text-xs">
+          {side1Name || "فريق 1"}
         </p>
       </div>
 
+      {/* شريط السيطرة */}
       <div className="relative">
-        <div className="relative h-2.5 overflow-hidden rounded-full border border-white/[0.08] bg-gradient-to-r from-[#0891b2] via-[#0ea5b7] to-[#22b8cf] shadow-[inset_0_2px_6px_rgba(0,0,0,.38)] sm:h-3">
+        <div className="relative h-2 overflow-hidden rounded-full border border-white/[0.07] bg-gradient-to-r from-cyan-500 via-cyan-500 to-cyan-400">
+          {/* فريق 1 */}
           <div
-            className="absolute inset-y-0 right-0 bg-gradient-to-l from-[#5b21b6] via-[#7c3aed] to-[#a855f7] transition-[width] duration-700 ease-out"
+            className="
+              absolute inset-y-0 right-0
+              bg-gradient-to-l
+              from-[#5b21b6]
+              via-[#6d28d9]
+              to-[#8b5cf6]
+              transition-[width]
+              duration-700
+              ease-out
+            "
             style={{
               width: `${side1Control}%`,
             }}
           />
 
+          {/* منتصف التعادل */}
           <div className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/20" />
-
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/15" />
         </div>
 
+        {/* الكأس */}
         <div
-          className="pointer-events-none absolute top-1/2 z-20 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-violet-300/20 bg-[#150b23] text-[9px] shadow-[0_0_8px_rgba(139,92,246,.18)] transition-[left] duration-700 ease-out sm:h-6 sm:w-6 sm:text-[10px]"
+          className="
+            pointer-events-none
+            absolute top-1/2 z-20
+            flex h-[18px] w-[18px]
+            -translate-x-1/2 -translate-y-1/2
+            items-center justify-center
+            rounded-full
+            border border-white/15
+            bg-[#130b20]
+            text-[8px]
+            shadow-[0_0_6px_rgba(139,92,246,.18)]
+            transition-[left]
+            duration-700
+            ease-out
+          "
           style={{
             left: `${markerPosition}%`,
           }}
