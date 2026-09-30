@@ -77,16 +77,16 @@ export default function GameLayout({
 
   return (
     <div className="mx-auto w-full max-w-5xl px-3 sm:px-4 lg:px-6">
-      <div className="glass rounded-[24px] border border-white/10 bg-[#121028]/80 p-3 text-center shadow-[0_0_30px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:rounded-[28px] sm:p-4 lg:p-6">
+      <div className="glass rounded-[24px] border border-white/10 bg-[#121028]/80 p-3 text-center shadow-[0_0_30px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:rounded-[28px] sm:p-3 lg:p-4">
 
         {/* =========================
             HEADER
         ========================== */}
 
-        <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="mb-2 flex items-start justify-between gap-3">
 
           {/* Round */}
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-b from-[#8b5cf6] to-[#6d28d9] text-2xl font-black text-white shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-[#8b5cf6] to-[#6d28d9] text-xl font-black text-white shadow-[0_0_16px_rgba(139,92,246,0.30)]">
             {currentRound}
           </div>
 
@@ -98,14 +98,14 @@ export default function GameLayout({
           </div>
 
           {/* يحافظ على توسط العنوان */}
-          <div className="w-12 shrink-0" />
+          <div className="w-10 shrink-0" />
         </div>
 
         {/* =========================
             TEAMS + CURRENT TURN
         ========================== */}
 
-        <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+        <div className="mb-3 grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-3">
 
           {/* =========================
               TEAM 1
@@ -113,27 +113,28 @@ export default function GameLayout({
 
           <div
             className={`
-              flex min-h-[128px]
+              flex
+              min-h-[92px]
               flex-col
               items-center
               justify-center
-              rounded-2xl
+              rounded-[18px]
               border
-              px-4
-              py-4
+              px-3
+              py-2
               transition-all
               duration-500
 
               ${
                 isSide1Turn
                   ? `
-                    scale-[1.02]
+                    scale-[1.01]
                     border-fuchsia-300/70
                     bg-gradient-to-br
                     from-fuchsia-500/30
                     via-pink-500/20
                     to-purple-500/15
-                    shadow-[0_0_32px_rgba(217,70,239,0.32)]
+                    shadow-[0_0_26px_rgba(217,70,239,0.28)]
                   `
                   : `
                     border-fuchsia-300/15
@@ -145,7 +146,11 @@ export default function GameLayout({
           >
             <p
               className={`
-                text-sm font-bold transition-colors duration-500
+                text-xs
+                font-bold
+                transition-colors
+                duration-500
+                sm:text-sm
 
                 ${
                   isSide1Turn
@@ -159,17 +164,16 @@ export default function GameLayout({
 
             <p
               className={`
-                mt-2
+                mt-1
                 flex
-                min-h-[52px]
                 items-center
                 justify-center
-                text-4xl
+                text-5xl
                 font-black
                 leading-none
                 transition-all
                 duration-500
-                sm:text-5xl
+                sm:text-6xl
 
                 ${
                   isSide1Turn
@@ -189,14 +193,14 @@ export default function GameLayout({
           <div
             className={`
               flex
-              min-h-[128px]
+              min-h-[92px]
               flex-col
               items-center
               justify-center
-              rounded-2xl
+              rounded-[18px]
               border
-              px-4
-              py-4
+              px-3
+              py-2
               transition-all
               duration-500
 
@@ -208,7 +212,7 @@ export default function GameLayout({
                     from-fuchsia-500/35
                     via-pink-500/25
                     to-purple-500/20
-                    shadow-[0_0_40px_rgba(217,70,239,0.38)]
+                    shadow-[0_0_30px_rgba(217,70,239,0.32)]
                   `
                   : isSide2Turn
                     ? `
@@ -217,7 +221,7 @@ export default function GameLayout({
                       from-cyan-400/35
                       via-sky-500/25
                       to-blue-500/20
-                      shadow-[0_0_40px_rgba(34,211,238,0.38)]
+                      shadow-[0_0_30px_rgba(34,211,238,0.32)]
                     `
                     : `
                       border-white/20
@@ -226,19 +230,21 @@ export default function GameLayout({
               }
             `}
           >
-            <p className="text-sm font-bold text-white/65">
+            <p className="text-xs font-bold text-white/55 sm:text-sm">
               الدور الحالي
             </p>
 
             <p
               className={`
-                mt-2
-                text-3xl
+                mt-1
+                max-w-full
+                truncate
+                text-2xl
                 font-black
                 leading-tight
                 transition-colors
                 duration-500
-                sm:text-4xl
+                sm:text-3xl
 
                 ${
                   isSide1Turn
@@ -260,27 +266,27 @@ export default function GameLayout({
           <div
             className={`
               flex
-              min-h-[128px]
+              min-h-[92px]
               flex-col
               items-center
               justify-center
-              rounded-2xl
+              rounded-[18px]
               border
-              px-4
-              py-4
+              px-3
+              py-2
               transition-all
               duration-500
 
               ${
                 isSide2Turn
                   ? `
-                    scale-[1.02]
+                    scale-[1.01]
                     border-cyan-300/70
                     bg-gradient-to-br
                     from-cyan-400/30
                     via-sky-500/20
                     to-blue-500/15
-                    shadow-[0_0_32px_rgba(34,211,238,0.32)]
+                    shadow-[0_0_26px_rgba(34,211,238,0.28)]
                   `
                   : `
                     border-cyan-300/15
@@ -292,7 +298,11 @@ export default function GameLayout({
           >
             <p
               className={`
-                text-sm font-bold transition-colors duration-500
+                text-xs
+                font-bold
+                transition-colors
+                duration-500
+                sm:text-sm
 
                 ${
                   isSide2Turn
@@ -306,17 +316,16 @@ export default function GameLayout({
 
             <p
               className={`
-                mt-2
+                mt-1
                 flex
-                min-h-[52px]
                 items-center
                 justify-center
-                text-4xl
+                text-5xl
                 font-black
                 leading-none
                 transition-all
                 duration-500
-                sm:text-5xl
+                sm:text-6xl
 
                 ${
                   isSide2Turn
@@ -334,7 +343,7 @@ export default function GameLayout({
             GAME CONTENT
         ========================== */}
 
-        <div className="rounded-[22px] border border-white/10 bg-[#0d1236]/70 p-3 sm:p-4 lg:p-5">
+        <div className="rounded-[20px] border border-white/10 bg-[#0d1236]/70 p-3 sm:p-3 lg:p-4">
           {children}
         </div>
       </div>
