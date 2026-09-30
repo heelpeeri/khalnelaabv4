@@ -604,105 +604,131 @@ function SessionBattleBar({
   side1Control: number;
   nextGame?: GameType;
 }) {
-  /*
-    فريق 1 = فوشي من اليمين.
-    فريق 2 = سماوي من اليسار.
-
-    50 / 50 = تعادل.
-    إذا تقدم فريق 1 يزيد الجزء الفوشي.
-    إذا تقدم فريق 2 يزيد الجزء السماوي.
-  */
-
-  const boundaryPosition =
-    100 - side1Control;
+  const boundaryPosition = 100 - side1Control;
 
   const markerPosition = Math.max(
-    4,
-    Math.min(96, boundaryPosition)
+    3,
+    Math.min(97, boundaryPosition)
   );
 
   return (
-    <div className="mb-5 rounded-[22px] border border-white/[0.08] bg-white/[0.025] px-4 py-3 sm:px-5">
-      {/* اللعبة الجاية */}
-      <div className="mb-3 text-center">
-        {nextGame ? (
-          <>
-            <p className="text-[10px] font-black tracking-[0.18em] text-white/35 sm:text-[11px]">
-              اللعبة الجاية
-            </p>
+    <div
+      className="
+        mb-3
+        rounded-[18px]
+        border border-violet-300/10
+        bg-[#12081f]/95
+        px-4 py-2.5
 
-            <p className="mt-1 text-sm font-black text-white/85 sm:text-base">
-              {getGameName(nextGame)}
-            </p>
-          </>
-        ) : (
-          <>
-            <p className="text-[10px] font-black tracking-[0.18em] text-yellow-200/55 sm:text-[11px]">
-              آخر لعبة
-            </p>
-
-            <p className="mt-1 text-sm font-black text-yellow-100 sm:text-base">
-              🏆 بعدها النتيجة
-            </p>
-          </>
-        )}
-      </div>
-
-      {/* الفرق */}
+        sm:fixed
+        sm:left-1/2
+        sm:top-4
+        sm:z-[50]
+        sm:mb-0
+        sm:w-[min(760px,calc(100%-230px))]
+        sm:-translate-x-1/2
+        sm:px-5
+        sm:py-2.5
+      "
+    >
+      {/* المعلومات */}
       <div
-        className="mb-2 grid grid-cols-[1fr_auto_1fr] items-end gap-3"
+        className="mb-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3"
         dir="ltr"
       >
-        {/* Team 2 */}
-        <div className="min-w-0 text-left">
-          <p className="truncate text-xs font-black text-cyan-100/70 sm:text-sm">
-            {side2Name || "فريق 2"}
-          </p>
-
-          <p className="mt-1 text-xl font-black leading-none text-cyan-300">
+        {/* فريق 2 */}
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="text-lg font-black leading-none text-cyan-300">
             {side2Score}
-          </p>
+          </span>
+
+          <span className="truncate text-xs font-black text-cyan-100/65 sm:text-sm">
+            {side2Name || "فريق 2"}
+          </span>
         </div>
 
-        <div className="pb-0.5 text-center">
-          <p className="whitespace-nowrap text-[9px] font-black tracking-[0.18em] text-white/25 sm:text-[10px]">
-            تحدي الجلسة
-          </p>
+        {/* اللعبة الجاية */}
+        <div className="min-w-0 text-center" dir="rtl">
+          {nextGame ? (
+            <>
+              <p className="text-[9px] font-black tracking-[0.12em] text-white/30">
+                اللعبة الجاية
+              </p>
+
+              <p className="mt-0.5 max-w-[240px] truncate text-xs font-black text-white/80 sm:text-sm">
+                {getGameName(nextGame)}
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-[9px] font-black tracking-[0.12em] text-amber-200/40">
+                آخر لعبة
+              </p>
+
+              <p className="mt-0.5 text-xs font-black text-amber-100/85 sm:text-sm">
+                🏆 بعدها النتيجة
+              </p>
+            </>
+          )}
         </div>
 
-        {/* Team 1 */}
-        <div className="min-w-0 text-right">
-          <p className="truncate text-xs font-black text-fuchsia-100/70 sm:text-sm">
+        {/* فريق 1 */}
+        <div className="flex min-w-0 items-center justify-end gap-2">
+          <span className="truncate text-xs font-black text-violet-100/70 sm:text-sm">
             {side1Name || "فريق 1"}
-          </p>
+          </span>
 
-          <p className="mt-1 text-xl font-black leading-none text-fuchsia-300">
+          <span className="text-lg font-black leading-none text-violet-300">
             {side1Score}
-          </p>
+          </span>
         </div>
       </div>
 
-      {/* الشريط */}
+      {/* شريط السيطرة */}
       <div className="relative">
-        <div className="relative h-4 overflow-hidden rounded-full border border-white/10 bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-600 shadow-[inset_0_2px_6px_rgba(0,0,0,.38)] sm:h-5">
-          {/* فريق 1 يستولي من اليمين */}
+        <div className="relative h-2.5 overflow-hidden rounded-full border border-white/[0.08] bg-[#071a2a] sm:h-3">
+          {/* فريق 2 - السماوي */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0891b2] via-[#0ea5b7] to-[#22b8cf]" />
+
+          {/* فريق 1 - بنفسجي فوشي غامق */}
           <div
-            className="absolute inset-y-0 right-0 bg-gradient-to-l from-fuchsia-600 via-fuchsia-500 to-pink-400 transition-[width] duration-700 ease-out"
+            className="
+              absolute inset-y-0 right-0
+              bg-gradient-to-l
+              from-[#6d28d9]
+              via-[#8b3fc0]
+              to-[#ad4bb8]
+              transition-[width]
+              duration-700
+              ease-out
+            "
             style={{
               width: `${side1Control}%`,
             }}
           />
 
-          {/* خط التعادل */}
-          <div className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/25" />
-
-          {/* لمعان خفيف */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/20" />
+          {/* نقطة التعادل */}
+          <div className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/20" />
         </div>
 
-        {/* الحد الفاصل / الكأس */}
+        {/* الكأس */}
         <div
-          className="pointer-events-none absolute top-1/2 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-[#110a21] text-[13px] shadow-[0_0_14px_rgba(255,255,255,.14)] transition-[left] duration-700 ease-out sm:h-8 sm:w-8 sm:text-sm"
+          className="
+            pointer-events-none
+            absolute top-1/2 z-20
+            flex h-5 w-5
+            -translate-x-1/2 -translate-y-1/2
+            items-center justify-center
+            rounded-full
+            border border-violet-300/20
+            bg-[#150b23]
+            text-[9px]
+            shadow-[0_0_8px_rgba(139,92,246,.18)]
+            transition-[left]
+            duration-700
+            ease-out
+            sm:h-6 sm:w-6 sm:text-[10px]
+          "
           style={{
             left: `${markerPosition}%`,
           }}
@@ -713,20 +739,6 @@ function SessionBattleBar({
     </div>
   );
 }
-
-type ShareRoundStat = {
-  winner: WinnerType;
-};
-
-type ShareResultData = {
-  isDraw: boolean;
-  finalWinnerName: string;
-  side1: string;
-  side2: string;
-  side1Score: number;
-  side2Score: number;
-  roundStats: ShareRoundStat[];
-};
 
 function drawRoundedRect(
   ctx: CanvasRenderingContext2D,
