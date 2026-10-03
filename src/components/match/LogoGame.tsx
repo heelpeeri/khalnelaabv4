@@ -21,11 +21,6 @@ type TeamSide =
   | "side1"
   | "side2";
 
-/*
-  نخزن ترتيب الشعارات على مستوى الملف
-  بحيث ما يتكرر شعار خلال نفس بقاء صفحة /match
-  إلا بعد استهلاك القائمة.
-*/
 let logoDeck: LogoItem[] = [];
 
 function shuffleArray<T>(
@@ -142,11 +137,6 @@ function PixelatedLogo({
       null
     );
 
-  const imageRef =
-    useRef<HTMLImageElement | null>(
-      null
-    );
-
   useEffect(() => {
     const canvas =
       canvasRef.current;
@@ -164,9 +154,6 @@ function PixelatedLogo({
 
     const image =
       new Image();
-
-    imageRef.current =
-      image;
 
     image.src =
       logo.image;
@@ -187,11 +174,6 @@ function PixelatedLogo({
         DISPLAY_SIZE
       );
 
-      /*
-        إذا انكشف الشعار:
-        نرسم نفس الصورة الأصلية
-        بدقتها الطبيعية.
-      */
       if (revealed) {
         context.imageSmoothingEnabled =
           true;
@@ -236,11 +218,6 @@ function PixelatedLogo({
         return;
       }
 
-      /*
-        Pixelation حقيقي:
-        1. نصغر الصورة إلى Canvas صغير.
-        2. نكبره بدون smoothing.
-      */
       const ratio =
         image.width /
         image.height;
@@ -305,10 +282,6 @@ function PixelatedLogo({
       context.imageSmoothingEnabled =
         false;
 
-      /*
-        نحافظ على Aspect Ratio
-        داخل مربع العرض.
-      */
       const scale =
         Math.min(
           DISPLAY_SIZE /
@@ -367,7 +340,6 @@ function PixelatedLogo({
           object-contain
           transition-all
           duration-500
-
           ${
             revealed
               ? "scale-[1.02]"
@@ -396,15 +368,11 @@ export default function LogoGame({
 }: {
   side1Name: string;
   side2Name: string;
-
   onRoundEnd: (
     winner?: WinnerType
   ) => void;
-
   roundKey: number;
-
   currentRound?: number;
-
   timerEnabled?: boolean;
   timerSeconds?: number;
 }) {
@@ -480,11 +448,6 @@ export default function LogoGame({
   const current =
     rounds[index];
 
-  /*
-    نفس منطق منهو ذا:
-    الشعار الأول فريق 1
-    الشعار الثاني فريق 2
-  */
   const activeSide: TeamSide =
     useMemo(
       () =>
@@ -715,8 +678,6 @@ export default function LogoGame({
         }
       >
         <div className="flex flex-col gap-4">
-
-          {/* معلومات الشعار */}
           <div className="flex flex-wrap items-center justify-center gap-2">
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
               الشعار{" "}
@@ -744,7 +705,6 @@ export default function LogoGame({
             )}
           </div>
 
-          {/* الشعار */}
           <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-4 sm:p-5">
             <div className="mx-auto max-w-[480px] rounded-[26px] bg-white p-5 shadow-[0_12px_40px_rgba(0,0,0,0.18)] sm:p-7">
               <PixelatedLogo
@@ -776,9 +736,7 @@ export default function LogoGame({
             )}
           </div>
 
-          {/* الأزرار */}
           <div className="flex flex-wrap justify-center gap-3">
-
             {!revealed && (
               <button
                 type="button"
