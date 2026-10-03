@@ -35,6 +35,11 @@ const GAMES = [
     name: "خمن المثل",
     image: "/images/posters/Proverbgame.png",
   },
+  {
+    id: "logo",
+    name: "خمن الشعار",
+    image: "/images/posters/Logogame.png",
+  },
 ];
 
 function getRoundOptions(
@@ -53,6 +58,7 @@ function getRoundOptions(
     case "word":
     case "scramble":
     case "draw":
+    case "logo":
     default:
       return [2, 4, 6];
   }
@@ -72,6 +78,7 @@ function getDefaultRounds(
     case "word":
     case "scramble":
     case "draw":
+    case "logo":
     default:
       return 2;
   }
@@ -198,15 +205,10 @@ export default function SetupGame({
 
   return (
     <div className="intro mx-auto w-full max-w-6xl pb-8 text-white">
-
       <audio
         ref={clickSound}
         src="/click.mp3"
       />
-
-      {/* ========================= */}
-      {/* Header */}
-      {/* ========================= */}
 
       <div className="text-center">
         <div
@@ -252,13 +254,7 @@ export default function SetupGame({
         </p>
       </div>
 
-      {/* ========================= */}
-      {/* Teams */}
-      {/* ========================= */}
-
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
-
-        {/* Team 1 */}
         <div
           className="
             rounded-[22px]
@@ -302,7 +298,6 @@ export default function SetupGame({
           />
         </div>
 
-        {/* Team 2 */}
         <div
           className="
             rounded-[22px]
@@ -347,10 +342,6 @@ export default function SetupGame({
         </div>
       </div>
 
-      {/* ========================= */}
-      {/* Timer */}
-      {/* ========================= */}
-
       <div
         className="
           mt-4
@@ -364,7 +355,6 @@ export default function SetupGame({
         "
       >
         <div className="flex flex-wrap items-center justify-between gap-4">
-
           <div className="text-right">
             <p className="font-black">
               ⏱️ المؤقت
@@ -432,7 +422,6 @@ export default function SetupGame({
 
         {timerEnabled && (
           <div className="mt-3">
-
             <input
               type="range"
               min={10}
@@ -463,14 +452,8 @@ export default function SetupGame({
         )}
       </div>
 
-      {/* ========================= */}
-      {/* Games */}
-      {/* ========================= */}
-
       <div className="mt-6">
-
         <div className="flex items-end justify-between gap-3">
-
           <div className="text-right">
             <h2 className="text-xl font-black">
               {isQuickMode
@@ -495,10 +478,6 @@ export default function SetupGame({
           )}
         </div>
 
-        {/* ========================= */}
-        {/* Poster cards */}
-        {/* ========================= */}
-
         <div
           className={`
             mt-4
@@ -508,7 +487,7 @@ export default function SetupGame({
             ${
               isQuickMode
                 ? "mx-auto max-w-[250px] grid-cols-1"
-                : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
+                : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-7"
             }
           `}
         >
@@ -579,7 +558,6 @@ export default function SetupGame({
                     `}
                   />
 
-                  {/* Selection indicator */}
                   {!isQuickMode && (
                     <div
                       className={`
@@ -619,14 +597,9 @@ export default function SetupGame({
         </div>
       </div>
 
-      {/* ========================= */}
-      {/* Selected Game Settings */}
-      {/* ========================= */}
-
       {selectedGames.length >
         0 && (
         <div className="mt-5 space-y-3">
-
           {GAMES.filter((game) =>
             selectedGames.includes(
               game.id
@@ -649,7 +622,6 @@ export default function SetupGame({
                 "
               >
                 <div className="flex flex-wrap items-center justify-between gap-3">
-
                   <div className="text-right">
                     <p className="font-black">
                       {game.name}
@@ -663,11 +635,9 @@ export default function SetupGame({
                     </p>
                   </div>
 
-                  {/* Round buttons */}
                   {game.id !==
                     "quiz" && (
                     <div className="flex flex-wrap gap-2">
-
                       {roundOptions.map(
                         (round) => {
                           const selected =
@@ -720,14 +690,9 @@ export default function SetupGame({
                   )}
                 </div>
 
-                {/* ========================= */}
-                {/* Quiz Categories */}
-                {/* ========================= */}
-
                 {game.id ===
                   "quiz" && (
                   <div className="mt-3 flex flex-wrap gap-2">
-
                     {quizCategoryList.map(
                       (category) => {
                         const selected =
@@ -779,10 +744,6 @@ export default function SetupGame({
           })}
         </div>
       )}
-
-      {/* ========================= */}
-      {/* Start Button */}
-      {/* ========================= */}
 
       <div className="mt-6 text-center">
         <button
