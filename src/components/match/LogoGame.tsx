@@ -15,7 +15,6 @@ import {
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_ROUNDS = 2;
-const PIXEL_SIZE = 28;
 
 type TeamSide =
   | "side1"
@@ -155,10 +154,17 @@ function PixelatedLogo({
     const image =
       new Image();
 
-    image.src =
-      logo.image;
+    let cancelled = false;
 
-    image.onload = () => {
+    function drawLogo() {
+      if (
+        cancelled ||
+        !image.naturalWidth ||
+        !image.naturalHeight
+      ) {
+        return;
+      }
+
       const DISPLAY_SIZE = 512;
 
       canvas.width =
@@ -174,6 +180,32 @@ function PixelatedLogo({
         DISPLAY_SIZE
       );
 
+      const scale =
+        Math.min(
+          DISPLAY_SIZE /
+            image.naturalWidth,
+          DISPLAY_SIZE /
+            image.naturalHeight
+        );
+
+      const displayWidth =
+        image.naturalWidth *
+        scale;
+
+      const displayHeight =
+        image.naturalHeight *
+        scale;
+
+      const x =
+        (DISPLAY_SIZE -
+          displayWidth) /
+        2;
+
+      const y =
+        (DISPLAY_SIZE -
+          displayHeight) /
+        2;
+
       if (revealed) {
         context.imageSmoothingEnabled =
           true;
@@ -181,59 +213,36 @@ function PixelatedLogo({
         context.imageSmoothingQuality =
           "high";
 
-        const scale =
-          Math.min(
-            DISPLAY_SIZE /
-              image.width,
-            DISPLAY_SIZE /
-              image.height
-          );
-
-        const width =
-          image.width *
-          scale;
-
-        const height =
-          image.height *
-          scale;
-
-        const x =
-          (DISPLAY_SIZE -
-            width) /
-          2;
-
-        const y =
-          (DISPLAY_SIZE -
-            height) /
-          2;
-
         context.drawImage(
           image,
           x,
           y,
-          width,
-          height
+          displayWidth,
+          displayHeight
         );
 
         return;
       }
 
+      const pixelSize =
+        logo.pixelSize ?? 28;
+
       const ratio =
-        image.width /
-        image.height;
+        image.naturalWidth /
+        image.naturalHeight;
 
       let smallWidth =
-        PIXEL_SIZE;
+        pixelSize;
 
       let smallHeight =
-        PIXEL_SIZE;
+        pixelSize;
 
-      if (ratio > 1) {
+      if (ratio >= 1) {
         smallHeight =
           Math.max(
             1,
             Math.round(
-              PIXEL_SIZE /
+              pixelSize /
                 ratio
             )
           );
@@ -242,7 +251,7 @@ function PixelatedLogo({
           Math.max(
             1,
             Math.round(
-              PIXEL_SIZE *
+              pixelSize *
                 ratio
             )
           );
@@ -268,6 +277,13 @@ function PixelatedLogo({
         return;
       }
 
+      smallContext.clearRect(
+        0,
+        0,
+        smallWidth,
+        smallHeight
+      );
+
       smallContext.imageSmoothingEnabled =
         true;
 
@@ -282,32 +298,6 @@ function PixelatedLogo({
       context.imageSmoothingEnabled =
         false;
 
-      const scale =
-        Math.min(
-          DISPLAY_SIZE /
-            image.width,
-          DISPLAY_SIZE /
-            image.height
-        );
-
-      const displayWidth =
-        image.width *
-        scale;
-
-      const displayHeight =
-        image.height *
-        scale;
-
-      const x =
-        (DISPLAY_SIZE -
-          displayWidth) /
-        2;
-
-      const y =
-        (DISPLAY_SIZE -
-          displayHeight) /
-        2;
-
       context.drawImage(
         offscreen,
         0,
@@ -319,14 +309,43 @@ function PixelatedLogo({
         displayWidth,
         displayHeight
       );
+
+      context.imageSmoothingEnabled =
+        true;
+    }
+
+    image.onload =
+      drawLogo;
+
+    image.onerror = () => {
+      console.error(
+        "Logo failed to load:",
+        logo.image
+      );
     };
 
+    image.src =
+      logo.image;
+
+    if (
+      image.complete &&
+      image.naturalWidth > 0
+    ) {
+      drawLogo();
+    }
+
     return () => {
+      cancelled = true;
+
       image.onload =
+        null;
+
+      image.onerror =
         null;
     };
   }, [
-    logo,
+    logo.image,
+    logo.pixelSize,
     revealed,
   ]);
 
@@ -337,9 +356,9 @@ function PixelatedLogo({
         className={`
           h-full
           w-full
-          object-contain
           transition-all
           duration-500
+
           ${
             revealed
               ? "scale-[1.02]"
@@ -368,11 +387,15 @@ export default function LogoGame({
 }: {
   side1Name: string;
   side2Name: string;
+
   onRoundEnd: (
     winner?: WinnerType
   ) => void;
+
   roundKey: number;
+
   currentRound?: number;
+
   timerEnabled?: boolean;
   timerSeconds?: number;
 }) {
