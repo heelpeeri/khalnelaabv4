@@ -21,9 +21,9 @@ const GAME_CARDS: GameCard[] = [
     href: "/match?game=scramble",
     image: "/images/posters/Whogame.png",
     title: "منهو ذا؟",
-    x: -270,
-    y: 12,
-    scale: 0.9,
+    x: -324,
+    y: 14,
+    scale: 0.88,
     z: 10,
     delay: -1.2,
   },
@@ -31,9 +31,9 @@ const GAME_CARDS: GameCard[] = [
     href: "/match?game=quiz",
     image: "/images/posters/Quizgame.png",
     title: "أسئلة وأجوبة",
-    x: -162,
-    y: 6,
-    scale: 0.94,
+    x: -216,
+    y: 8,
+    scale: 0.92,
     z: 20,
     delay: -3.6,
   },
@@ -41,19 +41,29 @@ const GAME_CARDS: GameCard[] = [
     href: "/match?game=word",
     image: "/images/posters/wordgame.png",
     title: "خمن الكلمة",
-    x: -54,
-    y: 1,
-    scale: 0.98,
+    x: -108,
+    y: 3,
+    scale: 0.96,
     z: 30,
     delay: -2.1,
+  },
+  {
+    href: "/match?game=logo",
+    image: "/images/posters/Logogame.png",
+    title: "خمن الشعار",
+    x: 0,
+    y: 0,
+    scale: 1,
+    z: 40,
+    delay: -5.1,
   },
   {
     href: "/match?game=wheel",
     image: "/images/posters/Wheelgame.png",
     title: "لف وخمن",
-    x: 54,
-    y: 1,
-    scale: 0.98,
+    x: 108,
+    y: 3,
+    scale: 0.96,
     z: 30,
     delay: -4.4,
   },
@@ -61,9 +71,9 @@ const GAME_CARDS: GameCard[] = [
     href: "/match?game=draw",
     image: "/images/posters/Proverbgame.png",
     title: "خمن المثل",
-    x: 162,
-    y: 6,
-    scale: 0.94,
+    x: 216,
+    y: 8,
+    scale: 0.92,
     z: 20,
     delay: -0.7,
   },
@@ -71,9 +81,9 @@ const GAME_CARDS: GameCard[] = [
     href: "/match?game=categories",
     image: "/images/posters/Categoriesgame.png",
     title: "إنسان حيوان نبات جماد بلاد",
-    x: 270,
-    y: 12,
-    scale: 0.9,
+    x: 324,
+    y: 14,
+    scale: 0.88,
     z: 10,
     delay: -2.9,
   },
@@ -92,13 +102,11 @@ export default function Home() {
     useState(false);
 
   useEffect(() => {
-   
     router.prefetch("/match");
     router.prefetch("/guide");
   }, [router]);
 
   function prepareNavigation() {
-  
     setIsLeaving(true);
     setHoveredCard(null);
   }
@@ -139,10 +147,6 @@ export default function Home() {
       }}
     >
       <div className="mx-auto max-w-[1450px]">
-        {/* ========================= */}
-        {/* Logo */}
-        {/* ========================= */}
-
         <header className="flex min-h-[112px] items-start justify-center">
           <Image
             src="/logo.png"
@@ -158,10 +162,6 @@ export default function Home() {
             "
           />
         </header>
-
-        {/* ========================= */}
-        {/* Main container */}
-        {/* ========================= */}
 
         <section
           className="
@@ -179,10 +179,6 @@ export default function Home() {
           "
         >
           <div className="pointer-events-none absolute inset-x-14 top-0 h-px bg-gradient-to-r from-transparent via-purple-300/45 to-transparent" />
-
-          {/* ========================= */}
-          {/* Guide button */}
-          {/* ========================= */}
 
           <Link
             href="/guide"
@@ -218,10 +214,6 @@ export default function Home() {
             <span>🎮</span>
             <span>طريقة اللعب</span>
           </Link>
-
-          {/* ========================= */}
-          {/* Session Mode */}
-          {/* ========================= */}
 
           <div className="text-center">
             <h1 className="text-4xl font-black sm:text-5xl">
@@ -266,10 +258,6 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* ========================= */}
-          {/* Divider */}
-          {/* ========================= */}
-
           <div className="mx-auto mt-4 flex max-w-4xl items-center gap-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-cyan-300/15" />
 
@@ -279,10 +267,6 @@ export default function Home() {
 
             <div className="h-px flex-1 bg-gradient-to-l from-transparent via-white/10 to-cyan-300/15" />
           </div>
-
-          {/* ========================= */}
-          {/* Quick Games */}
-          {/* ========================= */}
 
           <div
             className="
@@ -315,7 +299,6 @@ export default function Home() {
               `,
             }}
           >
-            {/* Header */}
             <div className="relative z-10 text-center">
               <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-400/[0.09] px-5 py-1.5 shadow-[0_0_16px_rgba(34,211,238,.07)]">
                 <span className="text-sm">
@@ -336,17 +319,12 @@ export default function Home() {
               </p>
             </div>
 
-            {/* ========================= */}
-            {/* Desktop Cards */}
-            {/* ========================= */}
-
             <div
               className="relative mx-auto hidden h-[268px] max-w-[920px] lg:block"
               onMouseLeave={() =>
                 setHoveredCard(null)
               }
             >
-              {/* Floor glow - بدون blur */}
               <div
                 className="
                   pointer-events-none
@@ -513,7 +491,6 @@ export default function Home() {
                             `}
                           />
 
-                          {/* Hover CTA */}
                           <div
                             className={`
                               pointer-events-none
@@ -548,10 +525,6 @@ export default function Home() {
                 )}
               </div>
             </div>
-
-            {/* ========================= */}
-            {/* Mobile / Tablet */}
-            {/* ========================= */}
 
             <div className="relative z-10 mt-4 grid grid-cols-2 gap-3 pb-2 sm:grid-cols-3 lg:hidden">
               {GAME_CARDS.map(
@@ -611,10 +584,6 @@ export default function Home() {
         </section>
       </div>
 
-      {/* ========================= */}
-      {/* Animations */}
-      {/* ========================= */}
-
       <style>{`
         @keyframes gameCardIdle {
           0%,
@@ -650,10 +619,6 @@ export default function Home() {
           animation: gameMobileIdle 7s ease-in-out infinite;
         }
 
-        /*
-          مهم لـ Safari:
-          نوقف كل الحركات فور الضغط قبل الانتقال.
-        */
         .home-leaving .game-idle-card,
         .home-leaving .game-mobile-card {
           animation: none !important;
