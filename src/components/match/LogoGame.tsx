@@ -137,17 +137,19 @@ function PixelatedLogo({
     );
 
   useEffect(() => {
-    const canvas =
+    const canvasElement =
       canvasRef.current;
 
-    if (!canvas) {
+    if (!canvasElement) {
       return;
     }
 
-    const context =
-      canvas.getContext("2d");
+    const drawingContext =
+      canvasElement.getContext(
+        "2d"
+      );
 
-    if (!context) {
+    if (!drawingContext) {
       return;
     }
 
@@ -167,13 +169,13 @@ function PixelatedLogo({
 
       const DISPLAY_SIZE = 512;
 
-      canvas.width =
+      canvasElement.width =
         DISPLAY_SIZE;
 
-      canvas.height =
+      canvasElement.height =
         DISPLAY_SIZE;
 
-      context.clearRect(
+      drawingContext.clearRect(
         0,
         0,
         DISPLAY_SIZE,
@@ -207,13 +209,13 @@ function PixelatedLogo({
         2;
 
       if (revealed) {
-        context.imageSmoothingEnabled =
+        drawingContext.imageSmoothingEnabled =
           true;
 
-        context.imageSmoothingQuality =
+        drawingContext.imageSmoothingQuality =
           "high";
 
-        context.drawImage(
+        drawingContext.drawImage(
           image,
           x,
           y,
@@ -295,10 +297,10 @@ function PixelatedLogo({
         smallHeight
       );
 
-      context.imageSmoothingEnabled =
+      drawingContext.imageSmoothingEnabled =
         false;
 
-      context.drawImage(
+      drawingContext.drawImage(
         offscreen,
         0,
         0,
@@ -310,7 +312,7 @@ function PixelatedLogo({
         displayHeight
       );
 
-      context.imageSmoothingEnabled =
+      drawingContext.imageSmoothingEnabled =
         true;
     }
 
@@ -336,12 +338,8 @@ function PixelatedLogo({
 
     return () => {
       cancelled = true;
-
-      image.onload =
-        null;
-
-      image.onerror =
-        null;
+      image.onload = null;
+      image.onerror = null;
     };
   }, [
     logo.image,
@@ -358,7 +356,6 @@ function PixelatedLogo({
           w-full
           transition-all
           duration-500
-
           ${
             revealed
               ? "scale-[1.02]"
@@ -387,15 +384,11 @@ export default function LogoGame({
 }: {
   side1Name: string;
   side2Name: string;
-
   onRoundEnd: (
     winner?: WinnerType
   ) => void;
-
   roundKey: number;
-
   currentRound?: number;
-
   timerEnabled?: boolean;
   timerSeconds?: number;
 }) {
