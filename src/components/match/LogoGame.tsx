@@ -137,45 +137,51 @@ function PixelatedLogo({
     );
 
   useEffect(() => {
-    const canvasElement =
+    const currentCanvas =
       canvasRef.current;
 
-    if (!canvasElement) {
+    if (!currentCanvas) {
       return;
     }
 
-    const drawingContext =
-      canvasElement.getContext(
+    const currentContext =
+      currentCanvas.getContext(
         "2d"
       );
 
-    if (!drawingContext) {
+    if (!currentContext) {
       return;
     }
+
+    const canvas: HTMLCanvasElement =
+      currentCanvas;
+
+    const ctx: CanvasRenderingContext2D =
+      currentContext;
 
     const image =
       new Image();
 
     let cancelled = false;
 
-    function drawLogo() {
+    const drawLogo = () => {
       if (
         cancelled ||
-        !image.naturalWidth ||
-        !image.naturalHeight
+        image.naturalWidth === 0 ||
+        image.naturalHeight === 0
       ) {
         return;
       }
 
       const DISPLAY_SIZE = 512;
 
-      canvasElement.width =
+      canvas.width =
         DISPLAY_SIZE;
 
-      canvasElement.height =
+      canvas.height =
         DISPLAY_SIZE;
 
-      drawingContext.clearRect(
+      ctx.clearRect(
         0,
         0,
         DISPLAY_SIZE,
@@ -209,13 +215,13 @@ function PixelatedLogo({
         2;
 
       if (revealed) {
-        drawingContext.imageSmoothingEnabled =
+        ctx.imageSmoothingEnabled =
           true;
 
-        drawingContext.imageSmoothingQuality =
+        ctx.imageSmoothingQuality =
           "high";
 
-        drawingContext.drawImage(
+        ctx.drawImage(
           image,
           x,
           y,
@@ -297,10 +303,10 @@ function PixelatedLogo({
         smallHeight
       );
 
-      drawingContext.imageSmoothingEnabled =
+      ctx.imageSmoothingEnabled =
         false;
 
-      drawingContext.drawImage(
+      ctx.drawImage(
         offscreen,
         0,
         0,
@@ -312,9 +318,9 @@ function PixelatedLogo({
         displayHeight
       );
 
-      drawingContext.imageSmoothingEnabled =
+      ctx.imageSmoothingEnabled =
         true;
-    }
+    };
 
     image.onload =
       drawLogo;
@@ -331,7 +337,8 @@ function PixelatedLogo({
 
     if (
       image.complete &&
-      image.naturalWidth > 0
+      image.naturalWidth > 0 &&
+      image.naturalHeight > 0
     ) {
       drawLogo();
     }
