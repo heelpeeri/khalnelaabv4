@@ -15,7 +15,8 @@ type GameType =
   | "scramble"
   | "wheel"
   | "categories"
-  | "draw";
+  | "draw"
+  | "logo";
 
 type ModeType = "session" | "quick";
 
@@ -52,6 +53,7 @@ const VALID_GAMES: GameType[] = [
   "wheel",
   "categories",
   "draw",
+  "logo",
 ];
 
 const GAME_NAMES: Record<GameType, string> = {
@@ -61,6 +63,7 @@ const GAME_NAMES: Record<GameType, string> = {
   wheel: "🎡 لف وخمن",
   categories: "🌍 إنسان حيوان نبات جماد بلاد",
   draw: "✏️ خمن المثل",
+  logo: "🏷️ خمن الشعار",
 };
 
 const DEFAULT_ROUNDS: Record<GameType, number> = {
@@ -70,6 +73,7 @@ const DEFAULT_ROUNDS: Record<GameType, number> = {
   wheel: 1,
   categories: 1,
   draw: 2,
+  logo: 2,
 };
 
 const GAME_LOADERS = {
@@ -79,6 +83,7 @@ const GAME_LOADERS = {
   wheel: () => import("@/components/match/WheelGame"),
   categories: () => import("@/components/match/CategoriesGame"),
   draw: () => import("@/components/match/ProverbGame"),
+  logo: () => import("@/components/match/LogoGame"),
 };
 
 function GameLoading() {
@@ -117,6 +122,11 @@ const CategoriesGame = dynamic(GAME_LOADERS.categories, {
 });
 
 const ProverbGame = dynamic(GAME_LOADERS.draw, {
+  ssr: false,
+  loading: GameLoading,
+});
+
+const LogoGame = dynamic(GAME_LOADERS.logo, {
   ssr: false,
   loading: GameLoading,
 });
@@ -2135,6 +2145,13 @@ export default function MatchPage() {
       case "draw":
         return (
           <ProverbGame
+            {...commonGameProps}
+          />
+        );
+
+      case "logo":
+        return (
+          <LogoGame
             {...commonGameProps}
           />
         );
