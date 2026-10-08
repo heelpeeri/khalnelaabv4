@@ -127,14 +127,31 @@ export default function GameLayout({
                 leading-none
                 sm:text-3xl
               "
+              dir="rtl"
             >
               {titleWords.map((word, index) => (
                 <span
                   key={`${word}-${index}`}
                   className={
                     index % 2 === 0
-                      ? 'text-[#FEA800] drop-shadow-[0_2px_8px_rgba(254,168,0,0.22)]'
-                      : 'text-[#019EFE] drop-shadow-[0_2px_8px_rgba(1,158,254,0.22)]'
+                      ? `
+                          bg-gradient-to-b
+                          from-[#FFD326]
+                          via-[#FFB000]
+                          to-[#FF8A00]
+                          bg-clip-text
+                          text-transparent
+                          drop-shadow-[0_2px_6px_rgba(255,176,0,0.28)]
+                        `
+                      : `
+                          bg-gradient-to-b
+                          from-[#13C2FF]
+                          via-[#008EFF]
+                          to-[#006BFF]
+                          bg-clip-text
+                          text-transparent
+                          drop-shadow-[0_2px_6px_rgba(0,142,255,0.28)]
+                        `
                   }
                 >
                   {word}
