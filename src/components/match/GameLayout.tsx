@@ -92,14 +92,7 @@ export default function GameLayout({
           lg:p-4
         "
       >
-
-        {/* =========================
-            HEADER
-        ========================== */}
-
         <div className="mb-2 flex items-center justify-between gap-3">
-
-          {/* Round */}
           <div
             className="
               flex
@@ -121,27 +114,31 @@ export default function GameLayout({
             {currentRound}
           </div>
 
-          {/* Title */}
           <div className="min-w-0 flex-1 text-center">
-            <h2 className="truncate text-2xl font-black leading-none text-white sm:text-3xl">
+            <h2
+              className="
+                truncate
+                bg-gradient-to-l
+                from-[#009EFF]
+                via-[#16B9FF]
+                to-[#FFAA00]
+                bg-clip-text
+                text-2xl
+                font-black
+                leading-none
+                text-transparent
+                drop-shadow-[0_2px_8px_rgba(0,158,255,0.18)]
+                sm:text-3xl
+              "
+            >
               {title}
             </h2>
           </div>
 
-          {/* يحافظ على توسط العنوان */}
           <div className="w-9 shrink-0" />
         </div>
 
-        {/* =========================
-            TEAMS + CURRENT TURN
-        ========================== */}
-
         <div className="mb-2 grid grid-cols-1 gap-2 md:grid-cols-3">
-
-          {/* =========================
-              TEAM 1
-          ========================== */}
-
           <div
             className={`
               flex
@@ -217,10 +214,6 @@ export default function GameLayout({
             </p>
           </div>
 
-          {/* =========================
-              CURRENT TURN
-          ========================== */}
-
           <div
             className={`
               flex
@@ -289,10 +282,6 @@ export default function GameLayout({
               {displayedTurn}
             </p>
           </div>
-
-          {/* =========================
-              TEAM 2
-          ========================== */}
 
           <div
             className={`
@@ -369,10 +358,6 @@ export default function GameLayout({
             </p>
           </div>
         </div>
-
-        {/* =========================
-            GAME CONTENT
-        ========================== */}
 
         <div
           className="
