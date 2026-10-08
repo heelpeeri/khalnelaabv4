@@ -75,6 +75,10 @@ export default function GameLayout({
         ? side2
         : cleanTurn;
 
+  const titleWords = title
+    .trim()
+    .split(/\s+/);
+
   return (
     <div className="mx-auto w-full max-w-5xl px-3 sm:px-4 lg:px-6">
       <div
@@ -118,20 +122,27 @@ export default function GameLayout({
             <h2
               className="
                 truncate
-                bg-gradient-to-l
-                from-[#009EFF]
-                via-[#16B9FF]
-                to-[#FFAA00]
-                bg-clip-text
                 text-2xl
                 font-black
                 leading-none
-                text-transparent
-                drop-shadow-[0_2px_8px_rgba(0,158,255,0.18)]
                 sm:text-3xl
               "
             >
-              {title}
+              {titleWords.map((word, index) => (
+                <span
+                  key={`${word}-${index}`}
+                  className={
+                    index % 2 === 0
+                      ? 'text-[#FEA800] drop-shadow-[0_2px_8px_rgba(254,168,0,0.22)]'
+                      : 'text-[#019EFE] drop-shadow-[0_2px_8px_rgba(1,158,254,0.22)]'
+                  }
+                >
+                  {word}
+                  {index < titleWords.length - 1
+                    ? ' '
+                    : ''}
+                </span>
+              ))}
             </h2>
           </div>
 
