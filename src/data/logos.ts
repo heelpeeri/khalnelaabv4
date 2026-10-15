@@ -8,7 +8,7 @@ export type LogoItem = {
 
 export const LOGOS: LogoItem[] = [
   { id: "netflix", answer: "Netflix", answerAr: "نتفلكس", image: "/images/logo/netflix.png", pixelSize: 18 },
-  { id: "kudu", answer: "Kudu", answerAr: "كودو", image: "/images/logo/kudu.png", pixelSize: 30 },
+  { id: "kudu", answer: "Kudu", answerAr: "كودو", image: "/images/logo/kudu.png", pixelSize: 26 },
   { id: "alrajhi", answer: "Al Rajhi Bank", answerAr: "مصرف الراجحي", image: "/images/logo/alrajhi.png", pixelSize: 30 },
   { id: "chevrolet", answer: "Chevrolet", answerAr: "شفروليه", image: "/images/logo/chevrolet.png", pixelSize: 20 },
   { id: "alinma", answer: "Alinma Bank", answerAr: "مصرف الإنماء", image: "/images/logo/alinma.png", pixelSize: 30 },
@@ -20,9 +20,9 @@ export const LOGOS: LogoItem[] = [
   { id: "samsung", answer: "Samsung", answerAr: "سامسونج", image: "/images/logo/samsung.png", pixelSize: 20 },
   { id: "stc", answer: "stc", answerAr: "STC", image: "/images/logo/stc.png", pixelSize: 18 },
   { id: "saff", answer: "Saudi Arabian Football Federation", answerAr: "الاتحاد السعودي لكرة القدم", image: "/images/logo/saff.png", pixelSize: 38 },
-  { id: "cocacola", answer: "Coca-Cola", answerAr: "كوكاكولا", image: "/images/logo/cocacola.png", pixelSize: 20 },
+  { id: "cocacola", answer: "Coca-Cola", answerAr: "كوكاكولا", image: "/images/logo/cocacola.png", pixelSize: 16 },
   { id: "halfmillion", answer: "Half Million", answerAr: "هاف مليون", image: "/images/logo/halfmillion.png", pixelSize: 32 },
-  { id: "nike", answer: "Nike", answerAr: "نايكي", image: "/images/logo/nike.png", pixelSize: 12 },
+  { id: "nike", answer: "Nike", answerAr: "نايكي", image: "/images/logo/nike.png", pixelSize: 8 },
   { id: "jarir", answer: "Jarir Bookstore", answerAr: "جرير", image: "/images/logo/jarir.png", pixelSize: 34 },
   { id: "albaik", answer: "Albaik", answerAr: "البيك", image: "/images/logo/albaik.png", pixelSize: 24 },
   { id: "mcdonalds", answer: "McDonald's", answerAr: "ماكدونالدز", image: "/images/logo/mcdonalds.png", pixelSize: 12 },
@@ -56,5 +56,5 @@ export const LOGOS: LogoItem[] = [
   { id: "roshnsaudileague", answer: "Roshn Saudi League", answerAr: "دوري روشن السعودي", image: "/images/logo/roshnsaudileague.png", pixelSize: 40 },
   { id: "noon", answer: "noon", answerAr: "نون", image: "/images/logo/noon.png", pixelSize: 26 },
   { id: "apple", answer: "Apple", answerAr: "أبل", image: "/images/logo/apple.png", pixelSize: 10 },
-  { id: "tiktok", answer: "TikTok", answerAr: "تيك توك", image: "/images/logo/tiktok.png", pixelSize: 14 },
+  { id: "tiktok", answer: "TikTok", answerAr: "تيك توك", image: "/images/logo/tiktok.png", pixelSize: 20 },
 ];
