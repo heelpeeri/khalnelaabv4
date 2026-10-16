@@ -18,7 +18,7 @@ export const LOGOS: LogoItem[] = [
 { id: "pizzahut", answer: "Pizza Hut", answerAr: "بيتزا هت", image: "/images/logo/pizzahut.png", pixelSize: 32 },
 { id: "linkedin", answer: "LinkedIn", answerAr: "لينكدإن", image: "/images/logo/linkedin.png", pixelSize: 22 },
 { id: "mitsubishi", answer: "Mitsubishi", answerAr: "ميتسوبيشي", image: "/images/logo/mitsubishi.png", pixelSize: 34 },
-{ id: "lays", answer: "Lay's", answerAr: "ليز", image: "/images/logo/lays.png", pixelSize: 34 },
+{ id: "lays", answer: "Lay's", answerAr: "ليز", image: "/images/logo/lays.png", pixelSize: 32 },
   { id: "alnassr", answer: "Al Nassr", answerAr: "النصر", image: "/images/logo/alnassr.png", pixelSize: 28 },
   { id: "tabby", answer: "Tabby", answerAr: "تابي", image: "/images/logo/tabby.png", pixelSize: 29 },
   { id: "google", answer: "Google", answerAr: "قوقل", image: "/images/logo/google.png", pixelSize: 25 },
