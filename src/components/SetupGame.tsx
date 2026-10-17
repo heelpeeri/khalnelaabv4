@@ -40,6 +40,11 @@ const GAMES = [
     name: "خمن الشعار",
     image: "/images/posters/Logogame.png",
   },
+  {
+    id: "country",
+    name: "خمن الدولة",
+    image: "/images/posters/Countries.png",
+  },
 ];
 
 function getRoundOptions(
@@ -59,6 +64,7 @@ function getRoundOptions(
     case "scramble":
     case "draw":
     case "logo":
+    case "country":
     default:
       return [2, 4, 6];
   }
@@ -79,6 +85,7 @@ function getDefaultRounds(
     case "scramble":
     case "draw":
     case "logo":
+    case "country":
     default:
       return 2;
   }
@@ -487,7 +494,7 @@ export default function SetupGame({
             ${
               isQuickMode
                 ? "mx-auto max-w-[250px] grid-cols-1"
-                : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-7"
+                : "grid-cols-2 sm:grid-cols-4 lg:grid-cols-8"
             }
           `}
         >
@@ -542,7 +549,7 @@ export default function SetupGame({
                     sizes={
                       isQuickMode
                         ? "250px"
-                        : "(max-width: 640px) 45vw, 16vw"
+                        : "(max-width: 640px) 45vw, 14vw"
                     }
                     className={`
                       object-cover
