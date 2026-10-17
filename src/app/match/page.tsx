@@ -16,7 +16,8 @@ type GameType =
   | "wheel"
   | "categories"
   | "draw"
-  | "logo";
+  | "logo"
+  | "country";
 
 type ModeType = "session" | "quick";
 
@@ -54,6 +55,7 @@ const VALID_GAMES: GameType[] = [
   "categories",
   "draw",
   "logo",
+  "country",
 ];
 
 const GAME_NAMES: Record<GameType, string> = {
@@ -64,6 +66,7 @@ const GAME_NAMES: Record<GameType, string> = {
   categories: "🌍 إنسان حيوان نبات جماد بلاد",
   draw: "✏️ خمن المثل",
   logo: "🏷️ خمن الشعار",
+  country: "🌍 خمن الدولة",
 };
 
 const DEFAULT_ROUNDS: Record<GameType, number> = {
@@ -74,6 +77,7 @@ const DEFAULT_ROUNDS: Record<GameType, number> = {
   categories: 1,
   draw: 2,
   logo: 2,
+  country: 2,
 };
 
 const GAME_LOADERS = {
@@ -84,6 +88,7 @@ const GAME_LOADERS = {
   categories: () => import("@/components/match/CategoriesGame"),
   draw: () => import("@/components/match/ProverbGame"),
   logo: () => import("@/components/match/LogoGame"),
+  country: () => import("@/components/match/CountryGame"),
 };
 
 function GameLoading() {
@@ -127,6 +132,11 @@ const ProverbGame = dynamic(GAME_LOADERS.draw, {
 });
 
 const LogoGame = dynamic(GAME_LOADERS.logo, {
+  ssr: false,
+  loading: GameLoading,
+});
+
+const CountryGame = dynamic(GAME_LOADERS.country, {
   ssr: false,
   loading: GameLoading,
 });
@@ -803,6 +813,7 @@ function drawRoundedRect(
   ctx.beginPath();
 
   ctx.moveTo(x + r, y);
+
   ctx.lineTo(
     x + width - r,
     y
@@ -2152,6 +2163,13 @@ export default function MatchPage() {
       case "logo":
         return (
           <LogoGame
+            {...commonGameProps}
+          />
+        );
+
+      case "country":
+        return (
+          <CountryGame
             {...commonGameProps}
           />
         );
