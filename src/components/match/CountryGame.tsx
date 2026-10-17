@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import QRCode from 'react-qr-code';
+import { useEffect, useState } from "react";
 
-import GameLayout from '@/components/match/GameLayout';
+import GameLayout from "@/components/match/GameLayout";
 import {
   COUNTRIES,
   type CountryItem,
-} from '@/data/countries';
-import type { WinnerType } from '@/types/game';
+} from "@/data/countries";
+import type { WinnerType } from "@/types/game";
 
 type Props = {
   side1Name: string;
@@ -20,15 +19,24 @@ type Props = {
   timerSeconds?: number;
 };
 
-const usedIds = new Set<string>();
+let countryDeck: CountryItem[] = [];
 
 function shuffleArray<T>(items: T[]) {
   const array = [...items];
 
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+  for (
+    let i = array.length - 1;
+    i > 0;
+    i -= 1
+  ) {
+    const j = Math.floor(
+      Math.random() * (i + 1)
+    );
 
-    [array[i], array[j]] = [
+    [
+      array[i],
+      array[j],
+    ] = [
       array[j],
       array[i],
     ];
@@ -37,27 +45,31 @@ function shuffleArray<T>(items: T[]) {
   return array;
 }
 
-function pickCountries(): [CountryItem, CountryItem] {
-  if (COUNTRIES.length - usedIds.size < 2) {
-    usedIds.clear();
+function getNextCountries(
+  count: number
+) {
+  if (
+    countryDeck.length <
+    count
+  ) {
+    countryDeck =
+      shuffleArray(
+        COUNTRIES
+      );
   }
 
-  const available = COUNTRIES.filter(
-    (item) => !usedIds.has(item.id)
+  return countryDeck.splice(
+    0,
+    count
   );
+}
 
-  const shuffled = shuffleArray(available);
-
-  const first = shuffled[0];
-  const second = shuffled[1];
-
-  usedIds.add(first.id);
-  usedIds.add(second.id);
-
-  return [
-    first,
-    second,
-  ];
+function createQrUrl(
+  value: string
+) {
+  return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(
+    value
+  )}`;
 }
 
 export default function CountryGame({
@@ -73,15 +85,18 @@ export default function CountryGame({
     countries,
     setCountries,
   ] =
-    useState<[CountryItem, CountryItem] | null>(
-      null
-    );
+    useState<
+      [
+        CountryItem,
+        CountryItem,
+      ] | null
+    >(null);
 
   const [
     origin,
     setOrigin,
   ] =
-    useState('');
+    useState("");
 
   const [
     started,
@@ -90,28 +105,48 @@ export default function CountryGame({
     useState(false);
 
   const [
+    revealed,
+    setRevealed,
+  ] =
+    useState(false);
+
+  const [
     timeLeft,
     setTimeLeft,
   ] =
-    useState(timerSeconds);
+    useState(
+      timerSeconds
+    );
 
-  const [
-    showAnswers,
-    setShowAnswers,
-  ] =
-    useState(false);
+  const side1 =
+    side1Name ||
+    "فريق 1";
+
+  const side2 =
+    side2Name ||
+    "فريق 2";
 
   useEffect(() => {
     setOrigin(
       window.location.origin
     );
 
-    setCountries(
-      pickCountries()
-    );
+    const picked =
+      getNextCountries(2);
+
+    if (
+      picked.length < 2
+    ) {
+      return;
+    }
+
+    setCountries([
+      picked[0],
+      picked[1],
+    ]);
 
     setStarted(false);
-    setShowAnswers(false);
+    setRevealed(false);
 
     setTimeLeft(
       timerSeconds
@@ -125,56 +160,64 @@ export default function CountryGame({
     if (
       !timerEnabled ||
       !started ||
-      showAnswers ||
+      revealed ||
       timeLeft <= 0
     ) {
       return;
     }
 
-    const timeout =
-      window.setTimeout(() => {
-        setTimeLeft(
-          (current) =>
-            current - 1
-        );
-      }, 1000);
-
-    return () =>
-      window.clearTimeout(
-        timeout
+    const timer =
+      window.setTimeout(
+        () => {
+          setTimeLeft(
+            (current) =>
+              Math.max(
+                0,
+                current - 1
+              )
+          );
+        },
+        1000
       );
+
+    return () => {
+      window.clearTimeout(
+        timer
+      );
+    };
   }, [
     timerEnabled,
     started,
-    showAnswers,
+    revealed,
     timeLeft,
   ]);
 
-  if (!countries) {
+  if (
+    !countries
+  ) {
     return (
-      <div className="p-8 text-center text-white">
-        جاري تجهيز الأعلام...
+      <div className="mx-auto max-w-xl p-8 text-center text-white">
+        <p className="font-black">
+          جاري تجهيز الدول...
+        </p>
       </div>
     );
   }
 
-  const side1 =
-    side1Name ||
-    'فريق 1';
+  const [
+    side1Country,
+    side2Country,
+  ] = countries;
 
-  const side2 =
-    side2Name ||
-    'فريق 2';
+  const side1FlagUrl =
+    origin
+      ? `${origin}/country/${side1Country.id}`
+      : "";
 
-  const names = [
-    side1,
-    side2,
-  ];
-
-  const timerClass =
-    timeLeft <= 10
-      ? 'animate-pulse text-red-300'
-      : 'text-cyan-300';
+  const side2FlagUrl =
+    origin
+      ? `${origin}/country/${side2Country.id}`
+      : "";
 
   return (
     <GameLayout
@@ -183,166 +226,313 @@ export default function CountryGame({
       side2={side2}
       side1Score={0}
       side2Score={0}
-      turn="الفريقين"
-      currentRound={currentRound}
+      turn={
+        started
+          ? "اسألوا وخمنوا"
+          : "امسحوا الأكواد"
+      }
+      currentRound={
+        currentRound
+      }
     >
       <div
-        className="mx-auto max-w-3xl space-y-4"
+        className="mx-auto w-full max-w-3xl"
         dir="rtl"
       >
-        <div className="rounded-2xl border border-cyan-300/15 bg-cyan-400/[0.06] px-4 py-3">
-          <p className="text-center text-sm font-bold text-white/70">
-            كل فريق يمسح كود الفريق الثاني ويشوف علمه، ثم يجاوب على أسئلته بنعم أو لا.
-          </p>
-        </div>
+        {!started ? (
+          <>
+            <div className="mb-4 text-center">
+              <h2 className="text-xl font-black text-white sm:text-2xl">
+                امسحوا الأكواد
+              </h2>
 
-        <div className="grid grid-cols-2 gap-3">
-          {countries.map(
-            (
-              country,
-              index
-            ) => (
+              <p className="mt-2 text-sm font-bold text-white/45">
+                كل فريق يمسح الكود ويشوف علم الفريق الثاني بدون ما يوريهم
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div
-                key={
-                  country.id
+                className="
+                  rounded-[24px]
+                  border
+                  border-fuchsia-300/20
+                  bg-fuchsia-500/[0.055]
+                  p-4
+                  text-center
+                  shadow-[0_0_28px_rgba(217,70,239,.06)]
+                "
+              >
+                <p className="text-sm font-black text-fuchsia-100">
+                  {side1}
+                </p>
+
+                <p className="mt-1 text-xs font-bold text-white/40">
+                  امسح الكود وشوف علم {side2}
+                </p>
+
+                <div className="mx-auto mt-4 w-fit rounded-[20px] bg-white p-3">
+                  {side2FlagUrl ? (
+                    <img
+                      src={createQrUrl(
+                        side2FlagUrl
+                      )}
+                      alt={`QR ${side1}`}
+                      width={190}
+                      height={190}
+                      className="h-[190px] w-[190px]"
+                    />
+                  ) : (
+                    <div className="h-[190px] w-[190px]" />
+                  )}
+                </div>
+              </div>
+
+              <div
+                className="
+                  rounded-[24px]
+                  border
+                  border-cyan-300/20
+                  bg-cyan-400/[0.055]
+                  p-4
+                  text-center
+                  shadow-[0_0_28px_rgba(34,211,238,.06)]
+                "
+              >
+                <p className="text-sm font-black text-cyan-100">
+                  {side2}
+                </p>
+
+                <p className="mt-1 text-xs font-bold text-white/40">
+                  امسح الكود وشوف علم {side1}
+                </p>
+
+                <div className="mx-auto mt-4 w-fit rounded-[20px] bg-white p-3">
+                  {side1FlagUrl ? (
+                    <img
+                      src={createQrUrl(
+                        side1FlagUrl
+                      )}
+                      alt={`QR ${side2}`}
+                      width={190}
+                      height={190}
+                      className="h-[190px] w-[190px]"
+                    />
+                  ) : (
+                    <div className="h-[190px] w-[190px]" />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setStarted(
+                  true
+                );
+
+                setTimeLeft(
+                  timerSeconds
+                );
+              }}
+              className="arcade-button mt-5 w-full px-6 py-3 text-lg"
+            >
+              الكل شاف العلم؟ ابدأوا
+            </button>
+          </>
+        ) : !revealed ? (
+          <>
+            <div
+              className="
+                rounded-[26px]
+                border
+                border-white/10
+                bg-white/[0.035]
+                px-5
+                py-6
+                text-center
+              "
+            >
+              <p className="text-sm font-black text-cyan-300/70">
+                خمن الدولة
+              </p>
+
+              <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
+                اسألوا بعض أسئلة إجابتها نعم أو لا
+              </h2>
+
+              <p className="mx-auto mt-3 max-w-xl text-sm font-bold leading-6 text-white/45">
+                مثال: هل دولتي عربية؟ هل هي في آسيا؟ هل علمها فيه أحمر؟
+              </p>
+
+              {timerEnabled && (
+                <div
+                  className={`
+                    mx-auto
+                    mt-5
+                    w-fit
+                    rounded-full
+                    border
+                    px-5
+                    py-2
+                    text-lg
+                    font-black
+
+                    ${
+                      timeLeft <= 10
+                        ? "border-red-300/30 bg-red-400/10 text-red-200"
+                        : "border-cyan-300/20 bg-cyan-400/[0.07] text-cyan-100"
+                    }
+                  `}
+                >
+                  ⏱️ {timeLeft} ثانية
+                </div>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() =>
+                setRevealed(
+                  true
+                )
+              }
+              className="arcade-button mt-5 w-full px-6 py-3 text-lg"
+            >
+              كشف الدول
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div
+                className="
+                  rounded-[24px]
+                  border
+                  border-fuchsia-300/20
+                  bg-fuchsia-500/[0.055]
+                  p-4
+                  text-center
+                "
+              >
+                <p className="text-sm font-black text-fuchsia-100">
+                  دولة {side1}
+                </p>
+
+                <div className="mt-3 overflow-hidden rounded-[18px] bg-white p-3">
+                  <img
+                    src={
+                      side1Country.flag
+                    }
+                    alt={
+                      side1Country.nameAr
+                    }
+                    className="mx-auto h-[150px] w-full object-contain"
+                  />
+                </div>
+
+                <p className="mt-3 text-xl font-black text-white">
+                  {
+                    side1Country.nameAr
+                  }
+                </p>
+              </div>
+
+              <div
+                className="
+                  rounded-[24px]
+                  border
+                  border-cyan-300/20
+                  bg-cyan-400/[0.055]
+                  p-4
+                  text-center
+                "
+              >
+                <p className="text-sm font-black text-cyan-100">
+                  دولة {side2}
+                </p>
+
+                <div className="mt-3 overflow-hidden rounded-[18px] bg-white p-3">
+                  <img
+                    src={
+                      side2Country.flag
+                    }
+                    alt={
+                      side2Country.nameAr
+                    }
+                    className="mx-auto h-[150px] w-full object-contain"
+                  />
+                </div>
+
+                <p className="mt-3 text-xl font-black text-white">
+                  {
+                    side2Country.nameAr
+                  }
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <button
+                type="button"
+                onClick={() =>
+                  onRoundEnd(
+                    "side1"
+                  )
                 }
                 className="
                   rounded-2xl
                   border
-                  border-white/10
-                  bg-white/5
-                  p-3
-                  text-center
+                  border-fuchsia-300/30
+                  bg-fuchsia-500/15
+                  px-4
+                  py-3
+                  font-black
+                  text-fuchsia-100
+                  transition
+                  hover:bg-fuchsia-500/25
                 "
               >
-                <h3 className="mb-3 text-base font-black text-white">
-                  كود{' '}
-                  {
-                    names[
-                      index
-                    ]
-                  }
-                </h3>
+                فاز {side1}
+              </button>
 
-                <div className="mx-auto w-fit max-w-full rounded-xl bg-white p-3">
-                  {origin ? (
-                    <QRCode
-                      value={`${origin}/country/${country.id}`}
-                      size={
-                        150
-                      }
-                      style={{
-                        width:
-                          '100%',
-                        height:
-                          'auto',
-                        maxWidth:
-                          150,
-                      }}
-                    />
-                  ) : (
-                    <div className="h-[150px] w-[150px]" />
-                  )}
-                </div>
-
-                <p className="mt-2 text-xs font-bold text-white/50">
-                  يمسحه الفريق الآخر
-                </p>
-
-                {showAnswers && (
-                  <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.05] px-3 py-2">
-                    <p className="text-xs font-bold text-white/45">
-                      الدولة
-                    </p>
-
-                    <p className="mt-1 text-lg font-black text-cyan-300">
-                      {
-                        country.nameAr
-                      }
-                    </p>
-                  </div>
-                )}
-              </div>
-            )
-          )}
-        </div>
-
-        {timerEnabled &&
-          started &&
-          !showAnswers && (
-            <div className="text-center">
-              <p
-                className={`text-2xl font-black ${timerClass}`}
+              <button
+                type="button"
+                onClick={() =>
+                  onRoundEnd(
+                    "side2"
+                  )
+                }
+                className="
+                  rounded-2xl
+                  border
+                  border-cyan-300/30
+                  bg-cyan-400/15
+                  px-4
+                  py-3
+                  font-black
+                  text-cyan-100
+                  transition
+                  hover:bg-cyan-400/25
+                "
               >
-                ⏱️{' '}
-                {timeLeft}{' '}
-                ثانية
-              </p>
+                فاز {side2}
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  onRoundEnd(
+                    "none"
+                  )
+                }
+                className="btn-secondary px-4 py-3"
+              >
+                تعادل / لا أحد
+              </button>
             </div>
-          )}
-
-        {!started ? (
-          <button
-            type="button"
-            onClick={() =>
-              setStarted(
-                true
-              )
-            }
-            className="arcade-button w-full px-5 py-3 text-lg"
-          >
-            ابدأ التخمين
-          </button>
-        ) : !showAnswers ? (
-          <button
-            type="button"
-            onClick={() =>
-              setShowAnswers(
-                true
-              )
-            }
-            className="arcade-button w-full px-5 py-3 text-lg"
-          >
-            كشف الدول وتحديد الفائز
-          </button>
-        ) : (
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-            <button
-              type="button"
-              onClick={() =>
-                onRoundEnd(
-                  'side1'
-                )
-              }
-              className="arcade-button px-3 py-3"
-            >
-              فاز {side1}
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                onRoundEnd(
-                  'side2'
-                )
-              }
-              className="arcade-button px-3 py-3"
-            >
-              فاز {side2}
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                onRoundEnd(
-                  'none'
-                )
-              }
-              className="btn-secondary px-3 py-3"
-            >
-              تعادل / لا أحد
-            </button>
-          </div>
+          </>
         )}
       </div>
     </GameLayout>
