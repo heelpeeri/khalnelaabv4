@@ -21,9 +21,9 @@ const GAME_CARDS: GameCard[] = [
     href: "/match?game=scramble",
     image: "/images/posters/Whogame.png",
     title: "منهو ذا؟",
-    x: -324,
-    y: 14,
-    scale: 0.88,
+    x: -378,
+    y: 15,
+    scale: 0.86,
     z: 10,
     delay: -1.2,
   },
@@ -31,9 +31,9 @@ const GAME_CARDS: GameCard[] = [
     href: "/match?game=quiz",
     image: "/images/posters/Quizgame.png",
     title: "أسئلة وأجوبة",
-    x: -216,
-    y: 8,
-    scale: 0.92,
+    x: -270,
+    y: 10,
+    scale: 0.9,
     z: 20,
     delay: -3.6,
   },
@@ -41,9 +41,9 @@ const GAME_CARDS: GameCard[] = [
     href: "/match?game=word",
     image: "/images/posters/wordgame.png",
     title: "خمن الكلمة",
-    x: -108,
-    y: 3,
-    scale: 0.96,
+    x: -162,
+    y: 5,
+    scale: 0.94,
     z: 30,
     delay: -2.1,
   },
@@ -51,19 +51,29 @@ const GAME_CARDS: GameCard[] = [
     href: "/match?game=logo",
     image: "/images/posters/Logogame.png",
     title: "خمن الشعار",
-    x: 0,
+    x: -54,
     y: 0,
     scale: 1,
     z: 40,
     delay: -5.1,
   },
   {
+    href: "/match?game=country",
+    image: "/images/posters/Countries.png",
+    title: "خمن الدولة",
+    x: 54,
+    y: 0,
+    scale: 1,
+    z: 40,
+    delay: -1.8,
+  },
+  {
     href: "/match?game=wheel",
     image: "/images/posters/Wheelgame.png",
     title: "لف وخمن",
-    x: 108,
-    y: 3,
-    scale: 0.96,
+    x: 162,
+    y: 5,
+    scale: 0.94,
     z: 30,
     delay: -4.4,
   },
@@ -71,9 +81,9 @@ const GAME_CARDS: GameCard[] = [
     href: "/match?game=draw",
     image: "/images/posters/Proverbgame.png",
     title: "خمن المثل",
-    x: 216,
-    y: 8,
-    scale: 0.92,
+    x: 270,
+    y: 10,
+    scale: 0.9,
     z: 20,
     delay: -0.7,
   },
@@ -81,9 +91,9 @@ const GAME_CARDS: GameCard[] = [
     href: "/match?game=categories",
     image: "/images/posters/Categoriesgame.png",
     title: "إنسان حيوان نبات جماد بلاد",
-    x: 324,
-    y: 14,
-    scale: 0.88,
+    x: 378,
+    y: 15,
+    scale: 0.86,
     z: 10,
     delay: -2.9,
   },
@@ -320,7 +330,7 @@ export default function Home() {
             </div>
 
             <div
-              className="relative mx-auto hidden h-[268px] max-w-[920px] lg:block"
+              className="relative mx-auto hidden h-[268px] max-w-[1020px] lg:block"
               onMouseLeave={() =>
                 setHoveredCard(null)
               }
@@ -332,7 +342,7 @@ export default function Home() {
                   bottom-0
                   left-1/2
                   h-20
-                  w-[700px]
+                  w-[760px]
                   -translate-x-1/2
                   rounded-[50%]
                 "
@@ -352,9 +362,9 @@ export default function Home() {
                       hoveredCard === null
                         ? 0
                         : index < hoveredCard
-                          ? -28
+                          ? -24
                           : index > hoveredCard
-                            ? 28
+                            ? 24
                             : 0;
 
                     const finalX =
