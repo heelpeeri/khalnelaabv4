@@ -86,6 +86,20 @@ const games = [
       "صاحب الجلسة يحدد الفائز",
     ],
   },
+
+  {
+    image: "/images/posters/Logogame.png",
+    title: "خمن الشعار",
+    how: [
+      "بيطلع شعار مبكسل للفريق اللي عليه الدور",
+      "حاولوا تعرفون الشعار قبل ما تكشفونه",
+      "إذا احتجتوا، اضغطوا إظهار الشعار",
+      "بعد الكشف بيطلع الشعار واضح مع اسمه",
+      "حددوا إذا تخمين الفريق كان صح أو لا",
+      "بعدها يجي دور الفريق الثاني بشعار جديد",
+      "الفريق اللي يجمع نقاط أكثر يفوز",
+    ],
+  },
 ];
 
 export default function GuidePage() {
@@ -99,12 +113,7 @@ export default function GuidePage() {
 
   return (
     <main className="h-[100dvh] overflow-hidden px-4 py-3 text-white sm:px-6">
-      <div className="mx-auto flex h-full max-w-6xl flex-col">
-
-        {/* ========================= */}
-        {/* Header */}
-        {/* ========================= */}
-
+      <div className="mx-auto flex h-full max-w-7xl flex-col">
         <header className="flex shrink-0 items-center justify-between gap-4 pb-3">
           <div>
             <h1 className="text-3xl font-black">
@@ -141,16 +150,12 @@ export default function GuidePage() {
           </Link>
         </header>
 
-        {/* ========================= */}
-        {/* Cards */}
-        {/* ========================= */}
-
         <div
           className="
             grid
             min-h-0
             flex-1
-            grid-cols-3
+            grid-cols-4
             grid-rows-2
             place-items-center
             gap-4
@@ -185,10 +190,6 @@ export default function GuidePage() {
                   focus-visible:ring-cyan-300
                 "
               >
-                {/* ========================= */}
-                {/* Flip wrapper */}
-                {/* ========================= */}
-
                 <div
                   className="
                     relative
@@ -206,10 +207,6 @@ export default function GuidePage() {
                       "cubic-bezier(0.16, 1, 0.3, 1)",
                   }}
                 >
-                  {/* ========================= */}
-                  {/* FRONT */}
-                  {/* ========================= */}
-
                   <div
                     className="
                       absolute
@@ -221,7 +218,6 @@ export default function GuidePage() {
                       transition-all
                       duration-500
                       [backface-visibility:hidden]
-
                       group-hover:-translate-y-1
                       group-hover:shadow-[0_20px_44px_rgba(0,0,0,.36)]
                     "
@@ -230,7 +226,7 @@ export default function GuidePage() {
                       src={game.image}
                       alt={game.title}
                       fill
-                      sizes="(min-width: 1024px) 280px, 33vw"
+                      sizes="(min-width: 1024px) 240px, 25vw"
                       className="
                         object-contain
                         transition-transform
@@ -240,7 +236,6 @@ export default function GuidePage() {
                       "
                     />
 
-                    {/* Flip icon */}
                     <div
                       className="
                         pointer-events-none
@@ -269,10 +264,6 @@ export default function GuidePage() {
                     </div>
                   </div>
 
-                  {/* ========================= */}
-                  {/* BACK */}
-                  {/* ========================= */}
-
                   <div
                     className="
                       absolute
@@ -293,12 +284,9 @@ export default function GuidePage() {
                       transform: "rotateY(180deg)",
                     }}
                   >
-                    {/* subtle glow */}
                     <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-cyan-400/[0.08] blur-[75px]" />
 
                     <div className="relative flex h-full flex-col">
-
-                      {/* Header */}
                       <div className="flex shrink-0 items-center justify-between gap-3">
                         <div>
                           <p className="text-[10px] font-black text-cyan-300/55">
@@ -329,7 +317,6 @@ export default function GuidePage() {
                         </div>
                       </div>
 
-                      {/* Steps */}
                       <div className="mt-3 min-h-0 flex-1 space-y-1.5">
                         {game.how.map((step, stepIndex) => (
                           <div
@@ -371,7 +358,6 @@ export default function GuidePage() {
                         ))}
                       </div>
 
-                      {/* Example */}
                       {game.example && (
                         <div
                           className="
