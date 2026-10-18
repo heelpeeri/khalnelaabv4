@@ -192,9 +192,7 @@ export default function CountryGame({
     timeLeft,
   ]);
 
-  if (
-    !countries
-  ) {
+  if (!countries) {
     return (
       <div className="mx-auto max-w-xl p-8 text-center text-white">
         <p className="font-black">
@@ -473,65 +471,15 @@ export default function CountryGame({
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onRoundEnd(
-                        "side1"
-                      )
-                    }
-                    className="
-                      rounded-2xl
-                      border
-                      border-fuchsia-300/30
-                      bg-fuchsia-500/15
-                      px-4
-                      py-3
-                      font-black
-                      text-fuchsia-100
-                      transition
-                      hover:bg-fuchsia-500/25
-                    "
-                  >
-                    فاز {side1}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onRoundEnd(
-                        "side2"
-                      )
-                    }
-                    className="
-                      rounded-2xl
-                      border
-                      border-cyan-300/30
-                      bg-cyan-400/15
-                      px-4
-                      py-3
-                      font-black
-                      text-cyan-100
-                      transition
-                      hover:bg-cyan-400/25
-                    "
-                  >
-                    فاز {side2}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onRoundEnd(
-                        "none"
-                      )
-                    }
-                    className="btn-secondary px-4 py-3"
-                  >
-                    تعادل / لا أحد
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    onRoundEnd()
+                  }
+                  className="arcade-button mt-4 w-full px-6 py-3 text-lg"
+                >
+                  إنهاء الجولة
+                </button>
               </div>
             )}
           </>
