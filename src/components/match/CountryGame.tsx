@@ -341,7 +341,7 @@ export default function CountryGame({
               الكل شاف العلم؟ ابدأوا
             </button>
           </>
-        ) : !revealed ? (
+        ) : (
           <>
             <div
               className="
@@ -391,147 +391,149 @@ export default function CountryGame({
               )}
             </div>
 
-            <button
-              type="button"
-              onClick={() =>
-                setRevealed(
-                  true
-                )
-              }
-              className="arcade-button mt-5 w-full px-6 py-3 text-lg"
-            >
-              كشف الدول
-            </button>
-          </>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div
-                className="
-                  rounded-[24px]
-                  border
-                  border-fuchsia-300/20
-                  bg-fuchsia-500/[0.055]
-                  p-4
-                  text-center
-                "
+            {!revealed ? (
+              <button
+                type="button"
+                onClick={() =>
+                  setRevealed(
+                    true
+                  )
+                }
+                className="arcade-button mt-5 w-full px-6 py-3 text-lg"
               >
-                <p className="text-sm font-black text-fuchsia-100">
-                  دولة {side1}
-                </p>
+                كشف الدول
+              </button>
+            ) : (
+              <div className="mt-5">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div
+                    className="
+                      rounded-[24px]
+                      border
+                      border-fuchsia-300/20
+                      bg-fuchsia-500/[0.055]
+                      p-4
+                      text-center
+                    "
+                  >
+                    <p className="text-sm font-black text-fuchsia-100">
+                      دولة {side1}
+                    </p>
 
-                <div className="mt-3 overflow-hidden rounded-[18px] bg-white p-3">
-                  <img
-                    src={
-                      side1Country.flag
-                    }
-                    alt={
-                      side1Country.nameAr
-                    }
-                    className="mx-auto h-[150px] w-full object-contain"
-                  />
+                    <div className="mt-3 overflow-hidden rounded-[18px] bg-white p-3">
+                      <img
+                        src={
+                          side1Country.flag
+                        }
+                        alt={
+                          side1Country.nameAr
+                        }
+                        className="mx-auto h-[150px] w-full object-contain"
+                      />
+                    </div>
+
+                    <p className="mt-3 text-xl font-black text-white">
+                      {
+                        side1Country.nameAr
+                      }
+                    </p>
+                  </div>
+
+                  <div
+                    className="
+                      rounded-[24px]
+                      border
+                      border-cyan-300/20
+                      bg-cyan-400/[0.055]
+                      p-4
+                      text-center
+                    "
+                  >
+                    <p className="text-sm font-black text-cyan-100">
+                      دولة {side2}
+                    </p>
+
+                    <div className="mt-3 overflow-hidden rounded-[18px] bg-white p-3">
+                      <img
+                        src={
+                          side2Country.flag
+                        }
+                        alt={
+                          side2Country.nameAr
+                        }
+                        className="mx-auto h-[150px] w-full object-contain"
+                      />
+                    </div>
+
+                    <p className="mt-3 text-xl font-black text-white">
+                      {
+                        side2Country.nameAr
+                      }
+                    </p>
+                  </div>
                 </div>
 
-                <p className="mt-3 text-xl font-black text-white">
-                  {
-                    side1Country.nameAr
-                  }
-                </p>
-              </div>
-
-              <div
-                className="
-                  rounded-[24px]
-                  border
-                  border-cyan-300/20
-                  bg-cyan-400/[0.055]
-                  p-4
-                  text-center
-                "
-              >
-                <p className="text-sm font-black text-cyan-100">
-                  دولة {side2}
-                </p>
-
-                <div className="mt-3 overflow-hidden rounded-[18px] bg-white p-3">
-                  <img
-                    src={
-                      side2Country.flag
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onRoundEnd(
+                        "side1"
+                      )
                     }
-                    alt={
-                      side2Country.nameAr
+                    className="
+                      rounded-2xl
+                      border
+                      border-fuchsia-300/30
+                      bg-fuchsia-500/15
+                      px-4
+                      py-3
+                      font-black
+                      text-fuchsia-100
+                      transition
+                      hover:bg-fuchsia-500/25
+                    "
+                  >
+                    فاز {side1}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onRoundEnd(
+                        "side2"
+                      )
                     }
-                    className="mx-auto h-[150px] w-full object-contain"
-                  />
+                    className="
+                      rounded-2xl
+                      border
+                      border-cyan-300/30
+                      bg-cyan-400/15
+                      px-4
+                      py-3
+                      font-black
+                      text-cyan-100
+                      transition
+                      hover:bg-cyan-400/25
+                    "
+                  >
+                    فاز {side2}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onRoundEnd(
+                        "none"
+                      )
+                    }
+                    className="btn-secondary px-4 py-3"
+                  >
+                    تعادل / لا أحد
+                  </button>
                 </div>
-
-                <p className="mt-3 text-xl font-black text-white">
-                  {
-                    side2Country.nameAr
-                  }
-                </p>
               </div>
-            </div>
-
-            <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <button
-                type="button"
-                onClick={() =>
-                  onRoundEnd(
-                    "side1"
-                  )
-                }
-                className="
-                  rounded-2xl
-                  border
-                  border-fuchsia-300/30
-                  bg-fuchsia-500/15
-                  px-4
-                  py-3
-                  font-black
-                  text-fuchsia-100
-                  transition
-                  hover:bg-fuchsia-500/25
-                "
-              >
-                فاز {side1}
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  onRoundEnd(
-                    "side2"
-                  )
-                }
-                className="
-                  rounded-2xl
-                  border
-                  border-cyan-300/30
-                  bg-cyan-400/15
-                  px-4
-                  py-3
-                  font-black
-                  text-cyan-100
-                  transition
-                  hover:bg-cyan-400/25
-                "
-              >
-                فاز {side2}
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  onRoundEnd(
-                    "none"
-                  )
-                }
-                className="btn-secondary px-4 py-3"
-              >
-                تعادل / لا أحد
-              </button>
-            </div>
+            )}
           </>
         )}
       </div>
