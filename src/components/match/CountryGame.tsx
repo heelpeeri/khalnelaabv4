@@ -234,7 +234,7 @@ export default function CountryGame({
       }
     >
       <div
-        className="mx-auto w-full max-w-3xl"
+        className="mx-auto w-full max-w-4xl"
         dir="rtl"
       >
         {!started ? (
@@ -245,11 +245,11 @@ export default function CountryGame({
               </h2>
 
               <p className="mt-2 text-sm font-bold text-white/45">
-                كل فريق يمسح الكود ويشوف علم الفريق الثاني بدون ما يوريهم
+                كل فريق يمسح الكود حقه ويشوف علم الفريق الثاني بدون ما يوريهم
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-12">
               <div
                 className="
                   rounded-[24px]
@@ -266,7 +266,7 @@ export default function CountryGame({
                 </p>
 
                 <p className="mt-1 text-xs font-bold text-white/40">
-                  امسح الكود وشوف علم {side2}
+                  امسح الكود حقك
                 </p>
 
                 <div className="mx-auto mt-4 w-fit rounded-[20px] bg-white p-3">
@@ -302,7 +302,7 @@ export default function CountryGame({
                 </p>
 
                 <p className="mt-1 text-xs font-bold text-white/40">
-                  امسح الكود وشوف علم {side1}
+                  امسح الكود حقك
                 </p>
 
                 <div className="mx-auto mt-4 w-fit rounded-[20px] bg-white p-3">
@@ -321,6 +321,26 @@ export default function CountryGame({
                   )}
                 </div>
               </div>
+            </div>
+
+            <div
+              className="
+                mx-auto
+                mt-5
+                w-fit
+                rounded-full
+                border
+                border-yellow-300/20
+                bg-yellow-300/[0.07]
+                px-5
+                py-2
+                text-center
+                text-sm
+                font-black
+                text-yellow-100/85
+              "
+            >
+              اللي يسكن كود الفريق اللي ضده يا ويله 👀
             </div>
 
             <button
@@ -403,7 +423,7 @@ export default function CountryGame({
               </button>
             ) : (
               <div className="mt-5">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-10">
                   <div
                     className="
                       rounded-[24px]
@@ -476,7 +496,7 @@ export default function CountryGame({
                   onClick={() =>
                     onRoundEnd()
                   }
-                  className="arcade-button mt-4 w-full px-6 py-3 text-lg"
+                  className="arcade-button mt-5 w-full px-6 py-3 text-lg"
                 >
                   إنهاء الجولة
                 </button>
