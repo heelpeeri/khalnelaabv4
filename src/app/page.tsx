@@ -500,34 +500,6 @@ export default function Home() {
                               }
                             `}
                           />
-
-                          <div
-                            className={`
-                              pointer-events-none
-                              absolute
-                              inset-x-3
-                              bottom-3
-                              rounded-full
-                              border
-                              border-white/10
-                              bg-black/80
-                              px-3
-                              py-2
-                              text-center
-                              text-xs
-                              font-black
-                              transition-all
-                              duration-300
-
-                              ${
-                                active
-                                  ? "translate-y-0 opacity-100"
-                                  : "translate-y-3 opacity-0"
-                              }
-                            `}
-                          >
-                            العب الآن
-                          </div>
                         </div>
                       </Link>
                     );
@@ -581,10 +553,6 @@ export default function Home() {
                         sizes="(max-width: 640px) 45vw, 30vw"
                         className="object-cover"
                       />
-
-                      <div className="pointer-events-none absolute inset-x-3 bottom-3 rounded-full border border-white/10 bg-black/80 px-3 py-2 text-center text-xs font-black">
-                        العب الآن
-                      </div>
                     </div>
                   </Link>
                 )
