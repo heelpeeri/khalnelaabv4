@@ -111,8 +111,6 @@ const games = [
     "صاحب الجلسة يحدد الفائز",
   ],
 },
-    ],
-  },
 ];
 
 export default function GuidePage() {
