@@ -196,7 +196,7 @@ export default function CountryGame({
     return (
       <div className="mx-auto max-w-xl p-8 text-center text-white">
         <p className="font-black">
-          جاري تجهيز الدول...
+          جاري تجهيز الأعلام...
         </p>
       </div>
     );
@@ -219,14 +219,14 @@ export default function CountryGame({
 
   return (
     <GameLayout
-      title="خمن الدولة"
+      title="خمن العلم"
       side1={side1}
       side2={side2}
       side1Score={0}
       side2Score={0}
       turn={
         started
-          ? "اسألوا وخمنوا"
+          ? "خمنوا الأعلام"
           : "امسحوا الأكواد"
       }
       currentRound={
@@ -234,7 +234,7 @@ export default function CountryGame({
       }
     >
       <div
-        className="mx-auto w-full max-w-4xl"
+        className="mx-auto w-full max-w-5xl"
         dir="rtl"
       >
         {!started ? (
@@ -245,79 +245,86 @@ export default function CountryGame({
               </h2>
 
               <p className="mt-2 text-sm font-bold text-white/45">
-                كل فريق يمسح الكود حقه ويشوف علم الفريق الثاني بدون ما يوريهم
+                كل فريق يشوف علم الفريق الثاني بدون ما يوريهم
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-12">
+            <div
+              className="
+                grid
+                grid-cols-1
+                gap-7
+                sm:grid-cols-2
+                sm:gap-14
+                lg:gap-20
+              "
+            >
               <div
                 className="
-                  rounded-[24px]
+                  mx-auto
+                  w-full
+                  max-w-[310px]
+                  rounded-[20px]
                   border
                   border-fuchsia-300/20
-                  bg-fuchsia-500/[0.055]
-                  p-4
+                  bg-fuchsia-500/[0.045]
+                  p-3
                   text-center
-                  shadow-[0_0_28px_rgba(217,70,239,.06)]
+                  shadow-[0_0_24px_rgba(217,70,239,.05)]
                 "
               >
-                <p className="text-sm font-black text-fuchsia-100">
+                <p className="text-base font-black text-fuchsia-100">
                   {side1}
                 </p>
 
-                <p className="mt-1 text-xs font-bold text-white/40">
-                  امسح الكود حقك
-                </p>
-
-                <div className="mx-auto mt-4 w-fit rounded-[20px] bg-white p-3">
+                <div className="mx-auto mt-3 w-fit rounded-[16px] bg-white p-2.5">
                   {side2FlagUrl ? (
                     <img
                       src={createQrUrl(
                         side2FlagUrl
                       )}
                       alt={`QR ${side1}`}
-                      width={190}
-                      height={190}
-                      className="h-[190px] w-[190px]"
+                      width={170}
+                      height={170}
+                      className="h-[170px] w-[170px]"
                     />
                   ) : (
-                    <div className="h-[190px] w-[190px]" />
+                    <div className="h-[170px] w-[170px]" />
                   )}
                 </div>
               </div>
 
               <div
                 className="
-                  rounded-[24px]
+                  mx-auto
+                  w-full
+                  max-w-[310px]
+                  rounded-[20px]
                   border
                   border-cyan-300/20
-                  bg-cyan-400/[0.055]
-                  p-4
+                  bg-cyan-400/[0.045]
+                  p-3
                   text-center
-                  shadow-[0_0_28px_rgba(34,211,238,.06)]
+                  shadow-[0_0_24px_rgba(34,211,238,.05)]
                 "
               >
-                <p className="text-sm font-black text-cyan-100">
+                <p className="text-base font-black text-cyan-100">
                   {side2}
                 </p>
 
-                <p className="mt-1 text-xs font-bold text-white/40">
-                  امسح الكود حقك
-                </p>
-
-                <div className="mx-auto mt-4 w-fit rounded-[20px] bg-white p-3">
+                <div className="mx-auto mt-3 w-fit rounded-[16px] bg-white p-2.5">
                   {side1FlagUrl ? (
                     <img
                       src={createQrUrl(
                         side1FlagUrl
                       )}
                       alt={`QR ${side2}`}
-                      width={190}
-                      height={190}
-                      className="h-[190px] w-[190px]"
+                      width={170}
+                      height={170}
+                      className="h-[170px] w-[170px]"
                     />
                   ) : (
-                    <div className="h-[190px] w-[190px]" />
+                    <div className="h-[170px] w-[170px]" />
                   )}
                 </div>
               </div>
@@ -363,7 +370,7 @@ export default function CountryGame({
           <>
             <div
               className="
-                rounded-[26px]
+                rounded-[24px]
                 border
                 border-white/10
                 bg-white/[0.035]
@@ -373,15 +380,15 @@ export default function CountryGame({
               "
             >
               <p className="text-sm font-black text-cyan-300/70">
-                خمن الدولة
+                خمن العلم
               </p>
 
               <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
-                اسألوا بعض أسئلة إجابتها نعم أو لا
+                كل فريق يحاول يخمن علم الفريق الثاني
               </h2>
 
               <p className="mx-auto mt-3 max-w-xl text-sm font-bold leading-6 text-white/45">
-                مثال: هل دولتي عربية؟ هل هي في آسيا؟ هل علمها فيه أحمر؟
+                لا تورون بعض الأعلام لين تخلصون التخمين
               </p>
 
               {timerEnabled && (
@@ -419,14 +426,14 @@ export default function CountryGame({
                 }
                 className="arcade-button mt-5 w-full px-6 py-3 text-lg"
               >
-                كشف الدول
+                كشف الأعلام
               </button>
             ) : (
               <div className="mt-5">
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-10">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-12">
                   <div
                     className="
-                      rounded-[24px]
+                      rounded-[22px]
                       border
                       border-fuchsia-300/20
                       bg-fuchsia-500/[0.055]
@@ -435,10 +442,10 @@ export default function CountryGame({
                     "
                   >
                     <p className="text-sm font-black text-fuchsia-100">
-                      دولة {side1}
+                      علم {side1}
                     </p>
 
-                    <div className="mt-3 overflow-hidden rounded-[18px] bg-white p-3">
+                    <div className="mt-3 overflow-hidden rounded-[16px] bg-white p-3">
                       <img
                         src={
                           side1Country.flag
@@ -446,7 +453,7 @@ export default function CountryGame({
                         alt={
                           side1Country.nameAr
                         }
-                        className="mx-auto h-[150px] w-full object-contain"
+                        className="mx-auto h-[145px] w-full object-contain"
                       />
                     </div>
 
@@ -459,7 +466,7 @@ export default function CountryGame({
 
                   <div
                     className="
-                      rounded-[24px]
+                      rounded-[22px]
                       border
                       border-cyan-300/20
                       bg-cyan-400/[0.055]
@@ -468,10 +475,10 @@ export default function CountryGame({
                     "
                   >
                     <p className="text-sm font-black text-cyan-100">
-                      دولة {side2}
+                      علم {side2}
                     </p>
 
-                    <div className="mt-3 overflow-hidden rounded-[18px] bg-white p-3">
+                    <div className="mt-3 overflow-hidden rounded-[16px] bg-white p-3">
                       <img
                         src={
                           side2Country.flag
@@ -479,7 +486,7 @@ export default function CountryGame({
                         alt={
                           side2Country.nameAr
                         }
-                        className="mx-auto h-[150px] w-full object-contain"
+                        className="mx-auto h-[145px] w-full object-contain"
                       />
                     </div>
 
