@@ -19,6 +19,8 @@ type GameLayoutProps = {
 
   currentRound?: number;
 
+  neutralTurnStyle?: 'default' | 'duo';
+
   children: ReactNode;
 };
 
@@ -45,6 +47,8 @@ export default function GameLayout({
 
   currentRound = 1,
 
+  neutralTurnStyle = 'default',
+
   children,
 }: GameLayoutProps) {
   const cleanTurn = normalizeTeamName(turn);
@@ -67,6 +71,14 @@ export default function GameLayout({
 
   const isSide2Turn =
     detectedSide === 'side2';
+
+  const isNeutralTurn =
+    !isSide1Turn &&
+    !isSide2Turn;
+
+  const useDuoNeutral =
+    isNeutralTurn &&
+    neutralTurnStyle === 'duo';
 
   const displayedTurn =
     isSide1Turn
@@ -275,14 +287,36 @@ export default function GameLayout({
                       to-blue-500/20
                       shadow-[0_0_26px_rgba(34,211,238,0.28)]
                     `
-                    : `
-                      border-white/20
-                      bg-white/10
-                    `
+                    : useDuoNeutral
+                      ? `
+                        border-violet-300/45
+                        bg-gradient-to-r
+                        from-fuchsia-500/24
+                        via-violet-500/24
+                        to-cyan-400/24
+                        shadow-[0_0_28px_rgba(139,92,246,0.18)]
+                      `
+                      : `
+                        border-white/20
+                        bg-white/10
+                      `
               }
             `}
           >
-            <p className="text-[11px] font-bold leading-none text-white/55 sm:text-xs">
+            <p
+              className={`
+                text-[11px]
+                font-bold
+                leading-none
+                sm:text-xs
+
+                ${
+                  useDuoNeutral
+                    ? 'text-white/65'
+                    : 'text-white/55'
+                }
+              `}
+            >
               الدور الحالي
             </p>
 
@@ -303,7 +337,16 @@ export default function GameLayout({
                     ? 'text-fuchsia-50'
                     : isSide2Turn
                       ? 'text-cyan-50'
-                      : 'text-white'
+                      : useDuoNeutral
+                        ? `
+                          bg-gradient-to-r
+                          from-fuchsia-200
+                          via-white
+                          to-cyan-200
+                          bg-clip-text
+                          text-transparent
+                        `
+                        : 'text-white'
                 }
               `}
             >
