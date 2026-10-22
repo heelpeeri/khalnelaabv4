@@ -72,6 +72,29 @@ function createQrUrl(
   )}`;
 }
 
+const actionButtonClass = `
+  mt-5
+  w-full
+  rounded-2xl
+  border
+  border-orange-200/30
+  bg-gradient-to-r
+  from-orange-400
+  via-amber-300
+  to-violet-500
+  px-6
+  py-3
+  text-lg
+  font-black
+  text-white
+  shadow-[0_10px_28px_rgba(168,85,247,.18)]
+  transition-all
+  duration-300
+  hover:-translate-y-0.5
+  hover:shadow-[0_14px_34px_rgba(168,85,247,.26)]
+  active:translate-y-0
+`;
+
 export default function CountryGame({
   side1Name,
   side2Name,
@@ -227,7 +250,7 @@ export default function CountryGame({
       turn={
         started
           ? "خمنوا الأعلام"
-          : "جهزوا جوالاتكم"
+          : "جاهزين؟ 👀"
       }
       currentRound={
         currentRound
@@ -361,7 +384,9 @@ export default function CountryGame({
                   timerSeconds
                 );
               }}
-              className="arcade-button mt-5 w-full px-6 py-3 text-lg"
+              className={
+                actionButtonClass
+              }
             >
               الكل شاف العلم؟ ابدأوا
             </button>
@@ -424,7 +449,9 @@ export default function CountryGame({
                     true
                   )
                 }
-                className="arcade-button mt-5 w-full px-6 py-3 text-lg"
+                className={
+                  actionButtonClass
+                }
               >
                 كشف الأعلام
               </button>
@@ -503,7 +530,9 @@ export default function CountryGame({
                   onClick={() =>
                     onRoundEnd()
                   }
-                  className="arcade-button mt-5 w-full px-6 py-3 text-lg"
+                  className={
+                    actionButtonClass
+                  }
                 >
                   إنهاء الجولة
                 </button>
