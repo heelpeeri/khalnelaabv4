@@ -227,7 +227,7 @@ export default function CountryGame({
       turn={
         started
           ? "خمنوا الأعلام"
-          : "امسحوا الأكواد"
+          : "جهزوا جوالاتكم"
       }
       currentRound={
         currentRound
@@ -245,7 +245,7 @@ export default function CountryGame({
               </h2>
 
               <p className="mt-2 text-sm font-bold text-white/45">
-                كل فريق يشوف علم الفريق الثاني بدون ما يوريهم
+                كل فريق يشوف علم الفريق الثاني بدون ما يوريه
               </p>
             </div>
 
@@ -384,11 +384,11 @@ export default function CountryGame({
               </p>
 
               <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
-                كل فريق يحاول يخمن علم الفريق الثاني
+                كل فريق يحاول يعرف علمه
               </h2>
 
               <p className="mx-auto mt-3 max-w-xl text-sm font-bold leading-6 text-white/45">
-                لا تورون بعض الأعلام لين تخلصون التخمين
+                اسألوا الفريق الثاني أسئلة إجابتها نعم أو لا لين تعرفون العلم
               </p>
 
               {timerEnabled && (
