@@ -252,6 +252,7 @@ export default function CountryGame({
           ? "خمنوا الأعلام"
           : "جاهزين؟ 👀"
       }
+      neutralTurnStyle="duo"
       currentRound={
         currentRound
       }
