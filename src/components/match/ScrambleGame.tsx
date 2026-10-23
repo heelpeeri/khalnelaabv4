@@ -2,76 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 import GameLayout from "@/components/match/GameLayout";
+import { JudgeModal } from "@/components/match/Overlays";
 import { WHO_GAME } from "@/data/scramble";
+import { createDeck } from "@/lib/deck";
 import type { WinnerType } from "@/types/game";
-
 
 const TOTAL_ROUNDS = 2;
 
 type TeamSide = "side1" | "side2";
 
-function shuffleArray<T>(items: T[]) {
-  const array = [...items];
-
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-
-    [array[i], array[j]] = [
-      array[j],
-      array[i],
-    ];
-  }
-
-  return array;
-}
-
-function GuessJudgeModal({
-  show,
-  onCorrect,
-  onWrong,
-}: {
-  show: boolean;
-  onCorrect: () => void;
-  onWrong: () => void;
-}) {
-  if (!show) return null;
-
-  return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
-      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
-        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
-          نتيجة التخمين
-        </p>
-
-        <h1 className="arcade-title mt-5">
-          هل التخمين صحيح؟ 🎯
-        </h1>
-
-        <p className="mt-3 text-lg font-bold text-white/70">
-          حدد نتيجة المحاولة
-        </p>
-
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={onCorrect}
-            className="arcade-button px-6 py-4 text-lg"
-          >
-            صحيح ✅
-          </button>
-
-          <button
-            type="button"
-            onClick={onWrong}
-            className="btn-secondary px-6 py-4 text-lg"
-          >
-            غير صحيح
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+const peopleDeck = createDeck(WHO_GAME);
 
 export default function ScrambleGame({
   side1Name,
@@ -91,6 +31,9 @@ export default function ScrambleGame({
   timerSeconds?: number;
 }) {
   const [index, setIndex] = useState(0);
+
+  const [loaded, setLoaded] =
+    useState(false);
 
   const [rounds, setRounds] =
     useState<typeof WHO_GAME>([]);
@@ -121,11 +64,11 @@ export default function ScrambleGame({
   }, []);
 
   useEffect(() => {
-    const selected = shuffleArray(
-      WHO_GAME
-    ).slice(0, TOTAL_ROUNDS);
+    setLoaded(true);
 
-    setRounds(selected);
+    setRounds(
+      peopleDeck.draw(TOTAL_ROUNDS)
+    );
 
     setIndex(0);
 
@@ -285,6 +228,8 @@ export default function ScrambleGame({
   }
 
   if (!current) {
+    if (!loaded) return null;
+
     return (
       <div className="text-center text-white">
         <p>
@@ -332,7 +277,6 @@ export default function ScrambleGame({
       >
         <div className="flex flex-col gap-4">
 
-          {/* معلومات الشخصية */}
           <div className="flex flex-wrap items-center justify-center gap-2">
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
               الشخصية{" "}
@@ -356,32 +300,37 @@ export default function ScrambleGame({
             {!started &&
               !revealed && (
                 <div className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-100">
-                  امسح الكود ثم ابدأ الوصف
+                  واحد من {activeTeamName} يمسح الكود
                 </div>
               )}
           </div>
 
-          {/* الشخصية */}
           <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 sm:p-6">
             {!revealed ? (
               <div className="flex flex-col items-center gap-4">
-                {personUrl && (
-                  <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
-                      personUrl
-                    )}`}
-                    alt="QR Code"
-                    className="h-[250px] w-[250px] rounded-2xl bg-white p-2 sm:h-[280px] sm:w-[280px]"
-                  />
-                )}
+                <div className="rounded-2xl bg-white p-2.5">
+                  {personUrl ? (
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=480x480&margin=8&data=${encodeURIComponent(
+                        personUrl
+                      )}`}
+                      alt="كود الشخصية"
+                      width={240}
+                      height={240}
+                      className="h-[220px] w-[220px] sm:h-[240px] sm:w-[240px]"
+                    />
+                  ) : (
+                    <div className="h-[220px] w-[220px] sm:h-[240px] sm:w-[240px]" />
+                  )}
+                </div>
 
                 <div>
                   <p className="text-lg font-black text-white">
-                    امسح الكود وشوف الشخصية
+                    امسح وشوف الشخصية
                   </p>
 
                   <p className="mt-1 text-sm font-bold text-white/50">
-                    لا تقول الاسم، اوصف فقط
+                    اوصفها بدون ما تقول الاسم
                   </p>
                 </div>
               </div>
@@ -390,7 +339,7 @@ export default function ScrambleGame({
                 <img
                   src={current.image}
                   alt={current.answer}
-                  className="mx-auto max-h-[420px] rounded-3xl object-contain"
+                  className="mx-auto max-h-[300px] max-w-full rounded-3xl object-contain sm:max-h-[420px]"
                 />
 
                 <p className="mt-4 text-2xl font-black text-white">
@@ -400,7 +349,6 @@ export default function ScrambleGame({
             )}
           </div>
 
-          {/* الأزرار */}
           <div className="flex flex-wrap justify-center gap-3">
 
             {!started &&
@@ -437,16 +385,16 @@ export default function ScrambleGame({
               >
                 {isLastCharacter
                   ? "إنهاء الجولة"
-                  : "التالي"}
+                  : "الشخصية اللي بعدها"}
               </button>
             )}
           </div>
         </div>
       </GameLayout>
 
-      {/* شاشة التحكيم */}
-      <GuessJudgeModal
+      <JudgeModal
         show={showJudge}
+        teamName={activeTeamName}
         onCorrect={markCorrect}
         onWrong={markWrong}
       />

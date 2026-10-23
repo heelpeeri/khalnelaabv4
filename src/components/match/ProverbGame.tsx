@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import GameLayout from "@/components/match/GameLayout";
+import { TeamPickModal } from "@/components/match/Overlays";
 import { PROVERB_PUZZLES as puzzles } from "@/data/proverbs";
+import { createDeck } from "@/lib/deck";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_ROUNDS = 6;
@@ -10,80 +12,7 @@ const SECOND_TIME = 10;
 
 type TeamSide = "side1" | "side2";
 
-function shuffleArray<T>(items: T[]) {
-  const array = [...items];
-
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-
-    [array[i], array[j]] = [
-      array[j],
-      array[i],
-    ];
-  }
-
-  return array;
-}
-
-function ProverbWinnerModal({
-  show,
-  side1Name,
-  side2Name,
-  onPick,
-}: {
-  show: boolean;
-  side1Name: string;
-  side2Name: string;
-  onPick: (
-    winner: "side1" | "side2" | "none"
-  ) => void;
-}) {
-  if (!show) return null;
-
-  return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
-      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
-        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
-          نتيجة المثل
-        </p>
-
-        <h1 className="arcade-title mt-5">
-  من جاوب صح؟ ✅
-</h1>
-
-<p className="mt-3 text-lg font-bold text-white/70">
-  اختر الفريق اللي جاوب الإجابة الصحيحة
-</p>
-
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={() => onPick("side1")}
-            className="arcade-button px-6 py-4 text-lg"
-          >
-            {side1Name || "فريق 1"}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onPick("side2")}
-            className="arcade-button px-6 py-4 text-lg"
-          >
-            {side2Name || "فريق 2"}
-          </button>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => onPick("none")}
-          className="btn-secondary mt-4 w-full px-6 py-4 text-lg"
-        >
-          لا أحد
-        </button>
-      </div>
-    </div>
-  );
-}
+const proverbDeck = createDeck(puzzles);
 
 export default function ProverbGame({
   side1Name,
@@ -108,6 +37,9 @@ export default function ProverbGame({
   const [index, setIndex] =
     useState(0);
 
+  const [loaded, setLoaded] =
+    useState(false);
+
   const [timeLeft, setTimeLeft] =
     useState(timerSeconds);
 
@@ -127,11 +59,11 @@ export default function ProverbGame({
     useState(0);
 
   useEffect(() => {
-    const selected = shuffleArray(
-      puzzles
-    ).slice(0, TOTAL_ROUNDS);
+    setLoaded(true);
 
-    setRounds(selected);
+    setRounds(
+      proverbDeck.draw(TOTAL_ROUNDS)
+    );
 
     setIndex(0);
 
@@ -275,6 +207,8 @@ export default function ProverbGame({
   }
 
   if (!current) {
+    if (!loaded) return null;
+
     return (
       <div className="text-center text-white">
         <p>ما فيه أمثال كافية</p>
@@ -320,7 +254,6 @@ export default function ProverbGame({
       >
         <div className="flex flex-col gap-4">
 
-          {/* معلومات الجولة */}
           <div className="flex flex-wrap items-center justify-center gap-2">
 
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
@@ -349,14 +282,13 @@ export default function ProverbGame({
               )}
           </div>
 
-          {/* صورة المثل */}
           <img
+            key={current.image}
             src={current.image}
             alt="لغز المثل"
-            className="mx-auto max-h-[360px] w-full max-w-[520px] rounded-3xl object-contain"
+            className="mx-auto max-h-[300px] w-full max-w-[520px] rounded-3xl object-contain sm:max-h-[360px]"
           />
 
-          {/* الإجابة */}
           {revealed && (
             <div className="rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5">
               <p className="text-sm font-bold text-white/60">
@@ -369,7 +301,6 @@ export default function ProverbGame({
             </div>
           )}
 
-          {/* الأزرار */}
           <div className="flex flex-wrap justify-center gap-3">
             {!revealed ? (
               <button
@@ -391,16 +322,17 @@ export default function ProverbGame({
               >
                 {isLastProverb
                   ? "إنهاء الجولة"
-                  : "التالي"}
+                  : "المثل اللي بعده"}
               </button>
             )}
           </div>
         </div>
       </GameLayout>
 
-      {/* شاشة من فاز؟ */}
-      <ProverbWinnerModal
+      <TeamPickModal
         show={showWinnerPicker}
+        kicker={`المثل ${index + 1}`}
+        title="مين جاوب صح؟ ✅"
         side1Name={side1Name}
         side2Name={side2Name}
         onPick={givePoint}

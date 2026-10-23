@@ -17,7 +17,7 @@ const games = [
       "انتبه للإفلاس وتخطي الدور",
     ],
     example:
-      "طلعت لك 300 واخترت حرف موجود مرتين؟ تاخذ 600 نقطة.",
+      "طلعت لك 200 واخترتوا حرف موجود مرتين؟ تاخذون 400.",
   },
 
   {
@@ -63,7 +63,7 @@ const games = [
     image: "/images/posters/Whogame.png",
     title: "منهو ذا؟",
     how: [
-      "بتطلع QR Code لشخصية",
+      "يطلع كود QR لشخصية",
       "واحد يمسح الكود ويشوف الشخصية بدون ما يوري الباقين",
       "يوصف الشخصية بدون ما يقول اسمها",
       "الفريق يحاول يعرف منهو",
@@ -90,27 +90,29 @@ const games = [
     image: "/images/posters/Logogame.png",
     title: "خمن الشعار",
     how: [
-      "بيطلع شعار مبكسل للفريق اللي عليه الدور",
-      "حاولوا تعرفون الشعار قبل ما تكشفونه",
-      "بعد الكشف بيطلع الشعار واضح مع اسمه",
-      "إذا راحت الفرصة، الفريق الثاني يحاول",
+      "يطلع شعار مبكسل للفريق اللي عليه الدور",
+      "حاولوا تعرفونه قبل ما تكشفونه",
+      "بعد الكشف يطلع الشعار واضح مع اسمه",
+      "صاحب الجلسة يحدد إذا جوابكم صح",
       "بعدها يجي دور الفريق الثاني بشعار جديد",
       "الفريق اللي يجمع نقاط أكثر يفوز",
     ],
   },
 
   {
-  image: "/images/posters/Countries.png",
-  title: "خمن العلم",
-  how: [
-    "بيطلع باركود لكل فريق",
-    "كل فريق يمسح الباركود حقه ويشوف علم الفريق الثاني",
-    "لا تورون الفريق الثاني العلم اللي ظهر لكم",
-    "كل فريق يحاول يخمن علم الفريق الثاني",
-    "بعد التخمين اكشفوا الأعلام",
-    "صاحب الجلسة يحدد الفائز",
-  ],
-},
+    image: "/images/posters/Countries.png",
+    title: "خمن العلم",
+    how: [
+      "يطلع كود QR لكل فريق",
+      "كل فريق يمسح كوده ويشوف العلم اللي لازم الفريق الثاني يخمنه",
+      "لا تورونه للفريق الثاني",
+      "كل فريق يخمن علمه بأسئلة جوابها نعم أو لا",
+      "بعدها اكشفوا الأعلام",
+      "صاحب الجلسة يحدد الفائز",
+    ],
+    example:
+      "اللي يسكن كود الفريق اللي ضده يا ويله 👀",
+  },
 ];
 
 export default function GuidePage() {
@@ -123,53 +125,41 @@ export default function GuidePage() {
   }
 
   return (
-    <main className="h-[100dvh] overflow-hidden px-4 py-3 text-white sm:px-6">
+    <main className="min-h-[100dvh] px-4 py-3 text-white sm:px-6 lg:h-[100dvh] lg:overflow-hidden">
       <div className="mx-auto flex h-full max-w-7xl flex-col">
         <header className="flex shrink-0 items-center justify-between gap-4 pb-3">
           <div>
-            <h1 className="text-3xl font-black">
+            <h1 className="text-2xl font-black sm:text-3xl">
               🎮 طريقة اللعب
             </h1>
 
-            <p className="mt-1 text-sm font-bold text-white/45">
-              اضغط على أي بطاقة لقلبها وشوف الشرح
+            <p className="mt-1 text-sm font-bold text-white/50">
+              اضغطوا على اللعبة وتنقلب لكم
             </p>
           </div>
 
           <Link
             href="/"
-            className="
-              rounded-full
-              border
-              border-cyan-300/25
-              bg-gradient-to-r
-              from-[#119DFF]
-              to-[#7A5CFF]
-              px-5
-              py-2.5
-              text-sm
-              font-black
-              text-white
-              shadow-[0_0_20px_rgba(17,157,255,.16)]
-              transition-all
-              duration-300
-              hover:-translate-y-0.5
-              hover:shadow-[0_0_28px_rgba(17,157,255,.25)]
-            "
+            className="nav-pill shrink-0"
           >
-            🏠 الرئيسية
+            <span aria-hidden="true">🏠</span>
+            الرئيسية
           </Link>
         </header>
 
         <div
           className="
             grid
-            min-h-0
-            flex-1
-            grid-cols-4
-            grid-rows-2
+            grid-cols-1
             place-items-center
             gap-4
+            pb-4
+            min-[480px]:grid-cols-2
+            lg:min-h-0
+            lg:flex-1
+            lg:grid-cols-4
+            lg:grid-rows-2
+            lg:pb-0
           "
         >
           {games.map((game, index) => {
@@ -189,11 +179,14 @@ export default function GuidePage() {
                   group
                   relative
                   aspect-[4/5]
-                  h-full
-                  max-h-full
-                  w-auto
-                  max-w-full
+                  w-full
+                  max-w-[340px]
                   cursor-pointer
+                  rounded-[20px]
+                  lg:h-full
+                  lg:max-h-full
+                  lg:w-auto
+                  lg:max-w-full
                   text-right
                   outline-none
                   [perspective:1400px]
@@ -265,7 +258,6 @@ export default function GuidePage() {
                         text-xs
                         text-white/60
                         opacity-65
-                        backdrop-blur-lg
                         transition-all
                         duration-300
                         group-hover:opacity-100
@@ -295,8 +287,6 @@ export default function GuidePage() {
                       transform: "rotateY(180deg)",
                     }}
                   >
-                    <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-cyan-400/[0.08] blur-[75px]" />
-
                     <div className="relative flex h-full flex-col">
                       <div className="flex shrink-0 items-center justify-between gap-3">
                         <div>
@@ -328,7 +318,7 @@ export default function GuidePage() {
                         </div>
                       </div>
 
-                      <div className="mt-3 min-h-0 flex-1 space-y-1.5">
+                      <div className="mt-3 min-h-0 flex-1 space-y-1.5 overflow-y-auto">
                         {game.how.map((step, stepIndex) => (
                           <div
                             key={stepIndex}
@@ -362,7 +352,7 @@ export default function GuidePage() {
                               {stepIndex + 1}
                             </div>
 
-                            <p className="text-[10px] font-bold leading-[16px] text-white/75 xl:text-[11px] xl:leading-[18px]">
+                            <p className="text-xs font-bold leading-5 text-white/80 lg:text-[10px] lg:leading-[16px] xl:text-[11px] xl:leading-[18px]">
                               {step}
                             </p>
                           </div>
@@ -382,11 +372,7 @@ export default function GuidePage() {
                             py-2
                           "
                         >
-                          <span className="text-[10px] font-black text-yellow-200/70">
-                            مثال:
-                          </span>
-
-                          <span className="mr-2 text-[10px] font-bold leading-4 text-white/60">
+                          <span className="text-xs font-bold leading-5 text-yellow-50/75 lg:text-[10px] lg:leading-4 xl:text-[11px]">
                             {game.example}
                           </span>
                         </div>

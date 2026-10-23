@@ -31,8 +31,8 @@ export default async function CountryFlagPage({
         min-h-[100dvh]
         items-center
         justify-center
-        bg-[#100b25]
         px-5
+        py-8
         text-white
       "
       dir="rtl"
@@ -55,8 +55,12 @@ export default async function CountryFlagPage({
         </p>
 
         <h1 className="mt-2 text-2xl font-black">
-          خمن الدولة
+          خمن العلم 🚩
         </h1>
+
+        <p className="mt-2 text-sm font-bold text-white/55">
+          هذا العلم اللي لازم الفريق الثاني يخمنه
+        </p>
 
         <div
           className="
@@ -72,12 +76,13 @@ export default async function CountryFlagPage({
             src={
               country.flag
             }
-            alt="علم الدولة"
-            width={512}
-            height={512}
+            alt="العلم"
+            width={640}
+            height={427}
             priority
+            sizes="(max-width: 480px) 90vw, 400px"
             className="
-              aspect-square
+              aspect-[4/3]
               w-full
               object-contain
             "
@@ -95,8 +100,8 @@ export default async function CountryFlagPage({
             py-3
           "
         >
-          <p className="text-sm font-bold text-white/65">
-            لا توري العلم للفريق اللي يحاول يخمن
+          <p className="text-sm font-bold text-yellow-50/80">
+            لا توريه الفريق الثاني 🤫
           </p>
         </div>
       </div>

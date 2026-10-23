@@ -8,10 +8,12 @@ import {
 } from "react";
 
 import GameLayout from "@/components/match/GameLayout";
+import { JudgeModal } from "@/components/match/Overlays";
 import {
   LOGOS,
   type LogoItem,
 } from "@/data/logos";
+import { createDeck } from "@/lib/deck";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_ROUNDS = 2;
@@ -20,109 +22,7 @@ type TeamSide =
   | "side1"
   | "side2";
 
-let logoDeck: LogoItem[] = [];
-
-function shuffleArray<T>(
-  items: T[]
-) {
-  const array = [...items];
-
-  for (
-    let i = array.length - 1;
-    i > 0;
-    i--
-  ) {
-    const j =
-      Math.floor(
-        Math.random() *
-          (i + 1)
-      );
-
-    [array[i], array[j]] = [
-      array[j],
-      array[i],
-    ];
-  }
-
-  return array;
-}
-
-function getNextLogos(
-  count: number
-) {
-  const result: LogoItem[] = [];
-
-  while (
-    result.length < count &&
-    LOGOS.length > 0
-  ) {
-    if (
-      logoDeck.length === 0
-    ) {
-      logoDeck =
-        shuffleArray(LOGOS);
-    }
-
-    const next =
-      logoDeck.shift();
-
-    if (next) {
-      result.push(next);
-    }
-  }
-
-  return result;
-}
-
-function GuessJudgeModal({
-  show,
-  onCorrect,
-  onWrong,
-}: {
-  show: boolean;
-  onCorrect: () => void;
-  onWrong: () => void;
-}) {
-  if (!show) {
-    return null;
-  }
-
-  return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
-      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
-        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
-          نتيجة التخمين
-        </p>
-
-        <h1 className="arcade-title mt-5">
-          هل التخمين صحيح؟ 🎯
-        </h1>
-
-        <p className="mt-3 text-lg font-bold text-white/70">
-          حدد نتيجة المحاولة
-        </p>
-
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={onCorrect}
-            className="arcade-button px-6 py-4 text-lg"
-          >
-            صحيح ✅
-          </button>
-
-          <button
-            type="button"
-            onClick={onWrong}
-            className="btn-secondary px-6 py-4 text-lg"
-          >
-            غير صحيح
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+const logoDeck = createDeck(LOGOS);
 
 function PixelatedLogo({
   logo,
@@ -135,6 +35,9 @@ function PixelatedLogo({
     useRef<HTMLCanvasElement | null>(
       null
     );
+
+  const [failed, setFailed] =
+    useState(false);
 
   useEffect(() => {
     const currentCanvas =
@@ -326,10 +229,9 @@ function PixelatedLogo({
       drawLogo;
 
     image.onerror = () => {
-      console.error(
-        "Logo failed to load:",
-        logo.image
-      );
+      if (!cancelled) {
+        setFailed(true);
+      }
     };
 
     image.src =
@@ -354,9 +256,25 @@ function PixelatedLogo({
     revealed,
   ]);
 
+  if (failed) {
+    return (
+      <div className="mx-auto flex aspect-square w-full max-w-[360px] items-center justify-center text-center text-base font-black text-slate-500 sm:max-w-[400px]">
+        {revealed
+          ? logo.answerAr
+          : "الصورة ما حملت"}
+      </div>
+    );
+  }
+
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[360px] sm:max-w-[400px]">
+    <div className="relative mx-auto aspect-square w-full max-w-[260px] sm:max-w-[400px]">
       <canvas
+        role="img"
+        aria-label={
+          revealed
+            ? logo.answerAr
+            : "شعار مبكسل"
+        }
         ref={canvasRef}
         className={`
           h-full
@@ -440,14 +358,16 @@ export default function LogoGame({
   ] =
     useState(0);
 
+  const [loaded, setLoaded] =
+    useState(false);
+
   useEffect(() => {
-    const selected =
-      getNextLogos(
-        TOTAL_ROUNDS
-      );
+    setLoaded(true);
 
     setRounds(
-      selected
+      logoDeck.draw(
+        TOTAL_ROUNDS
+      )
     );
 
     setIndex(0);
@@ -640,6 +560,8 @@ export default function LogoGame({
   }
 
   if (!current) {
+    if (!loaded) return null;
+
     return (
       <div className="text-center text-white">
         <p>
@@ -723,14 +645,15 @@ export default function LogoGame({
 
             {!revealed && (
               <div className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-100">
-                تقدر تعرف الشعار وهو مبكسل؟
+                تعرفونه وهو مبكسل؟
               </div>
             )}
           </div>
 
           <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-4 sm:p-5">
-            <div className="mx-auto max-w-[480px] rounded-[26px] bg-white p-5 shadow-[0_12px_40px_rgba(0,0,0,0.18)] sm:p-7">
+            <div className="mx-auto max-w-[480px] rounded-[26px] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.18)] sm:p-7">
               <PixelatedLogo
+                key={current.id}
                 logo={
                   current
                 }
@@ -786,16 +709,19 @@ export default function LogoGame({
               >
                 {isLastLogo
                   ? "إنهاء الجولة"
-                  : "التالي"}
+                  : "الشعار اللي بعده"}
               </button>
             )}
           </div>
         </div>
       </GameLayout>
 
-      <GuessJudgeModal
+      <JudgeModal
         show={
           showJudge
+        }
+        teamName={
+          activeTeamName
         }
         onCorrect={
           markCorrect

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import GameLayout from "@/components/match/GameLayout";
 import { WORDS } from "@/data/words";
+import { createDeck } from "@/lib/deck";
 import type { WinnerType } from "@/types/game";
 
 type CellState = "correct" | "present" | "absent";
@@ -26,6 +27,14 @@ function normalizeArabic(text: string) {
     .replace(/ى/g, "ي");
 }
 
+const wordDeck = createDeck(
+  WORDS.filter(
+    (word) =>
+      normalizeArabic(word.answer).length ===
+      WORD_LENGTH
+  )
+);
+
 function evaluateGuess(
   guess: string,
   answer: string
@@ -47,7 +56,6 @@ function evaluateGuess(
     number
   > = {};
 
-  // أولاً: الحروف الصحيحة وفي مكانها
   guessLetters.forEach((letter, index) => {
     if (letter === answerLetters[index]) {
       result[index] = "correct";
@@ -63,7 +71,6 @@ function evaluateGuess(
     }
   });
 
-  // ثانياً: الحروف الموجودة لكن في مكان مختلف
   guessLetters.forEach((letter, index) => {
     if (result[index] === "correct") {
       return;
@@ -93,7 +100,7 @@ function HelpModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 px-4 backdrop-blur-sm">
+    <div role="dialog" aria-modal="true" className="fixed inset-0 z-[999] flex items-center justify-center bg-black/75 px-4">
       <div className="w-full max-w-lg rounded-[28px] border border-white/15 bg-[#120d2c]/95 p-6 text-right shadow-2xl">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-2xl font-black text-white">
@@ -103,6 +110,7 @@ function HelpModal({
           <button
             type="button"
             onClick={onClose}
+            aria-label="إغلاق"
             className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-lg font-bold text-white transition hover:bg-white/10"
           >
             ×
@@ -178,6 +186,9 @@ export default function WordGame({
   const [category, setCategory] =
     useState("");
 
+  const [loaded, setLoaded] =
+    useState(false);
+
   const [guesses, setGuesses] =
     useState<string[]>([]);
 
@@ -219,6 +230,7 @@ export default function WordGame({
     useState(false);
 
   useEffect(() => {
+    setLoaded(true);
     resetRound();
   }, [
     roundKey,
@@ -254,26 +266,16 @@ export default function WordGame({
     activeSide,
   ]);
 
-  function getFiveLetterWords() {
-    return WORDS.filter(
-      (word) =>
-        normalizeArabic(word.answer).length ===
-        WORD_LENGTH
-    );
-  }
-
   function resetRound() {
     const startingSide: TeamSide =
       currentRound % 2 === 1
         ? "side1"
         : "side2";
 
-    const fiveLetterWords =
-      getFiveLetterWords();
+    const [randomWord] =
+      wordDeck.draw(1);
 
-    if (
-      fiveLetterWords.length === 0
-    ) {
+    if (!randomWord) {
       setAnswer("");
       setCategory("");
 
@@ -283,14 +285,6 @@ export default function WordGame({
 
       return;
     }
-
-    const randomWord =
-      fiveLetterWords[
-        Math.floor(
-          Math.random() *
-            fiveLetterWords.length
-        )
-      ];
 
     setAnswer(randomWord.answer);
     setCategory(randomWord.category);
@@ -752,15 +746,12 @@ export default function WordGame({
     !routineFeedback;
 
   if (!answer) {
+    if (!loaded) return null;
+
     return (
       <div className="text-center text-white">
         <p>
           ما فيه كلمات من 5 حروف
-        </p>
-
-        <p className="mt-2 text-sm text-white/50">
-          عدّل ملف words.ts وأضف
-          كلمات مكوّنة من 5 حروف.
         </p>
 
         <button
@@ -789,7 +780,6 @@ export default function WordGame({
       >
         <div className="flex flex-col gap-2">
 
-          {/* طريقة اللعب + المؤقت */}
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
@@ -812,7 +802,6 @@ export default function WordGame({
               )}
           </div>
 
-          {/* التصنيف */}
           <div className="mt-1 flex justify-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-400/10 px-5 py-2 shadow-[0_0_18px_rgba(34,211,238,0.08)]">
               <span className="text-xs font-bold text-white/45">
@@ -825,14 +814,12 @@ export default function WordGame({
             </div>
           </div>
 
-          {/* الرسائل المهمة فقط */}
           {showFeedback && (
             <div className="mt-1 text-center text-sm font-bold text-white/75">
               {feedback}
             </div>
           )}
 
-          {/* مربعات التخمين */}
           <div className="flex justify-center py-2">
             <div className="space-y-1.5">
               {guesses.map(
@@ -923,7 +910,6 @@ export default function WordGame({
             </div>
           </div>
 
-          {/* تظهر الإجابة إذا انتهت المحاولات */}
           {status === "lost" && (
             <div className="mx-auto mt-3 w-full max-w-md rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5 text-center shadow-[0_0_24px_rgba(253,224,71,0.08)]">
               <p className="text-sm font-bold text-white/60">
@@ -936,8 +922,10 @@ export default function WordGame({
             </div>
           )}
 
-          {/* الكيبورد */}
-          <div className="mt-2 space-y-1.5">
+          <div
+            className="mx-auto mt-2 w-full max-w-[560px] space-y-1.5"
+            dir="rtl"
+          >
             {keyboardRows.map(
               (
                 row,
@@ -947,14 +935,7 @@ export default function WordGame({
                   key={
                     rowIndex
                   }
-                  className={`flex justify-center gap-1.5 ${
-                    rowIndex === 1
-                      ? "mr-2 sm:mr-4"
-                      : rowIndex ===
-                          2
-                        ? "mr-4 sm:mr-6"
-                        : ""
-                  }`}
+                  className="flex justify-center gap-1 sm:gap-1.5"
                 >
                   {row
                     .split("")
@@ -973,7 +954,7 @@ export default function WordGame({
                           disabled={isKeyDisabled(
                             key
                           )}
-                          className={`h-9 min-w-[34px] rounded-lg border px-1 text-sm font-bold transition active:scale-95 disabled:cursor-not-allowed sm:h-10 sm:min-w-[38px] sm:text-base ${getKeyColor(
+                          className={`h-11 min-w-0 max-w-[44px] flex-1 rounded-lg border px-0 text-base font-bold transition active:scale-95 disabled:cursor-not-allowed sm:h-11 ${getKeyColor(
                             key
                           )}`}
                         >
@@ -986,8 +967,7 @@ export default function WordGame({
             )}
           </div>
 
-          {/* الأزرار */}
-          <div className="mt-2 flex flex-wrap justify-center gap-2">
+          <div className="mt-2 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-center">
 
             {status ===
               "playing" && (
@@ -1009,9 +989,9 @@ export default function WordGame({
                     current.length ===
                     0
                   }
-                  className="h-10 min-w-[90px] rounded-xl border border-white/10 bg-[#2a2f45] px-4 text-sm font-bold text-white transition hover:bg-[#343a56] disabled:opacity-40"
+                  className="btn-secondary min-w-[100px] px-4 py-2 text-sm"
                 >
-                  حذف
+                  ⌫ مسح
                 </button>
 
                 <button
@@ -1023,7 +1003,7 @@ export default function WordGame({
                     current.length !==
                     WORD_LENGTH
                   }
-                  className="h-10 min-w-[90px] rounded-xl bg-gradient-to-r from-orange-400 to-pink-500 px-4 text-sm font-bold text-white transition hover:scale-[1.02] disabled:opacity-40"
+                  className="btn-primary min-w-[100px] px-4 py-2 text-sm"
                 >
                   إدخال
                 </button>
@@ -1034,11 +1014,11 @@ export default function WordGame({
                   disabled={
                     activeTeamHintUsed
                   }
-                  className="h-10 min-w-[125px] rounded-xl border border-yellow-300/30 bg-yellow-400/10 px-4 text-sm font-bold text-yellow-100 transition hover:bg-yellow-400/20 disabled:opacity-40"
+                  className="btn-secondary min-w-[125px] border-yellow-300/30 bg-yellow-400/10 px-4 py-2 text-sm text-yellow-100"
                 >
                   {activeTeamHintUsed
-                    ? "المساعدة استخدمت"
-                    : "💡 حذف حرف"}
+                    ? "استخدمتوا المساعدة"
+                    : "💡 احذف حرف غلط"}
                 </button>
 
                 <button
@@ -1046,14 +1026,13 @@ export default function WordGame({
                   onClick={() =>
                     onRoundEnd()
                   }
-                  className="h-10 min-w-[105px] rounded-xl border border-white/10 bg-[#4c2b7a] px-4 text-sm font-bold text-white transition hover:bg-[#5a3392]"
+                  className="btn-secondary min-w-[105px] px-4 py-2 text-sm"
                 >
                   إنهاء الجولة
                 </button>
               </>
             )}
 
-            {/* بعد خسارة الجميع */}
             {status ===
               "lost" && (
               <button

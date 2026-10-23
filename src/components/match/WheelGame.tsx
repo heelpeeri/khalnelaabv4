@@ -9,8 +9,11 @@ import {
   WHEEL_LETTER_ROWS as LETTER_ROWS,
 } from "@/data/wheel";
 
+import { createDeck } from "@/lib/deck";
 import type { TeamTurn as Turn, WinnerType } from "@/types/game";
 import type { WheelValue as Value } from "@/data/wheel";
+
+const puzzleDeck = createDeck(PUZZLES);
 
 type Phase = "spin" | "result" | "guess" | "celebrate";
 
@@ -44,13 +47,14 @@ function HelpModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 px-4 backdrop-blur-sm">
+    <div role="dialog" aria-modal="true" className="fixed inset-0 z-[999] flex items-center justify-center bg-black/75 px-4">
       <div className="w-full max-w-lg rounded-[28px] border border-white/15 bg-[#120d2c]/95 p-6 text-right shadow-2xl">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-2xl font-black">طريقة اللعب</h3>
 
           <button
             onClick={onClose}
+            aria-label="إغلاق"
             className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-lg font-bold text-white transition hover:bg-white/10"
             type="button"
           >
@@ -119,8 +123,10 @@ export default function WheelGame({
     useState<number | null>(null);
 
   const [showHelp, setShowHelp] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   const tickTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const flowTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const lastTickIndexRef = useRef<number | null>(null);
 
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -131,9 +137,31 @@ export default function WheelGame({
   const currentTeamName =
     turn === "side1" ? side1Name : side2Name;
 
+  function later(action: () => void, delay: number) {
+    const timer = setTimeout(() => {
+      flowTimersRef.current = flowTimersRef.current.filter(
+        (item) => item !== timer
+      );
+
+      action();
+    }, delay);
+
+    flowTimersRef.current.push(timer);
+  }
+
+  function clearFlowTimers() {
+    flowTimersRef.current.forEach(clearTimeout);
+    flowTimersRef.current = [];
+  }
+
   useEffect(() => {
-    const q =
-      PUZZLES[Math.floor(Math.random() * PUZZLES.length)];
+    setLoaded(true);
+
+    const [q] = puzzleDeck.draw(1);
+
+    if (!q) {
+      return;
+    }
 
     setAnswer(q.answer);
     setCategory(q.category);
@@ -162,6 +190,8 @@ export default function WheelGame({
       if (tickTimerRef.current) {
         clearInterval(tickTimerRef.current);
       }
+
+      clearFlowTimers();
     };
   }, [roundKey, timerSeconds]);
 
@@ -170,6 +200,8 @@ export default function WheelGame({
       if (tickTimerRef.current) {
         clearInterval(tickTimerRef.current);
       }
+
+      clearFlowTimers();
 
       if (
         audioContextRef.current &&
@@ -351,6 +383,8 @@ export default function WheelGame({
   }
 
   function finishRound(winner: WinnerType) {
+    if (phase === "celebrate") return;
+
     setWinnerName(
       winner === "side1"
         ? side1Name
@@ -359,7 +393,7 @@ export default function WheelGame({
 
     setPhase("celebrate");
 
-    setTimeout(() => {
+    later(() => {
       onRoundEnd(winner);
     }, 1400);
   }
@@ -399,7 +433,7 @@ export default function WheelGame({
 
           playTickSound();
 
-          setTimeout(
+          later(
             () => setWheelGlow(false),
             90
           );
@@ -424,7 +458,7 @@ export default function WheelGame({
 
     playFinalTickSound();
 
-    setTimeout(
+    later(
       () => setWheelGlow(false),
       180
     );
@@ -469,13 +503,13 @@ export default function WheelGame({
 
     setRotation(nextRotation);
 
-    setTimeout(() => {
+    later(() => {
       stopTicking(nextRotation);
 
       setSpinning(false);
       setPhase("result");
 
-      setTimeout(() => {
+      later(() => {
         if (value === "bankrupt") {
           if (turn === "side1") {
             setScore1(0);
@@ -578,10 +612,10 @@ export default function WheelGame({
   }
 
   function solveWord() {
-    if (phase === "celebrate") return;
+    if (phase !== "guess") return;
 
     const guess =
-      window.prompt("اكتب الكلمة كاملة");
+      window.prompt("اكتبوا الجواب كامل");
 
     if (!guess) return;
 
@@ -602,6 +636,24 @@ export default function WheelGame({
     setTimeLeft(timerSeconds);
   }
 
+  if (!answer) {
+    if (!loaded) return null;
+
+    return (
+      <div className="text-center text-white">
+        <p>ما فيه كلمات للعجلة</p>
+
+        <button
+          type="button"
+          onClick={() => onRoundEnd("none")}
+          className="btn-primary mt-4"
+        >
+          إنهاء الجولة
+        </button>
+      </div>
+    );
+  }
+
   const timerTextClass =
     timeLeft <= 5
       ? "animate-pulse text-red-300"
@@ -612,21 +664,18 @@ export default function WheelGame({
   return (
     <>
       <GameLayout
-        title="🎡 لف وخمن"
+        title="لف وخمن"
         side1={side1Name}
         side2={side2Name}
         side1Score={score1}
         side2Score={score2}
-
-        // هذا أهم سطر:
-        // GameLayout يعرف منه أي فريق دوره
         turn={currentTeamName}
+        turnSide={turn}
 
         currentRound={currentRound}
       >
         <div className="flex flex-col gap-4">
 
-          {/* Category + Help */}
           <div className="flex flex-wrap items-center justify-center gap-3">
             <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-100">
               <span className="text-white/70">
@@ -647,21 +696,19 @@ export default function WheelGame({
             </button>
           </div>
 
-          {/* Game status */}
           <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-base font-bold md:text-lg">
             {phase === "result"
               ? `طلعت لك: ${formatValue(
                   currentValue
                 )}`
               : phase === "guess"
-                ? `اختر حرف — قيمة الحرف ${formatValue(
+                ? `اختاروا حرف — الحرف بـ ${formatValue(
                     currentValue
                   )}`
                 : phase === "celebrate"
                   ? "🏆 انتهت الجولة!"
                   : "لف العجلة"}
 
-            {/* يظهر الوقت فقط إذا المؤقت مفعّل */}
             {phase === "guess" &&
               timerEnabled && (
                 <span
@@ -672,20 +719,19 @@ export default function WheelGame({
               )}
           </div>
 
-          {/* Answer */}
-          <div className="flex flex-wrap items-center justify-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             {revealedWordGroups.map(
               (word, wordIndex) => (
                 <div
                   key={wordIndex}
-                  className="flex items-center gap-4"
+                  className="flex max-w-full items-center gap-4"
                 >
-                  <div className="flex flex-wrap justify-center gap-2">
+                  <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
                     {word.map(
                       (letter, i) => (
                         <div
                           key={`${wordIndex}-${i}`}
-                          className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-2xl font-black shadow-[0_0_10px_rgba(255,255,255,0.04)]"
+                          className="flex h-10 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-xl font-black sm:h-14 sm:w-14 sm:rounded-2xl sm:text-2xl"
                         >
                           {letter || ""}
                         </div>
@@ -716,14 +762,12 @@ export default function WheelGame({
             </p>
           )}
 
-          {/* Wheel */}
           <div className="mt-2">
             {(phase === "spin" ||
               phase === "result") && (
               <div className="flex flex-col items-center">
-                <div className="relative h-[290px] w-[290px] md:h-[340px] md:w-[340px]">
+                <div className="relative h-[290px] w-[290px] max-w-full md:h-[340px] md:w-[340px]">
 
-                  {/* Pointer */}
                   <div
                     className={`absolute left-1/2 top-0 z-30 -translate-x-1/2 -translate-y-2 transition ${
                       wheelGlow
@@ -734,17 +778,6 @@ export default function WheelGame({
                     <div className="h-0 w-0 border-l-[16px] border-r-[16px] border-t-[28px] border-l-transparent border-r-transparent border-t-red-500" />
                   </div>
 
-                  {/* Glow */}
-                  <div
-                    className="absolute inset-0 rounded-full"
-                    style={{
-                      background:
-                        "radial-gradient(circle, rgba(255,255,255,0.10), transparent 58%)",
-                      filter: "blur(8px)",
-                    }}
-                  />
-
-                  {/* Wheel */}
                   <div
                     className="relative h-full w-full rounded-full border-[6px] border-white/25"
                     style={{
@@ -781,7 +814,6 @@ export default function WheelGame({
                       }}
                     />
 
-                    {/* Segment labels */}
                     {SEGMENTS.map(
                       (segment, i) => {
                         const angle =
@@ -823,7 +855,6 @@ export default function WheelGame({
                       }
                     )}
 
-                    {/* Center */}
                     <div
                       className={`absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-white/25 bg-[radial-gradient(circle_at_30%_30%,#b91c1c,#7a001f)] text-2xl shadow-[0_0_25px_rgba(239,68,68,0.35)] transition ${
                         wheelGlow
@@ -837,6 +868,7 @@ export default function WheelGame({
                 </div>
 
                 <button
+                  type="button"
                   onClick={spinWheel}
                   disabled={
                     phase !== "spin" ||
@@ -851,23 +883,15 @@ export default function WheelGame({
               </div>
             )}
 
-            {/* Guess phase */}
             {phase === "guess" && (
               <div className="space-y-5">
                
-                {/* Keyboard */}
                 <div className="space-y-2">
                   {LETTER_ROWS.map(
                     (row, rowIndex) => (
                       <div
                         key={rowIndex}
-                        className={`flex justify-center gap-2 ${
-                          rowIndex === 1
-                            ? "mr-5"
-                            : rowIndex === 2
-                              ? "mr-10"
-                              : ""
-                        }`}
+                        className="flex flex-wrap justify-center gap-1.5 sm:gap-2"
                       >
                         {row
                           .split("")
@@ -883,6 +907,7 @@ export default function WheelGame({
                                   key={
                                     letter
                                   }
+                                  type="button"
                                   onClick={() =>
                                     pickLetter(
                                       letter
@@ -891,7 +916,7 @@ export default function WheelGame({
                                   disabled={
                                     isUsed
                                   }
-                                  className={`h-11 min-w-[44px] rounded-xl border px-3 text-base font-bold transition ${
+                                  className={`h-11 min-w-[40px] rounded-xl border px-2 text-base font-bold transition sm:min-w-[44px] sm:px-3 ${
                                     isUsed
                                       ? "border-white/5 bg-white/5 text-white/25"
                                       : "border-white/10 bg-white/10 text-white hover:bg-white/20 active:scale-95"
@@ -911,16 +936,16 @@ export default function WheelGame({
 
                 <div className="flex justify-center">
                   <button
+                    type="button"
                     onClick={solveWord}
                     className="btn-primary min-w-[170px]"
                   >
-                    حل الكلمة
+                    عرفتوها؟ حلّوها
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Winner */}
             {phase === "celebrate" && (
               <div className="mt-4">
                 <div className="rounded-3xl border border-yellow-300/40 bg-yellow-400/15 px-6 py-8 shadow-2xl">
@@ -933,7 +958,7 @@ export default function WheelGame({
                   </p>
 
                   <p className="mt-2 text-lg text-white/85">
-                    فاز بالجولة!
+                    أخذ الجولة!
                   </p>
                 </div>
               </div>
