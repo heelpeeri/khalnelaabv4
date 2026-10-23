@@ -718,175 +718,186 @@ export default function SetupGame({
                     )}
                   </button>
 
-                  {active && (
-                    <div
-                      className="
-                        border-t
-                        border-cyan-300/15
-                        bg-gradient-to-b
-                        from-cyan-400/[0.065]
-                        to-transparent
-                        px-2
-                        pb-2.5
-                        pt-2
-                      "
-                    >
-                      {game.id !==
-                      "quiz" ? (
-                        <>
-                          <p
-                            className="
-                              mb-1.5
-                              text-center
-                              text-[10px]
-                              font-black
-                              text-white/50
-                            "
-                          >
-                            عدد الجولات
-                          </p>
+     {active && (
+  <div
+    className="
+      border-t
+      border-cyan-300/15
+      bg-gradient-to-b
+      from-cyan-400/[0.065]
+      to-transparent
+      px-2.5
+      pb-3
+      pt-2.5
+    "
+  >
+    {game.id !== "quiz" ? (
+      <>
+        <p
+          className="
+            mb-2
+            text-center
+            text-[11px]
+            font-black
+            text-white/55
+          "
+        >
+          عدد الجولات
+        </p>
 
-                          <div
-                            className="
-                              flex
-                              items-center
-                              justify-center
-                              gap-1
-                            "
-                          >
-                            {roundOptions.map(
-                              (round) => {
-                                const selected =
-                                  gameRounds[
-                                    game.id
-                                  ] ===
-                                  round;
+        <div
+          className="
+            flex
+            items-center
+            justify-center
+            gap-2
+          "
+        >
+          {roundOptions.map(
+            (round) => {
+              const selected =
+                gameRounds[
+                  game.id
+                ] === round;
 
-                                return (
-                                  <button
-                                    key={
-                                      round
-                                    }
-                                    type="button"
-                                    onClick={() =>
-                                      selectRounds(
-                                        game.id,
-                                        round
-                                      )
-                                    }
-                                    className={`
-                                      flex
-                                      h-8
-                                      min-w-8
-                                      items-center
-                                      justify-center
-                                      rounded-full
-                                      border
-                                      px-2
-                                      text-xs
-                                      font-black
-                                      transition-all
+              return (
+                <button
+                  key={round}
+                  type="button"
+                  onClick={() =>
+                    selectRounds(
+                      game.id,
+                      round
+                    )
+                  }
+                  className={`
+                    flex
+                    h-10
+                    min-w-[42px]
+                    items-center
+                    justify-center
+                    rounded-xl
+                    border
+                    px-3
+                    text-sm
+                    font-black
+                    transition-all
+                    duration-300
 
-                                      ${
-                                        selected
-                                          ? `
-                                            border-cyan-200/60
-                                            bg-cyan-400/22
-                                            text-cyan-50
-                                            shadow-[0_0_14px_rgba(34,211,238,.15)]
-                                          `
-                                          : `
-                                            border-white/10
-                                            bg-white/[0.04]
-                                            text-white/45
-                                            hover:bg-white/[0.08]
-                                          `
-                                      }
-                                    `}
-                                  >
-                                    {round}
-                                  </button>
-                                );
-                              }
-                            )}
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <p
-                            className="
-                              mb-1.5
-                              text-center
-                              text-[10px]
-                              font-black
-                              text-white/50
-                            "
-                          >
-                            اختر الفئات
-                          </p>
+                    ${
+                      selected
+                        ? `
+                          scale-[1.03]
+                          border-cyan-200/60
+                          bg-cyan-400/22
+                          text-cyan-50
+                          shadow-[0_0_16px_rgba(34,211,238,.17)]
+                        `
+                        : `
+                          border-white/10
+                          bg-white/[0.04]
+                          text-white/50
+                          hover:border-white/20
+                          hover:bg-white/[0.08]
+                          hover:text-white/75
+                        `
+                    }
+                  `}
+                >
+                  {round}
+                </button>
+              );
+            }
+          )}
+        </div>
+      </>
+    ) : (
+      <>
+        <p
+          className="
+            mb-2
+            text-center
+            text-[11px]
+            font-black
+            text-white/55
+          "
+        >
+          اختر الفئات
+        </p>
 
-                          <div className="grid grid-cols-1 gap-1">
-                            {quizCategoryList.map(
-                              (
-                                category
-                              ) => {
-                                const selected =
-                                  quizCategories.includes(
-                                    category.key
-                                  );
+        <div className="grid grid-cols-2 gap-1.5">
+          {quizCategoryList.map(
+            (category) => {
+              const selected =
+                quizCategories.includes(
+                  category.key
+                );
 
-                                return (
-                                  <button
-                                    key={
-                                      category.key
-                                    }
-                                    type="button"
-                                    onClick={() =>
-                                      toggleCategory(
-                                        category.key
-                                      )
-                                    }
-                                    className={`
-                                      truncate
-                                      rounded-lg
-                                      border
-                                      px-1.5
-                                      py-1
-                                      text-[9px]
-                                      font-black
-                                      transition-all
+              return (
+                <button
+                  key={
+                    category.key
+                  }
+                  type="button"
+                  onClick={() =>
+                    toggleCategory(
+                      category.key
+                    )
+                  }
+                  className={`
+                    flex
+                    min-h-[40px]
+                    items-center
+                    justify-center
+                    gap-1
+                    rounded-xl
+                    border
+                    px-1.5
+                    py-1.5
+                    text-[9px]
+                    font-black
+                    transition-all
+                    duration-300
 
-                                      ${
-                                        selected
-                                          ? `
-                                            border-cyan-300/40
-                                            bg-cyan-400/20
-                                            text-cyan-50
-                                          `
-                                          : `
-                                            border-white/[0.08]
-                                            bg-white/[0.035]
-                                            text-white/45
-                                            hover:bg-white/[0.07]
-                                          `
-                                      }
-                                    `}
-                                  >
-                                    {
-                                      category.emoji
-                                    }{" "}
-                                    {
-                                      category.title
-                                    }
-                                  </button>
-                                );
-                              }
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  )}
+                    ${
+                      selected
+                        ? `
+                          border-cyan-300/45
+                          bg-cyan-400/20
+                          text-cyan-50
+                          shadow-[0_0_12px_rgba(34,211,238,.10)]
+                        `
+                        : `
+                          border-white/[0.08]
+                          bg-white/[0.035]
+                          text-white/50
+                          hover:border-white/15
+                          hover:bg-white/[0.07]
+                          hover:text-white/75
+                        `
+                    }
+                  `}
+                >
+                  <span className="shrink-0 text-[11px]">
+                    {
+                      category.emoji
+                    }
+                  </span>
+
+                  <span className="truncate">
+                    {
+                      category.title
+                    }
+                  </span>
+                </button>
+              );
+            }
+          )}
+        </div>
+      </>
+    )}
+  </div>
+)}
                 </div>
               );
             }
