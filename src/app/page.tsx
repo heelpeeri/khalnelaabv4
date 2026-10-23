@@ -182,7 +182,7 @@ export default function Home() {
             bg-[#0c0617]/95
             px-5
             pb-4
-            pt-5
+            pt-3
             shadow-[0_26px_70px_rgba(0,0,0,0.32)]
             sm:px-8
             lg:px-10
@@ -213,7 +213,7 @@ export default function Home() {
           </Link>
 
           <div className="text-center">
-            <h1 className="text-4xl font-black sm:text-5xl">
+            <h1 className="text-4xl font-black leading-tight sm:text-5xl md:-mt-1">
               🏆 تحدي الجلسة
             </h1>
 
