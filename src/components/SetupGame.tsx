@@ -11,11 +11,6 @@ const GAMES = [
     image: "/images/posters/wordgame.png",
   },
   {
-    id: "quiz",
-    name: "أسئلة وأجوبة",
-    image: "/images/posters/Quizgame.png",
-  },
-  {
     id: "scramble",
     name: "منهو ذا؟",
     image: "/images/posters/Whogame.png",
@@ -44,6 +39,11 @@ const GAMES = [
     id: "country",
     name: "خمن العلم",
     image: "/images/posters/Countries.png",
+  },
+  {
+    id: "quiz",
+    name: "أسئلة وأجوبة",
+    image: "/images/posters/Quizgame.png",
   },
 ];
 
