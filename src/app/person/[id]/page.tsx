@@ -11,19 +11,29 @@ export default async function PersonPage({
 
   if (!person) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black text-white">
-        <h1 className="text-3xl font-bold">الشخص غير موجود</h1>
+      <main className="flex min-h-[100dvh] items-center justify-center px-5 text-center text-white">
+        <h1 className="text-2xl font-black">
+          ما لقينا الشخصية 🤔
+        </h1>
       </main>
     );
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black p-6">
+    <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 px-4 py-6 text-center text-white">
+      <p className="text-sm font-black text-cyan-300/70">
+        منهو ذا؟
+      </p>
+
       <img
         src={person.image}
-        alt={person.answer}
-        className="max-h-[90vh] rounded-3xl object-contain"
+        alt="الشخصية"
+        className="max-h-[75dvh] w-auto max-w-full rounded-3xl object-contain"
       />
+
+      <p className="rounded-full border border-yellow-300/20 bg-yellow-300/[0.07] px-4 py-2 text-sm font-bold text-yellow-50/80">
+        اوصفها بدون ما تقول الاسم 🤫
+      </p>
     </main>
   );
 }

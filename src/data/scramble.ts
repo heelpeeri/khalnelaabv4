@@ -76,7 +76,7 @@ export const WHO_GAME = [
   },
   {
     id: "talal",
-    image: "/images/people/talal.png",
+    image: "/images/people/talal.jpg",
     answer: "طلال مداح",
   },
   {
@@ -111,12 +111,12 @@ export const WHO_GAME = [
   },
   {
     id: "you",
-    image: "/images/people/you.png",
+    image: "/images/people/you.jpg",
     answer: "اوصف نفسك شف يعرفونك ولا",
   },
   {
     id: "rbeah",
-    image: "/images/people/rbeah.png",
+    image: "/images/people/rbeah.jpg",
     answer: "ربيعة",
   },
   {

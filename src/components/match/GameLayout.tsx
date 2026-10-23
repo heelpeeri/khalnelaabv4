@@ -33,6 +33,62 @@ function normalizeTeamName(value: string) {
     .replace(/\s+/g, ' ');
 }
 
+export function GameTitle({
+  title,
+}: {
+  title: string;
+}) {
+  const titleWords = title
+    .trim()
+    .split(/\s+/);
+
+  return (
+    <h2
+      className="
+        truncate
+        py-1
+        text-xl
+        font-black
+        leading-tight
+        sm:text-3xl
+      "
+      dir="rtl"
+    >
+      {titleWords.map((word, index) => (
+        <span
+          key={`${word}-${index}`}
+          className={
+            index % 2 === 0
+              ? `
+                  bg-gradient-to-b
+                  from-[#FFD326]
+                  via-[#FFB000]
+                  to-[#FF8A00]
+                  bg-clip-text
+                  text-transparent
+                  drop-shadow-[0_2px_6px_rgba(255,176,0,0.28)]
+                `
+              : `
+                  bg-gradient-to-b
+                  from-[#13C2FF]
+                  via-[#008EFF]
+                  to-[#006BFF]
+                  bg-clip-text
+                  text-transparent
+                  drop-shadow-[0_2px_6px_rgba(0,142,255,0.28)]
+                `
+          }
+        >
+          {word}
+          {index < titleWords.length - 1
+            ? ' '
+            : ''}
+        </span>
+      ))}
+    </h2>
+  );
+}
+
 export default function GameLayout({
   title,
 
@@ -87,12 +143,8 @@ export default function GameLayout({
         ? side2
         : cleanTurn;
 
-  const titleWords = title
-    .trim()
-    .split(/\s+/);
-
   return (
-    <div className="mx-auto w-full max-w-5xl px-3 sm:px-4 lg:px-6">
+    <div className="mx-auto w-full max-w-5xl">
       <div
         className="
           glass
@@ -102,7 +154,6 @@ export default function GameLayout({
           p-3
           text-center
           shadow-[0_0_30px_rgba(0,0,0,0.35)]
-          backdrop-blur-xl
           sm:rounded-[28px]
           sm:p-3
           lg:p-4
@@ -131,72 +182,33 @@ export default function GameLayout({
           </div>
 
           <div className="min-w-0 flex-1 text-center">
-            <h2
-              className="
-                truncate
-                text-2xl
-                font-black
-                leading-none
-                sm:text-3xl
-              "
-              dir="rtl"
-            >
-              {titleWords.map((word, index) => (
-                <span
-                  key={`${word}-${index}`}
-                  className={
-                    index % 2 === 0
-                      ? `
-                          bg-gradient-to-b
-                          from-[#FFD326]
-                          via-[#FFB000]
-                          to-[#FF8A00]
-                          bg-clip-text
-                          text-transparent
-                          drop-shadow-[0_2px_6px_rgba(255,176,0,0.28)]
-                        `
-                      : `
-                          bg-gradient-to-b
-                          from-[#13C2FF]
-                          via-[#008EFF]
-                          to-[#006BFF]
-                          bg-clip-text
-                          text-transparent
-                          drop-shadow-[0_2px_6px_rgba(0,142,255,0.28)]
-                        `
-                  }
-                >
-                  {word}
-                  {index < titleWords.length - 1
-                    ? ' '
-                    : ''}
-                </span>
-              ))}
-            </h2>
+            <GameTitle title={title} />
           </div>
 
           <div className="w-9 shrink-0" />
         </div>
 
-        <div className="mb-2 grid grid-cols-1 gap-2 md:grid-cols-3">
+        <div className="mb-2 grid grid-cols-3 gap-1.5 sm:gap-2">
           <div
             className={`
               flex
-              min-h-[76px]
+              min-h-[64px]
+              min-w-0
               flex-col
               items-center
               justify-center
               rounded-[16px]
               border
-              px-3
+              px-2
               py-1.5
               transition-all
               duration-500
+              sm:min-h-[76px]
+              sm:px-3
 
               ${
                 isSide1Turn
                   ? `
-                    scale-[1.01]
                     border-fuchsia-300/70
                     bg-gradient-to-br
                     from-fuchsia-500/30
@@ -214,9 +226,11 @@ export default function GameLayout({
           >
             <p
               className={`
+                max-w-full
+                truncate
                 text-xs
                 font-bold
-                leading-none
+                leading-tight
                 transition-colors
                 duration-500
 
@@ -236,9 +250,9 @@ export default function GameLayout({
                 flex
                 items-center
                 justify-center
-                text-[46px]
+                text-[34px]
                 font-black
-                leading-[0.8]
+                leading-[0.9]
                 transition-all
                 duration-500
                 sm:text-[52px]
@@ -257,16 +271,19 @@ export default function GameLayout({
           <div
             className={`
               flex
-              min-h-[76px]
+              min-h-[64px]
+              min-w-0
               flex-col
               items-center
               justify-center
               rounded-[16px]
               border
-              px-3
+              px-2
               py-1.5
               transition-all
               duration-500
+              sm:min-h-[76px]
+              sm:px-3
 
               ${
                 isSide1Turn
@@ -325,9 +342,9 @@ export default function GameLayout({
                 mt-1
                 max-w-full
                 truncate
-                text-xl
+                text-base
                 font-black
-                leading-none
+                leading-tight
                 transition-colors
                 duration-500
                 sm:text-2xl
@@ -357,21 +374,23 @@ export default function GameLayout({
           <div
             className={`
               flex
-              min-h-[76px]
+              min-h-[64px]
+              min-w-0
               flex-col
               items-center
               justify-center
               rounded-[16px]
               border
-              px-3
+              px-2
               py-1.5
               transition-all
               duration-500
+              sm:min-h-[76px]
+              sm:px-3
 
               ${
                 isSide2Turn
                   ? `
-                    scale-[1.01]
                     border-cyan-300/70
                     bg-gradient-to-br
                     from-cyan-400/30
@@ -389,9 +408,11 @@ export default function GameLayout({
           >
             <p
               className={`
+                max-w-full
+                truncate
                 text-xs
                 font-bold
-                leading-none
+                leading-tight
                 transition-colors
                 duration-500
 
@@ -411,9 +432,9 @@ export default function GameLayout({
                 flex
                 items-center
                 justify-center
-                text-[46px]
+                text-[34px]
                 font-black
-                leading-[0.8]
+                leading-[0.9]
                 transition-all
                 duration-500
                 sm:text-[52px]
@@ -435,7 +456,7 @@ export default function GameLayout({
             rounded-[20px]
             border border-white/10
             bg-[#0d1236]/70
-            p-3
+            p-2
             sm:p-3
             lg:p-4
           "

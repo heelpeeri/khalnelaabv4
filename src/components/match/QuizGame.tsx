@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import GameLayout from "@/components/match/GameLayout";
+import { TeamPickModal } from "@/components/match/Overlays";
 import {
   quizQuestions,
   quizCategoryMeta,
@@ -10,6 +11,7 @@ import type {
   QuizCategoryKey,
   QuizQuestion,
 } from "@/data/quiz";
+import { createDeck, type Deck } from "@/lib/deck";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_QUESTIONS = 6;
@@ -17,81 +19,25 @@ const SECOND_TIME = 10;
 
 type TeamSide = "side1" | "side2";
 
-function shuffleArray<T>(items: T[]) {
-  const array = [...items];
+const quizDecks = new Map<
+  QuizCategoryKey,
+  Deck<QuizQuestion>
+>();
 
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(
-      Math.random() * (i + 1)
+function drawQuizQuestions(
+  category: QuizCategoryKey
+) {
+  let deck = quizDecks.get(category);
+
+  if (!deck) {
+    deck = createDeck(
+      quizQuestions[category] ?? []
     );
 
-    [array[i], array[j]] = [
-      array[j],
-      array[i],
-    ];
+    quizDecks.set(category, deck);
   }
 
-  return array;
-}
-
-function AnswerJudgeModal({
-  show,
-  side1Name,
-  side2Name,
-  onPick,
-}: {
-  show: boolean;
-  side1Name: string;
-  side2Name: string;
-  onPick: (
-    winner: "side1" | "side2" | "none"
-  ) => void;
-}) {
-  if (!show) return null;
-
-  return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-md">
-      <div className="arcade-card w-full max-w-2xl p-8 text-center animate-fade-in-up">
-        <p className="text-sm font-black tracking-[0.22em] text-cyan-300/80">
-          نتيجة السؤال
-        </p>
-
-        <h1 className="arcade-title mt-5">
-          من جاوب صح؟ ✅
-        </h1>
-
-        <p className="mt-3 text-lg font-bold text-white/70">
-          اختر الفريق اللي جاوب الإجابة الصحيحة
-        </p>
-
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={() => onPick("side1")}
-            className="arcade-button px-6 py-4 text-lg"
-          >
-            {side1Name || "فريق 1"}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onPick("side2")}
-            className="arcade-button px-6 py-4 text-lg"
-          >
-            {side2Name || "فريق 2"}
-          </button>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => onPick("none")}
-          className="btn-secondary mt-4 w-full px-6 py-4 text-lg"
-        >
-          لا أحد
-        </button>
-      </div>
-    </div>
-  );
+  return deck.draw(TOTAL_QUESTIONS);
 }
 
 export default function QuizGame({
@@ -125,6 +71,9 @@ export default function QuizGame({
 
   const [index, setIndex] =
     useState(0);
+
+  const [loaded, setLoaded] =
+    useState(false);
 
   const [
     showAnswer,
@@ -170,18 +119,13 @@ export default function QuizGame({
   ] = useState(false);
 
   useEffect(() => {
+    setLoaded(true);
+
     if (!category) return;
 
-    const picked =
-      quizQuestions[category] ?? [];
-
-    const selected =
-      shuffleArray(picked).slice(
-        0,
-        TOTAL_QUESTIONS
-      );
-
-    setQuestions(selected);
+    setQuestions(
+      drawQuizQuestions(category)
+    );
 
     setIndex(0);
 
@@ -207,7 +151,7 @@ export default function QuizGame({
     questions[index];
 
   const meta = category
-    ? quizCategoryMeta[category]
+    ? quizCategoryMeta[category] ?? null
     : null;
 
   const currentOptions =
@@ -255,7 +199,6 @@ export default function QuizGame({
     }
 
     if (timeLeft <= 0) {
-   
       if (!secondTurn) {
         setSecondTurn(true);
 
@@ -263,7 +206,6 @@ export default function QuizGame({
 
         setShowOptions(false);
       } else {
-   
         setShowAnswer(true);
       }
 
@@ -375,15 +317,27 @@ export default function QuizGame({
     );
   }
 
-  if (!category) {
+  if (!category || !meta) {
     return (
       <div className="text-center text-white">
-        ما تم تحديد فئة
+        <p>ما فيه فئة محددة للأسئلة</p>
+
+        <button
+          type="button"
+          onClick={() =>
+            onRoundEnd("none")
+          }
+          className="btn-primary mt-4"
+        >
+          إنهاء الجولة
+        </button>
       </div>
     );
   }
 
   if (!current) {
+    if (!loaded) return null;
+
     return (
       <div className="text-center text-white">
         <p>
@@ -416,9 +370,7 @@ export default function QuizGame({
   return (
     <>
       <GameLayout
-        title={`${meta?.emoji ?? "❓"} ${
-          meta?.title ?? "كويز"
-        }`}
+        title="أسئلة وأجوبة"
         side1={
           side1Name || "فريق 1"
         }
@@ -433,8 +385,11 @@ export default function QuizGame({
       >
         <div className="flex flex-col gap-4">
 
-          {/* معلومات السؤال */}
           <div className="flex flex-wrap items-center justify-center gap-2">
+            <div className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-black text-cyan-100">
+              {meta.emoji} {meta.title}
+            </div>
+
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
               السؤال{" "}
               <span className="text-white">
@@ -461,13 +416,12 @@ export default function QuizGame({
               )}
           </div>
 
-          {/* السؤال */}
           <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 sm:p-6">
             {current.image && (
               <img
                 src={current.image}
-                alt={current.question}
-                className="mx-auto mb-5 max-h-[260px] w-full rounded-2xl object-contain"
+                alt=""
+                className="mx-auto mb-5 max-h-[220px] w-full rounded-2xl object-contain sm:max-h-[260px]"
               />
             )}
 
@@ -475,7 +429,6 @@ export default function QuizGame({
               {current.question}
             </p>
 
-            {/* الخيارات */}
             {showOptions &&
               currentOptions.length >
                 0 && (
@@ -494,7 +447,6 @@ export default function QuizGame({
               )}
           </div>
 
-          {/* الإجابة */}
           {showAnswer && (
             <div className="rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5">
               <p className="text-sm font-bold text-white/60">
@@ -507,11 +459,9 @@ export default function QuizGame({
             </div>
           )}
 
-          {/* Actions */}
           <div className="flex flex-wrap items-center justify-center gap-3">
             {!showAnswer ? (
               <>
-                {/* Hint */}
                 {currentOptions.length >
                   0 && (
                   <button
@@ -528,7 +478,6 @@ export default function QuizGame({
                   </button>
                 )}
 
-                {/* Show answer */}
                 <button
                   type="button"
                   onClick={() =>
@@ -540,7 +489,6 @@ export default function QuizGame({
                 </button>
               </>
             ) : (
-          
               <button
                 type="button"
                 onClick={() =>
@@ -549,17 +497,18 @@ export default function QuizGame({
                 className="btn-primary min-w-[170px]"
               >
                 {isLastQuestion
-                  ? "إنهاء الكويز"
-                  : "السؤال التالي"}
+                  ? "إنهاء الجولة"
+                  : "السؤال اللي بعده"}
               </button>
             )}
           </div>
         </div>
       </GameLayout>
 
-      {/* شاشة من جاوب صح؟ */}
-      <AnswerJudgeModal
+      <TeamPickModal
         show={showJudge}
+        kicker={`السؤال ${index + 1}`}
+        title="مين جاوب صح؟ ✅"
         side1Name={side1Name}
         side2Name={side2Name}
         onPick={givePoint}

@@ -60,7 +60,7 @@ const GAME_CARDS: GameCard[] = [
   {
     href: "/match?game=country",
     image: "/images/posters/Countries.png",
-    title: "خمن الدولة",
+    title: "خمن العلم",
     x: 54,
     y: 0,
     scale: 1,
@@ -182,7 +182,7 @@ export default function Home() {
             bg-[#0c0617]/95
             px-5
             pb-4
-            pt-5
+            pt-3
             shadow-[0_26px_70px_rgba(0,0,0,0.32)]
             sm:px-8
             lg:px-10
@@ -193,54 +193,40 @@ export default function Home() {
           <Link
             href="/guide"
             prefetch={false}
-            onPointerDown={prepareNavigation}
             onClick={prepareNavigation}
             className="
-              absolute
-              left-5
-              top-5
+              nav-pill
+              relative
               z-50
+              mx-auto
+              mb-3
               flex
-              items-center
-              gap-2
-              rounded-full
-              border
-              border-cyan-300/30
-              bg-[#130b24]
-              px-4
-              py-2.5
-              text-sm
-              font-black
-              text-white
-              shadow-[0_0_18px_rgba(34,211,238,0.10)]
-              transition-all
-              duration-300
-              hover:-translate-y-0.5
-              hover:border-cyan-300/55
-              hover:bg-[#19102c]
-              hover:shadow-[0_0_22px_rgba(34,211,238,0.16)]
+              w-fit
+              md:absolute
+              md:left-5
+              md:top-5
+              md:mb-0
             "
           >
-            <span>🎮</span>
+            <span aria-hidden="true">🎮</span>
             <span>طريقة اللعب</span>
           </Link>
 
           <div className="text-center">
-            <h1 className="text-4xl font-black sm:text-5xl">
+            <h1 className="text-4xl font-black leading-tight sm:text-5xl md:-mt-1">
               🏆 تحدي الجلسة
             </h1>
 
             <div className="mx-auto mt-2 max-w-2xl rounded-2xl border border-yellow-300/[0.08] bg-gradient-to-r from-yellow-300/[0.035] via-yellow-200/[0.06] to-yellow-300/[0.035] px-5 py-2">
               <p className="text-sm font-bold leading-6 text-yellow-50/65 sm:text-[15px]">
-                اختاروا أكثر من لعبة، سجلوا الفرق،
-                واجمعوا النقاط لين يطلع بطل الجلسة.
+                اختاروا كم لعبة، سمّوا الفرق،
+                واللي يجمع أكثر هو بطل الجلسة.
               </p>
             </div>
 
             <Link
               href="/match?mode=session"
               prefetch={false}
-              onPointerDown={prepareNavigation}
               onClick={prepareNavigation}
               className="
                 mt-3
@@ -321,11 +307,11 @@ export default function Home() {
               </div>
 
               <h2 className="mt-1.5 text-2xl font-black sm:text-[28px]">
-                اختر لعبة وابدأ مباشرة
+                لعبة وحدة على السريع
               </h2>
 
-              <p className="mt-0.5 text-xs font-bold text-white/40">
-                اضغط على أي بطاقة
+              <p className="mt-0.5 text-xs font-bold text-white/45">
+                اضغطوا على أي لعبة
               </p>
             </div>
 
@@ -380,10 +366,7 @@ export default function Home() {
                         key={card.title}
                         href={card.href}
                         prefetch={false}
-                        aria-label={`ابدأ ${card.title}`}
-                        onPointerDown={
-                          prepareNavigation
-                        }
+                        aria-label={card.title}
                         onClick={
                           prepareNavigation
                         }
@@ -412,10 +395,12 @@ export default function Home() {
                         }
                         className="
                           home-card-link
+                          group
                           absolute
                           left-1/2
                           top-1/2
                           cursor-pointer
+                          rounded-[20px]
                           outline-none
                         "
                         style={{
@@ -466,6 +451,8 @@ export default function Home() {
                             bg-[#11091f]
                             transition-shadow
                             duration-300
+                            group-focus-visible:ring-2
+                            group-focus-visible:ring-cyan-300
 
                             ${
                               active
@@ -482,9 +469,7 @@ export default function Home() {
                             src={
                               card.image
                             }
-                            alt={
-                              card.title
-                            }
+                            alt=""
                             fill
                             sizes="190px"
                             className={`
@@ -515,13 +500,11 @@ export default function Home() {
                     key={card.title}
                     href={card.href}
                     prefetch={false}
-                    onPointerDown={
-                      prepareNavigation
-                    }
+                    aria-label={card.title}
                     onClick={
                       prepareNavigation
                     }
-                    className="group"
+                    className="group rounded-[20px] outline-none"
                   >
                     <div
                       className="
@@ -535,6 +518,8 @@ export default function Home() {
                         shadow-[0_10px_24px_rgba(0,0,0,.28)]
                         transition-transform
                         duration-300
+                        group-focus-visible:ring-2
+                        group-focus-visible:ring-cyan-300
                         group-active:scale-[0.97]
                       "
                       style={{
@@ -546,9 +531,7 @@ export default function Home() {
                         src={
                           card.image
                         }
-                        alt={
-                          card.title
-                        }
+                        alt=""
                         fill
                         sizes="(max-width: 640px) 45vw, 30vw"
                         className="object-cover"

@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { GlassCard } from "@/components/GlassCard";
-import RoundBadge from "@/components/match/RoundBadge";
+import { GameTitle } from "@/components/match/GameLayout";
 import { CATEGORY_LETTERS as letters } from "@/data/categories";
+import { createDeck } from "@/lib/deck";
 import type { WinnerType } from "@/types/game";
+
+const letterDeck = createDeck(letters);
 
 export default function CategoriesGame({
   side1Name,
@@ -23,9 +25,7 @@ export default function CategoriesGame({
   timerEnabled?: boolean;
   timerSeconds?: number;
 }) {
-  const [letter, setLetter] = useState<string>(
-    () => letters[Math.floor(Math.random() * letters.length)]
-  );
+  const [letter, setLetter] = useState("");
 
   const [timeLeft, setTimeLeft] = useState(timerSeconds);
   const [revealed, setRevealed] = useState(false);
@@ -38,14 +38,10 @@ export default function CategoriesGame({
 
   const [roundStartedAt, setRoundStartedAt] = useState(() => Date.now());
 
-  const instructionText =
-    "فكروا في: إنسان – حيوان – نبات – جماد – بلاد، كلها بنفس الحرف. إذا خلص الفريق يبلغ صاحب الجلسة. إذا إجابات الفريقين صحيحة، الفائز هو الأسرع.";
-
   useEffect(() => {
-    const next =
-      letters[Math.floor(Math.random() * letters.length)];
+    const [next] = letterDeck.draw(1);
 
-    setLetter(next);
+    setLetter(next ?? "");
     setTimeLeft(timerSeconds);
     setRevealed(false);
 
@@ -122,187 +118,156 @@ export default function CategoriesGame({
         )}%`
       : "100%";
 
+  const side1Label = side1Name || "فريق 1";
+  const side2Label = side2Name || "فريق 2";
+
   return (
-    <GlassCard className="relative min-h-[700px] overflow-hidden border border-white/10 bg-[#121028]/80 p-5 text-center shadow-[0_0_30px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-7">
-      <RoundBadge currentRound={currentRound} />
-
-      <div className="relative z-10 mx-auto max-w-5xl">
-        {/* Header */}
-        <div className="mb-5">
-          <h2 className="text-2xl font-black text-white sm:text-3xl">
-            إنسان حيوان نبات جماد بلاد
-          </h2>
+    <div className="mx-auto w-full max-w-5xl rounded-[24px] border border-white/10 bg-[#121028]/80 p-3 text-center shadow-[0_0_30px_rgba(0,0,0,0.35)] sm:rounded-[28px] lg:p-4">
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-[#8b5cf6] to-[#6d28d9] text-lg font-black text-white">
+          {currentRound}
         </div>
 
-        {/* Teams + Both Playing */}
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-          {/* Team 1 */}
-          <div
-            className={`flex min-h-[128px] flex-col items-center justify-center rounded-2xl border px-4 py-4 transition-all duration-500 ${
-              side1Ready
-                ? "border-fuchsia-300/30 bg-fuchsia-500/10 opacity-65"
-                : "scale-[1.02] border-fuchsia-300/70 bg-gradient-to-br from-fuchsia-500/30 via-pink-500/20 to-purple-500/15 shadow-[0_0_32px_rgba(217,70,239,0.30)]"
-            }`}
-          >
-            <p
-              className={`text-sm font-bold ${
-                side1Ready
-                  ? "text-white/55"
-                  : "text-fuchsia-100"
-              }`}
-            >
-              {side1Name || "فريق 1"}
-            </p>
-
-            <p
-              className={`mt-2 flex min-h-[52px] items-center justify-center font-black leading-none ${
-                side1Ready
-                  ? "text-2xl text-fuchsia-100"
-                  : "text-4xl text-fuchsia-100 sm:text-5xl"
-              }`}
-            >
-              {side1Ready ? "✓ خلص" : "..."}
-            </p>
-
-            {side1Time !== null && (
-              <p className="mt-2 text-sm font-black text-fuchsia-100/80">
-                {side1Time} ث
-              </p>
-            )}
-          </div>
-
-          {/* Both Playing */}
-          <div className="flex min-h-[128px] flex-col items-center justify-center rounded-2xl border border-purple-300/70 bg-gradient-to-r from-fuchsia-500/30 via-purple-500/25 to-cyan-400/30 px-4 py-4 shadow-[0_0_38px_rgba(168,85,247,0.30)]">
-            <p className="text-sm font-bold text-white/65">
-              اللعب الآن
-            </p>
-
-            <p className="mt-2 text-2xl font-black text-white sm:text-3xl">
-              الفريقين يلعبون
-            </p>
-
-            {timerEnabled && !revealed && (
-              <p
-                className={`mt-2 text-3xl font-black ${timerTextClass}`}
-              >
-                ⏱️ {timeLeft}
-              </p>
-            )}
-          </div>
-
-          {/* Team 2 */}
-          <div
-            className={`flex min-h-[128px] flex-col items-center justify-center rounded-2xl border px-4 py-4 transition-all duration-500 ${
-              side2Ready
-                ? "border-cyan-300/30 bg-cyan-400/10 opacity-65"
-                : "scale-[1.02] border-cyan-300/70 bg-gradient-to-br from-cyan-400/30 via-sky-500/20 to-blue-500/15 shadow-[0_0_32px_rgba(34,211,238,0.30)]"
-            }`}
-          >
-            <p
-              className={`text-sm font-bold ${
-                side2Ready
-                  ? "text-white/55"
-                  : "text-cyan-100"
-              }`}
-            >
-              {side2Name || "فريق 2"}
-            </p>
-
-            <p
-              className={`mt-2 flex min-h-[52px] items-center justify-center font-black leading-none ${
-                side2Ready
-                  ? "text-2xl text-cyan-100"
-                  : "text-4xl text-cyan-100 sm:text-5xl"
-              }`}
-            >
-              {side2Ready ? "✓ خلص" : "..."}
-            </p>
-
-            {side2Time !== null && (
-              <p className="mt-2 text-sm font-black text-cyan-100/80">
-                {side2Time} ث
-              </p>
-            )}
-          </div>
+        <div className="min-w-0 flex-1 text-center">
+          <GameTitle title="إنسان حيوان نبات جماد بلاد" />
         </div>
 
-        {/* Timer progress */}
+        <div className="w-9 shrink-0" />
+      </div>
+
+      <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+        <div
+          className={`flex min-h-[64px] min-w-0 flex-col items-center justify-center rounded-[16px] border px-2 py-1.5 transition-colors duration-500 sm:min-h-[76px] ${
+            side1Ready
+              ? "border-fuchsia-300/25 bg-fuchsia-500/[0.06]"
+              : "border-fuchsia-300/70 bg-gradient-to-br from-fuchsia-500/30 to-purple-500/15"
+          }`}
+        >
+          <p className="max-w-full truncate text-xs font-bold text-fuchsia-100">
+            {side1Label}
+          </p>
+
+          <p className="mt-1 text-lg font-black text-fuchsia-100 sm:text-2xl">
+            {side1Ready
+              ? `✓ ${side1Time ?? ""}ث`
+              : "⏳"}
+          </p>
+        </div>
+
+        <div className="flex min-h-[64px] min-w-0 flex-col items-center justify-center rounded-[16px] border border-violet-300/45 bg-gradient-to-r from-fuchsia-500/20 via-violet-500/20 to-cyan-400/20 px-2 py-1.5 sm:min-h-[76px]">
+          <p className="text-[11px] font-bold text-white/60 sm:text-xs">
+            {timerEnabled && !revealed
+              ? "الوقت"
+              : "الدور"}
+          </p>
+
+          {timerEnabled && !revealed ? (
+            <p
+              className={`mt-1 text-2xl font-black ${timerTextClass}`}
+            >
+              {timeLeft}
+            </p>
+          ) : (
+            <p className="mt-1 truncate text-base font-black text-white sm:text-2xl">
+              الفريقين
+            </p>
+          )}
+        </div>
+
+        <div
+          className={`flex min-h-[64px] min-w-0 flex-col items-center justify-center rounded-[16px] border px-2 py-1.5 transition-colors duration-500 sm:min-h-[76px] ${
+            side2Ready
+              ? "border-cyan-300/25 bg-cyan-400/[0.06]"
+              : "border-cyan-300/70 bg-gradient-to-br from-cyan-400/30 to-blue-500/15"
+          }`}
+        >
+          <p className="max-w-full truncate text-xs font-bold text-cyan-100">
+            {side2Label}
+          </p>
+
+          <p className="mt-1 text-lg font-black text-cyan-100 sm:text-2xl">
+            {side2Ready
+              ? `✓ ${side2Time ?? ""}ث`
+              : "⏳"}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-2 rounded-[20px] border border-white/10 bg-[#0d1236]/70 p-3 lg:p-5">
         {timerEnabled && !revealed && (
-          <div className="mx-auto mt-4 max-w-md">
-            <div className="h-2.5 w-full overflow-hidden rounded-full border border-white/10 bg-white/10">
+          <div className="mx-auto mb-4 max-w-md">
+            <div className="h-2 w-full overflow-hidden rounded-full border border-white/10 bg-white/10">
               <div
-                className="h-full bg-gradient-to-r from-fuchsia-500 via-purple-500 to-cyan-400 transition-all duration-1000"
+                className="h-full bg-gradient-to-r from-fuchsia-500 via-purple-500 to-cyan-400 transition-[width] duration-1000"
                 style={{ width: progressWidth }}
               />
             </div>
           </div>
         )}
 
-        {/* Letter */}
-        <div className="mt-7 flex justify-center">
-          <div className="flex h-28 w-28 items-center justify-center rounded-[28px] border border-purple-300/30 bg-[#1b1537] text-6xl font-black text-white shadow-[0_0_28px_rgba(168,85,247,0.18)] sm:h-32 sm:w-32 sm:text-7xl">
+        <div className="flex justify-center">
+          <div className="flex h-24 w-24 items-center justify-center rounded-[28px] border border-purple-300/30 bg-[#1b1537] text-6xl font-black text-white sm:h-32 sm:w-32 sm:text-7xl">
             {letter}
           </div>
         </div>
 
-        {/* Instructions */}
-        <div className="mx-auto mt-6 max-w-2xl rounded-2xl border border-white/10 bg-white/5 px-5 py-4">
+        <div className="mx-auto mt-4 max-w-2xl rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
           <p className="font-black text-white">
             إنسان • حيوان • نبات • جماد • بلاد
           </p>
 
-          <p className="mt-2 text-sm leading-7 text-white/60">
-            {instructionText}
+          <p className="mt-1.5 text-sm leading-6 text-white/60">
+            كلها تبدأ بنفس الحرف. اللي يخلص يضغط زره، وإذا الإجابات صح ياخذها الأسرع.
           </p>
         </div>
 
-        {/* Ready buttons */}
         {!revealed && (
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:gap-3">
             <button
               type="button"
               onClick={() => markReady("side1")}
               disabled={side1Ready}
-              className={`rounded-2xl border px-5 py-4 font-black transition disabled:cursor-not-allowed ${
-                side1Ready
-                  ? "border-fuchsia-300/20 bg-fuchsia-500/10 text-fuchsia-100/40"
-                  : "border-fuchsia-300/40 bg-fuchsia-500/15 text-fuchsia-100 hover:bg-fuchsia-500/25"
-              }`}
+              className="btn-team-1"
             >
-              {side1Ready
-                ? "✓ خلص"
-                : `${side1Name || "فريق 1"} خلص`}
+              <span className="block truncate">
+                {side1Ready
+                  ? "✓ خلصوا"
+                  : `${side1Label} خلصوا`}
+              </span>
             </button>
 
             <button
               type="button"
               onClick={() => markReady("side2")}
               disabled={side2Ready}
-              className={`rounded-2xl border px-5 py-4 font-black transition disabled:cursor-not-allowed ${
-                side2Ready
-                  ? "border-cyan-300/20 bg-cyan-400/10 text-cyan-100/40"
-                  : "border-cyan-300/40 bg-cyan-400/15 text-cyan-100 hover:bg-cyan-400/25"
-              }`}
+              className="btn-team-2"
             >
-              {side2Ready
-                ? "✓ خلص"
-                : `${side2Name || "فريق 2"} خلص`}
+              <span className="block truncate">
+                {side2Ready
+                  ? "✓ خلصوا"
+                  : `${side2Label} خلصوا`}
+              </span>
             </button>
           </div>
         )}
 
-        {/* Finish */}
-        <div className="mt-6 flex justify-center">
+        {revealed && (
+          <p className="mt-4 text-sm font-bold text-white/60">
+            راجعوا الإجابات وبعدها أنهوا الجولة
+          </p>
+        )}
+
+        <div className="mt-4 flex justify-center">
           <button
             type="button"
             onClick={() => onRoundEnd()}
             disabled={!revealed}
-            className="btn-primary disabled:opacity-40"
+            className="btn-primary min-w-[170px]"
           >
             إنهاء الجولة
           </button>
         </div>
       </div>
-    </GlassCard>
+    </div>
   );
 }
