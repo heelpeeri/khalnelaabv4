@@ -2,14 +2,12 @@ import { seerahQuestions } from "./seerah";
 import { saudiQuestions } from "./saudi";
 import { footballQuestions } from "./football";
 import { geographyQuestions } from "./geography";
-import { tashQuestions } from "./tash";
 
 export type QuizCategoryKey =
   | "seerah"
   | "saudi"
   | "football"
-  | "geography"
-  | "tash";
+  | "geography";
 
 export type QuizQuestion = {
   question: string;
@@ -26,7 +24,6 @@ export const quizCategoryMeta: Record<
   saudi: { title: "السعودية", emoji: "🇸🇦" },
   football: { title: "كرة القدم", emoji: "⚽" },
   geography: { title: "جغرافيا", emoji: "🌍" },
-  tash: { title: "طاش ما طاش", emoji: "📺" },
 };
 
 export const quizCategoryList = Object.entries(quizCategoryMeta).map(
@@ -41,5 +38,4 @@ export const quizQuestions: Record<QuizCategoryKey, QuizQuestion[]> = {
   saudi: saudiQuestions,
   football: footballQuestions,
   geography: geographyQuestions,
-  tash: tashQuestions,
 };
