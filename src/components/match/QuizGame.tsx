@@ -12,9 +12,25 @@ import type {
   QuizQuestion,
 } from "@/data/quiz";
 import { createDeck, type Deck } from "@/lib/deck";
+import {
+  readRoundState,
+  writeRoundState,
+} from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_QUESTIONS = 6;
+
+type QuizRoundState = {
+  questions: QuizQuestion[];
+  index: number;
+  showAnswer: boolean;
+  showOptions: boolean;
+  secondTurn: boolean;
+  side1Score: number;
+  side2Score: number;
+  side1HintUsed: boolean;
+  side2HintUsed: boolean;
+};
 const SECOND_TIME = 10;
 
 type TeamSide = "side1" | "side2";
@@ -123,6 +139,28 @@ export default function QuizGame({
 
     if (!category) return;
 
+    setShowJudge(false);
+    setTimeLeft(timerSeconds);
+
+    const saved =
+      readRoundState<QuizRoundState>(
+        "quiz",
+        roundKey
+      );
+
+    if (saved && saved.questions.length > 0) {
+      setQuestions(saved.questions);
+      setIndex(saved.index);
+      setShowAnswer(saved.showAnswer);
+      setShowOptions(saved.showOptions);
+      setSecondTurn(saved.secondTurn);
+      setSide1Score(saved.side1Score);
+      setSide2Score(saved.side2Score);
+      setSide1HintUsed(saved.side1HintUsed);
+      setSide2HintUsed(saved.side2HintUsed);
+      return;
+    }
+
     setQuestions(
       drawQuizQuestions(category)
     );
@@ -132,9 +170,6 @@ export default function QuizGame({
     setShowAnswer(false);
     setShowOptions(false);
     setSecondTurn(false);
-    setShowJudge(false);
-
-    setTimeLeft(timerSeconds);
 
     setSide1Score(0);
     setSide2Score(0);
@@ -145,6 +180,40 @@ export default function QuizGame({
     category,
     roundKey,
     timerSeconds,
+  ]);
+
+  useEffect(() => {
+    if (!loaded || questions.length === 0) {
+      return;
+    }
+
+    writeRoundState<QuizRoundState>(
+      "quiz",
+      roundKey,
+      {
+        questions,
+        index,
+        showAnswer,
+        showOptions,
+        secondTurn,
+        side1Score,
+        side2Score,
+        side1HintUsed,
+        side2HintUsed,
+      }
+    );
+  }, [
+    loaded,
+    roundKey,
+    questions,
+    index,
+    showAnswer,
+    showOptions,
+    secondTurn,
+    side1Score,
+    side2Score,
+    side1HintUsed,
+    side2HintUsed,
   ]);
 
   const current =

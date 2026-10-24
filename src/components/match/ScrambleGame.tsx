@@ -6,6 +6,10 @@ import GameLayout from "@/components/match/GameLayout";
 import { JudgeModal } from "@/components/match/Overlays";
 import { WHO_GAME } from "@/data/scramble";
 import { createDeck } from "@/lib/deck";
+import {
+  readRoundState,
+  writeRoundState,
+} from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_ROUNDS = 2;
@@ -13,6 +17,15 @@ const TOTAL_ROUNDS = 2;
 type TeamSide = "side1" | "side2";
 
 const peopleDeck = createDeck(WHO_GAME);
+
+type ScrambleRoundState = {
+  rounds: typeof WHO_GAME;
+  index: number;
+  started: boolean;
+  revealed: boolean;
+  side1Score: number;
+  side2Score: number;
+};
 
 export default function ScrambleGame({
   side1Name,
@@ -67,6 +80,25 @@ export default function ScrambleGame({
   useEffect(() => {
     setLoaded(true);
 
+    setShowJudge(false);
+    setTimeLeft(timerSeconds);
+
+    const saved =
+      readRoundState<ScrambleRoundState>(
+        "scramble",
+        roundKey
+      );
+
+    if (saved && saved.rounds.length > 0) {
+      setRounds(saved.rounds);
+      setIndex(saved.index);
+      setStarted(saved.started);
+      setRevealed(saved.revealed);
+      setSide1Score(saved.side1Score);
+      setSide2Score(saved.side2Score);
+      return;
+    }
+
     setRounds(
       peopleDeck.draw(TOTAL_ROUNDS)
     );
@@ -75,15 +107,40 @@ export default function ScrambleGame({
 
     setStarted(false);
     setRevealed(false);
-    setShowJudge(false);
-
-    setTimeLeft(timerSeconds);
 
     setSide1Score(0);
     setSide2Score(0);
   }, [
     roundKey,
     timerSeconds,
+  ]);
+
+  useEffect(() => {
+    if (!loaded || rounds.length === 0) {
+      return;
+    }
+
+    writeRoundState<ScrambleRoundState>(
+      "scramble",
+      roundKey,
+      {
+        rounds,
+        index,
+        started,
+        revealed,
+        side1Score,
+        side2Score,
+      }
+    );
+  }, [
+    loaded,
+    roundKey,
+    rounds,
+    index,
+    started,
+    revealed,
+    side1Score,
+    side2Score,
   ]);
 
   const current =

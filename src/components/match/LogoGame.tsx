@@ -14,6 +14,10 @@ import {
   type LogoItem,
 } from "@/data/logos";
 import { createDeck } from "@/lib/deck";
+import {
+  readRoundState,
+  writeRoundState,
+} from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_ROUNDS = 2;
@@ -23,6 +27,14 @@ type TeamSide =
   | "side2";
 
 const logoDeck = createDeck(LOGOS);
+
+type LogoRoundState = {
+  rounds: LogoItem[];
+  index: number;
+  revealed: boolean;
+  side1Score: number;
+  side2Score: number;
+};
 
 function PixelatedLogo({
   logo,
@@ -364,6 +376,27 @@ export default function LogoGame({
   useEffect(() => {
     setLoaded(true);
 
+    setShowJudge(false);
+
+    setTimeLeft(
+      timerSeconds
+    );
+
+    const saved =
+      readRoundState<LogoRoundState>(
+        "logo",
+        roundKey
+      );
+
+    if (saved && saved.rounds.length > 0) {
+      setRounds(saved.rounds);
+      setIndex(saved.index);
+      setRevealed(saved.revealed);
+      setSide1Score(saved.side1Score);
+      setSide2Score(saved.side2Score);
+      return;
+    }
+
     setRounds(
       logoDeck.draw(
         TOTAL_ROUNDS
@@ -374,18 +407,38 @@ export default function LogoGame({
 
     setRevealed(false);
 
-    setShowJudge(false);
-
-    setTimeLeft(
-      timerSeconds
-    );
-
     setSide1Score(0);
 
     setSide2Score(0);
   }, [
     roundKey,
     timerSeconds,
+  ]);
+
+  useEffect(() => {
+    if (!loaded || rounds.length === 0) {
+      return;
+    }
+
+    writeRoundState<LogoRoundState>(
+      "logo",
+      roundKey,
+      {
+        rounds,
+        index,
+        revealed,
+        side1Score,
+        side2Score,
+      }
+    );
+  }, [
+    loaded,
+    roundKey,
+    rounds,
+    index,
+    revealed,
+    side1Score,
+    side2Score,
   ]);
 
   const current =
