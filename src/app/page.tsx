@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import SiteFooter from "@/components/SiteFooter";
 
 type GameCard = {
   href: string;
@@ -488,6 +489,8 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <SiteFooter />
       </div>
 
       <style>{`
