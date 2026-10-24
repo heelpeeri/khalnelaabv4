@@ -67,6 +67,7 @@ function HelpModal({
           <p>2. إذا طلعت خسارة الدور أو إفلاس ينتقل الدور مباشرة.</p>
           <p>3. بعد الدوران اختر حرف من الكلمة.</p>
           <p>4. كل حرف صحيح يضيف نفس قيمة العجلة.</p>
+          <p>5. لما تنحل الكلمة، الفريق اللي نقاطه أكثر ياخذ الجولة.</p>
         </div>
 
         <button
@@ -382,13 +383,25 @@ export default function WheelGame({
     );
   }
 
-  function finishRound(winner: WinnerType) {
+  function finishRound(
+    final1: number,
+    final2: number
+  ) {
     if (phase === "celebrate") return;
+
+    const winner: WinnerType =
+      final1 > final2
+        ? "side1"
+        : final2 > final1
+          ? "side2"
+          : "none";
 
     setWinnerName(
       winner === "side1"
         ? side1Name
-        : side2Name
+        : winner === "side2"
+          ? side2Name
+          : ""
     );
 
     setPhase("celebrate");
@@ -596,7 +609,12 @@ export default function WheelGame({
         );
 
       if (solved) {
-        finishRound(turn);
+        finishRound(
+          score1 +
+            (turn === "side1" ? gained : 0),
+          score2 +
+            (turn === "side2" ? gained : 0)
+        );
       }
 
       return;
@@ -623,7 +641,15 @@ export default function WheelGame({
       normalizeArabic(guess) ===
       normalizeArabic(answer)
     ) {
-      finishRound(turn);
+      setRevealed(
+        answer
+          .split("")
+          .map((char) =>
+            char === " " ? "" : char
+          )
+      );
+
+      finishRound(score1, score2);
       return;
     }
 
@@ -950,15 +976,17 @@ export default function WheelGame({
               <div className="mt-4">
                 <div className="rounded-3xl border border-yellow-300/40 bg-yellow-400/15 px-6 py-8 shadow-2xl">
                   <p className="text-5xl">
-                    🏆
+                    {winnerName ? "🏆" : "🤝"}
                   </p>
 
                   <p className="mt-4 text-3xl font-black">
-                    {winnerName}
+                    {winnerName || "تعادل"}
                   </p>
 
                   <p className="mt-2 text-lg text-white/85">
-                    أخذ الجولة!
+                    {winnerName
+                      ? `أخذ الجولة بـ ${Math.max(score1, score2)} نقطة`
+                      : `النقاط متساوية: ${score1}`}
                   </p>
                 </div>
               </div>
