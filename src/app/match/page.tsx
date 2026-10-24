@@ -854,6 +854,57 @@ function drawRoundedRect(
   ctx.closePath();
 }
 
+function getVisibleBounds(image: HTMLImageElement) {
+  const full = {
+    x: 0,
+    y: 0,
+    width: image.naturalWidth,
+    height: image.naturalHeight,
+  };
+
+  const canvas = document.createElement("canvas");
+  canvas.width = image.naturalWidth;
+  canvas.height = image.naturalHeight;
+
+  const ctx = canvas.getContext("2d");
+
+  if (!ctx) return full;
+
+  ctx.drawImage(image, 0, 0);
+
+  const { data } = ctx.getImageData(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  let minX = canvas.width;
+  let minY = canvas.height;
+  let maxX = -1;
+  let maxY = -1;
+
+  for (let y = 0; y < canvas.height; y += 1) {
+    for (let x = 0; x < canvas.width; x += 1) {
+      if (data[(y * canvas.width + x) * 4 + 3] > 8) {
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+      }
+    }
+  }
+
+  if (maxX < minX || maxY < minY) return full;
+
+  return {
+    x: minX,
+    y: minY,
+    width: maxX - minX + 1,
+    height: maxY - minY + 1,
+  };
+}
+
 async function createResultShareImage({
   isDraw,
   finalWinnerName,
@@ -870,6 +921,16 @@ async function createResultShareImage({
 
   canvas.width = 1080;
   canvas.height = 1350;
+
+  const logo =
+    await new Promise<HTMLImageElement | null>(
+      (resolve) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => resolve(null);
+        image.src = "/logo.png";
+      }
+    );
 
   const fontFamily =
     getComputedStyle(document.body).fontFamily ||
@@ -1034,17 +1095,36 @@ async function createResultShareImage({
   ctx.direction =
     "rtl";
 
-  ctx.fillStyle =
-    "#67e8f9";
+  if (logo) {
+    const bounds = getVisibleBounds(logo);
+    const logoHeight = 160;
+    const logoWidth =
+      (bounds.width / bounds.height) * logoHeight;
 
-  ctx.font =
-    `900 35px ${fontFamily}`;
+    ctx.drawImage(
+      logo,
+      bounds.x,
+      bounds.y,
+      bounds.width,
+      bounds.height,
+      (width - logoWidth) / 2,
+      70,
+      logoWidth,
+      logoHeight
+    );
+  } else {
+    ctx.fillStyle =
+      "#67e8f9";
 
-  ctx.fillText(
-    "خل نلعب 🎮",
-    width / 2,
-    135
-  );
+    ctx.font =
+      `900 44px ${fontFamily}`;
+
+    ctx.fillText(
+      "خل نلعب",
+      width / 2,
+      170
+    );
+  }
 
   ctx.fillStyle =
     "#ffffff";
@@ -1057,7 +1137,7 @@ async function createResultShareImage({
       ? "تعادل! 🤝"
       : "كفووو! 🏆",
     width / 2,
-    245
+    300
   );
 
   ctx.font =
@@ -1071,13 +1151,13 @@ async function createResultShareImage({
       ? "الفريقين قدّها"
       : `الفائز: ${finalWinnerName}`,
     width / 2,
-    315
+    370
   );
 
   drawRoundedRect(
     ctx,
     585,
-    390,
+    445,
     390,
     270,
     38
@@ -1086,9 +1166,9 @@ async function createResultShareImage({
   const team1Gradient =
     ctx.createLinearGradient(
       585,
-      390,
+      445,
       975,
-      660
+      715
     );
 
   team1Gradient.addColorStop(
@@ -1122,7 +1202,7 @@ async function createResultShareImage({
   ctx.fillText(
     side1 || "فريق 1",
     780,
-    460
+    515
   );
 
   ctx.font =
@@ -1131,13 +1211,13 @@ async function createResultShareImage({
   ctx.fillText(
     String(side1Score),
     780,
-    590
+    645
   );
 
   drawRoundedRect(
     ctx,
     105,
-    390,
+    445,
     390,
     270,
     38
@@ -1146,9 +1226,9 @@ async function createResultShareImage({
   const team2Gradient =
     ctx.createLinearGradient(
       105,
-      390,
+      445,
       495,
-      660
+      715
     );
 
   team2Gradient.addColorStop(
@@ -1182,7 +1262,7 @@ async function createResultShareImage({
   ctx.fillText(
     side2 || "فريق 2",
     300,
-    460
+    515
   );
 
   ctx.font =
@@ -1191,7 +1271,7 @@ async function createResultShareImage({
   ctx.fillText(
     String(side2Score),
     300,
-    590
+    645
   );
 
   ctx.fillStyle =
@@ -1203,7 +1283,7 @@ async function createResultShareImage({
   ctx.fillText(
     "-",
     width / 2,
-    540
+    595
   );
 
   const draws =
@@ -1234,7 +1314,7 @@ async function createResultShareImage({
   ctx.fillText(
     "نتيجة الجلسة",
     width / 2,
-    755
+    810
   );
 
   ctx.fillStyle =
@@ -1246,13 +1326,13 @@ async function createResultShareImage({
   ctx.fillText(
     `${roundText}  •  ${drawText}`,
     width / 2,
-    810
+    865
   );
 
   drawRoundedRect(
     ctx,
     145,
-    895,
+    950,
     790,
     205,
     38
@@ -1279,7 +1359,7 @@ async function createResultShareImage({
   ctx.fillText(
     "تقدرون تتحدونا؟ 👀",
     width / 2,
-    975
+    1030
   );
 
   ctx.fillStyle =
@@ -1291,19 +1371,7 @@ async function createResultShareImage({
   ctx.fillText(
     "العبوا خل نلعب وشوفوا مين يفوز",
     width / 2,
-    1035
-  );
-
-  ctx.fillStyle =
-    "#67e8f9";
-
-  ctx.font =
-    `900 38px ${fontFamily}`;
-
-  ctx.fillText(
-    "خل نلعب",
-    width / 2,
-    1180
+    1090
   );
 
   ctx.fillStyle =
@@ -1315,7 +1383,7 @@ async function createResultShareImage({
   ctx.fillText(
     window.location.host,
     width / 2,
-    1230
+    1235
   );
 
   const blob =
