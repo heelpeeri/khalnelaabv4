@@ -49,7 +49,8 @@ export function WinnerOverlay({
   side2Score,
   roundStats,
   sharing,
-  onRestart,
+  onReplay,
+  onChangeGames,
   onGoHome,
   onShare,
 }: {
@@ -63,7 +64,8 @@ export function WinnerOverlay({
   side2Score: number;
   roundStats: RoundStat[];
   sharing: boolean;
-  onRestart: () => void;
+  onReplay: () => void;
+  onChangeGames: () => void;
   onGoHome: () => void;
   onShare: () => void;
 }) {
@@ -186,8 +188,12 @@ export function WinnerOverlay({
       )}
 
       <div className="mt-6 grid gap-2 sm:flex sm:flex-wrap sm:justify-center sm:gap-3">
-        <button type="button" onClick={onRestart} className="btn-primary">
-          {mode === "quick" ? "نعيدها؟" : "تحدي جديد"}
+        <button type="button" onClick={onReplay} className="btn-primary">
+          {mode === "quick" ? "نعيدها؟ 🔁" : "نعيدها بنفس الألعاب 🔁"}
+        </button>
+
+        <button type="button" onClick={onChangeGames} className="btn-secondary">
+          {mode === "quick" ? "نغيّر الإعدادات" : "نغيّر الألعاب"}
         </button>
 
         <button

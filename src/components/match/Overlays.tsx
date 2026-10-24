@@ -131,30 +131,99 @@ export function TeamPickModal({
   );
 }
 
-export function JudgeModal({
-  show,
+function useKeyLock(resetKey: string | number) {
+  const lockedRef = useRef(false);
+
+  useEffect(() => {
+    lockedRef.current = false;
+  }, [resetKey]);
+
+  return function runOnce(action: () => void) {
+    if (lockedRef.current) {
+      return;
+    }
+
+    lockedRef.current = true;
+    action();
+  };
+}
+
+export function InlineTeamPick({
+  resetKey,
+  title,
+  side1Name,
+  side2Name,
+  noneLabel = "ولا أحد",
+  onPick,
+}: {
+  resetKey: string | number;
+  title: string;
+  side1Name: string;
+  side2Name: string;
+  noneLabel?: string;
+  onPick: (winner: WinnerType) => void;
+}) {
+  const runOnce = useKeyLock(resetKey);
+
+  return (
+    <div className="animate-fade-in-up mx-auto w-full max-w-xl">
+      <p className="mb-2 text-center text-base font-black text-white/80">
+        {title}
+      </p>
+
+      <div className="grid grid-cols-2 gap-2 sm:gap-3">
+        <button
+          type="button"
+          onClick={() => runOnce(() => onPick("side1"))}
+          className="btn-team-1"
+        >
+          <span className="block truncate">{side1Name || "فريق 1"}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => runOnce(() => onPick("side2"))}
+          className="btn-team-2"
+        >
+          <span className="block truncate">{side2Name || "فريق 2"}</span>
+        </button>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => runOnce(() => onPick("none"))}
+        className="btn-secondary mt-2 w-full"
+      >
+        {noneLabel}
+      </button>
+    </div>
+  );
+}
+
+export function InlineJudge({
+  resetKey,
   teamName,
   onCorrect,
   onWrong,
 }: {
-  show: boolean;
+  resetKey: string | number;
   teamName: string;
   onCorrect: () => void;
   onWrong: () => void;
 }) {
-  const runOnce = useShowLock(show);
-
-  if (!show) return null;
+  const runOnce = useKeyLock(resetKey);
 
   return (
-    <OverlayShell>
-      <OverlayHeading kicker={teamName} title="عرفوها؟ 🎯" />
+    <div className="animate-fade-in-up mx-auto w-full max-w-xl">
+      <p className="mb-2 text-center text-base font-black text-white/80">
+        {teamName} عرفوها؟
+      </p>
 
-      <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3">
         <button
           type="button"
           onClick={() => runOnce(onCorrect)}
-          className="btn-primary py-4 text-lg"
+          className="btn-primary py-3 text-lg"
         >
           صح ✅
         </button>
@@ -162,11 +231,11 @@ export function JudgeModal({
         <button
           type="button"
           onClick={() => runOnce(onWrong)}
-          className="btn-secondary py-4 text-lg"
+          className="btn-secondary py-3 text-lg"
         >
           غلط ❌
         </button>
       </div>
-    </OverlayShell>
+    </div>
   );
 }

@@ -234,7 +234,7 @@ export default function SetupGame({
           </span>
 
           <span className="min-w-0 flex-1">
-            <span className="mb-1 block text-right text-[11px] font-black text-fuchsia-200/70">
+            <span className="mb-1 block text-right text-xs font-black text-fuchsia-200/70">
               الفريق الأول
             </span>
 
@@ -257,7 +257,7 @@ export default function SetupGame({
           </span>
 
           <span className="min-w-0 flex-1">
-            <span className="mb-1 block text-right text-[11px] font-black text-cyan-200/70">
+            <span className="mb-1 block text-right text-xs font-black text-cyan-200/70">
               الفريق الثاني
             </span>
 
@@ -276,8 +276,10 @@ export default function SetupGame({
             <div className="text-right">
               <p className="text-sm font-black">⏱️ المؤقت</p>
 
-              <p className="mt-0.5 text-[11px] font-bold text-white/40">
-                {timerEnabled ? `${timerSeconds} ثانية لكل دور` : "اختياري"}
+              <p className="mt-0.5 text-xs font-bold text-white/40">
+                {timerEnabled
+                  ? `${timerSeconds} ثانية، وضعفها لإنسان حيوان والعلم`
+                  : "اختياري"}
               </p>
             </div>
 
@@ -404,7 +406,7 @@ export default function SetupGame({
                   <div className="border-t border-cyan-300/15 bg-gradient-to-b from-cyan-400/[0.065] to-transparent px-2 pb-2.5 pt-2">
                     {game.id !== "quiz" ? (
                       <>
-                        <p className="mb-1.5 text-center text-[11px] font-black text-white/60">
+                        <p className="mb-1.5 text-center text-xs font-black text-white/60">
                           عدد الجولات
                         </p>
 
@@ -433,7 +435,7 @@ export default function SetupGame({
                       </>
                     ) : (
                       <>
-                        <p className="mb-1.5 text-center text-[11px] font-black text-white/60">
+                        <p className="mb-1.5 text-center text-xs font-black text-white/60">
                           الفئات · كل فئة جولة
                         </p>
 
@@ -449,7 +451,7 @@ export default function SetupGame({
                                 type="button"
                                 aria-pressed={selected}
                                 onClick={() => toggleCategory(category.key)}
-                                className={`flex min-h-[44px] min-w-0 flex-col items-center justify-center rounded-xl border px-1 py-1 text-[11px] font-black leading-tight transition-colors duration-200 ${
+                                className={`flex min-h-[44px] min-w-0 flex-col items-center justify-center rounded-xl border px-1 py-1 text-xs font-black leading-tight transition-colors duration-200 ${
                                   selected
                                     ? "border-cyan-300/60 bg-cyan-400/20 text-cyan-50"
                                     : "border-white/10 bg-white/[0.035] text-white/55 hover:border-white/25 hover:text-white/85"

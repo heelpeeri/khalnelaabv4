@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildRoundQueue,
   getRoundCount,
+  getTimerSeconds,
   isGameType,
   isQuizCategory,
 } from "@/lib/matchQueue";
@@ -50,5 +51,17 @@ describe("URL validation", () => {
     expect(isQuizCategory("saudi")).toBe(true);
     expect(isQuizCategory("tash")).toBe(false);
     expect(isQuizCategory("toString")).toBe(false);
+  });
+});
+
+describe("getTimerSeconds", () => {
+  it("doubles the time for games that need longer thinking", () => {
+    expect(getTimerSeconds("categories", 30)).toBe(60);
+    expect(getTimerSeconds("country", 45)).toBe(90);
+  });
+
+  it("keeps the set time for other games", () => {
+    expect(getTimerSeconds("quiz", 30)).toBe(30);
+    expect(getTimerSeconds("word", 20)).toBe(20);
   });
 });

@@ -36,59 +36,6 @@ const wordDeck = createDeck(
   WORDS.filter((word) => isPlayableWord(word.answer)),
 );
 
-function HelpModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  if (!open) return null;
-
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/75 px-4"
-    >
-      <div className="w-full max-w-lg rounded-[28px] border border-white/15 bg-[#120d2c]/95 p-6 text-right shadow-2xl">
-        <div className="flex items-center justify-between gap-3">
-          <h3 className="text-2xl font-black text-white">طريقة اللعب</h3>
-
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="إغلاق"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-lg font-bold text-white transition hover:bg-white/10"
-          >
-            ×
-          </button>
-        </div>
-
-        <div className="mt-5 space-y-3 text-sm leading-7 text-white/85 md:text-base">
-          <p>1. يظهر لك تصنيف يساعدك على تخمين الكلمة المكوّنة من 5 حروف.</p>
-
-          <p>2. اللون الأخضر يعني أن الحرف صحيح وفي مكانه الصحيح.</p>
-
-          <p>
-            3. اللون الأصفر يعني أن الحرف موجود في الكلمة لكن في مكان مختلف.
-          </p>
-
-          <p>4. اللون الرمادي يعني أن الحرف غير موجود في الكلمة.</p>
-
-          <p>5. بعد كل محاولة ينتقل الدور للفريق الثاني.</p>
-
-          <p>6. لكل فريق مساعدة واحدة تحذف حرفًا خاطئًا من لوحة الحروف.</p>
-
-          <p>7. الفريق الذي يخمن الكلمة بشكل صحيح يفوز بالجولة.</p>
-        </div>
-
-        <button
-          type="button"
-          onClick={onClose}
-          className="btn-primary mt-6 min-w-[140px]"
-        >
-          فهمت
-        </button>
-      </div>
-    </div>
-  );
-}
-
 export default function WordGame({
   onRoundEnd,
   roundKey,
@@ -135,8 +82,6 @@ export default function WordGame({
   const [side1HintUsed, setSide1HintUsed] = useState(false);
 
   const [side2HintUsed, setSide2HintUsed] = useState(false);
-
-  const [showHelp, setShowHelp] = useState(false);
 
   const resetRoundRef = useRef(resetRound);
   resetRoundRef.current = resetRound;
@@ -451,7 +396,6 @@ export default function WordGame({
 
   physicalKeyRef.current = (event) => {
     if (
-      showHelp ||
       document.querySelector('[role="dialog"]') ||
       event.ctrlKey ||
       event.metaKey ||
@@ -598,17 +542,10 @@ export default function WordGame({
         side2Score={side2Score}
         turn={getCurrentTurnName()}
         currentRound={currentRound}
+        game="word"
       >
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => setShowHelp(true)}
-              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white transition hover:bg-white/10"
-            >
-              طريقة اللعب
-            </button>
-
             {timerEnabled && status === "playing" && (
               <span
                 className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 font-black ${timerColor}`}
@@ -775,8 +712,6 @@ export default function WordGame({
           </div>
         </div>
       </GameLayout>
-
-      <HelpModal open={showHelp} onClose={() => setShowHelp(false)} />
     </>
   );
 }

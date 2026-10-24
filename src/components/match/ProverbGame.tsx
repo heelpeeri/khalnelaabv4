@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import GameLayout from "@/components/match/GameLayout";
-import { TeamPickModal } from "@/components/match/Overlays";
+import { InlineTeamPick } from "@/components/match/Overlays";
 import { PROVERB_PUZZLES as puzzles } from "@/data/proverbs";
 import { createDeck } from "@/lib/deck";
 import { readRoundState, writeRoundState } from "@/lib/roundState";
@@ -53,8 +53,6 @@ export default function ProverbGame({
 
   const [secondTurn, setSecondTurn] = useState(false);
 
-  const [showWinnerPicker, setShowWinnerPicker] = useState(false);
-
   const [side1Score, setSide1Score] = useState(0);
 
   const [side2Score, setSide2Score] = useState(0);
@@ -63,7 +61,6 @@ export default function ProverbGame({
     setLoaded(true);
 
     setTimeLeft(timerSeconds);
-    setShowWinnerPicker(false);
 
     const saved = readRoundState<ProverbRoundState>("draw", roundKey);
 
@@ -129,7 +126,7 @@ export default function ProverbGame({
     activeTurn === "side1" ? side1Name || "فريق 1" : side2Name || "فريق 2";
 
   useEffect(() => {
-    if (!timerEnabled || revealed || !current || showWinnerPicker) {
+    if (!timerEnabled || revealed || !current) {
       return;
     }
 
@@ -149,7 +146,7 @@ export default function ProverbGame({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [timeLeft, revealed, secondTurn, current, timerEnabled, showWinnerPicker]);
+  }, [timeLeft, revealed, secondTurn, current, timerEnabled]);
 
   function finishGame(final1: number, final2: number) {
     if (final1 > final2) {
@@ -178,7 +175,6 @@ export default function ProverbGame({
 
     setRevealed(false);
     setSecondTurn(false);
-    setShowWinnerPicker(false);
   }
 
   function givePoint(winner: "side1" | "side2" | "none") {
@@ -188,8 +184,6 @@ export default function ProverbGame({
 
     setSide1Score(next1);
     setSide2Score(next2);
-
-    setShowWinnerPicker(false);
 
     goNext(next1, next2);
   }
@@ -232,6 +226,7 @@ export default function ProverbGame({
         turn={activeTeamName}
         turnSide={activeTurn}
         currentRound={currentRound}
+        game="draw"
       >
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -283,26 +278,21 @@ export default function ProverbGame({
                 إظهار الإجابة
               </button>
             ) : (
-              <button
-                type="button"
-                onClick={() => setShowWinnerPicker(true)}
-                className="btn-primary min-w-[170px]"
-              >
-                {isLastProverb ? "إنهاء الجولة" : "المثل اللي بعده"}
-              </button>
+              <InlineTeamPick
+                resetKey={index}
+                title={
+                  isLastProverb
+                    ? "مين جاوب صح؟ وبعدها تخلص الجولة"
+                    : "مين جاوب صح؟"
+                }
+                side1Name={side1Name}
+                side2Name={side2Name}
+                onPick={givePoint}
+              />
             )}
           </div>
         </div>
       </GameLayout>
-
-      <TeamPickModal
-        show={showWinnerPicker}
-        kicker={`المثل ${index + 1}`}
-        title="مين جاوب صح؟ ✅"
-        side1Name={side1Name}
-        side2Name={side2Name}
-        onPick={givePoint}
-      />
     </>
   );
 }

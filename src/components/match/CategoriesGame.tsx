@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { GameTitle } from "@/components/match/GameLayout";
+import HowToPlayButton from "@/components/match/HowToPlayButton";
 import { CATEGORY_LETTERS as letters } from "@/data/categories";
 import { createDeck } from "@/lib/deck";
 import { readRoundState, writeRoundState } from "@/lib/roundState";
@@ -173,7 +174,7 @@ export default function CategoriesGame({
           <GameTitle title="إنسان حيوان نبات جماد بلاد" />
         </div>
 
-        <div className="w-9 shrink-0" />
+        <HowToPlayButton game="categories" />
       </div>
 
       <div className="grid grid-cols-3 gap-1.5 sm:gap-2">

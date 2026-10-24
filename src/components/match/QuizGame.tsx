@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import GameLayout from "@/components/match/GameLayout";
-import { TeamPickModal } from "@/components/match/Overlays";
+import { InlineTeamPick } from "@/components/match/Overlays";
 import { quizQuestions, quizCategoryMeta } from "@/data/quiz";
 import type { QuizCategoryKey, QuizQuestion } from "@/data/quiz";
 import { createDeck, type Deck } from "@/lib/deck";
@@ -76,8 +76,6 @@ export default function QuizGame({
 
   const [secondTurn, setSecondTurn] = useState(false);
 
-  const [showJudge, setShowJudge] = useState(false);
-
   const [timeLeft, setTimeLeft] = useState(timerSeconds);
 
   const [side1Score, setSide1Score] = useState(0);
@@ -93,7 +91,6 @@ export default function QuizGame({
 
     if (!category) return;
 
-    setShowJudge(false);
     setTimeLeft(timerSeconds);
 
     const saved = readRoundState<QuizRoundState>("quiz", roundKey);
@@ -183,7 +180,7 @@ export default function QuizGame({
     currentOptions.length > 0 && !showOptions && !activeTeamUsedHint;
 
   useEffect(() => {
-    if (!timerEnabled || showAnswer || !current || showJudge) {
+    if (!timerEnabled || showAnswer || !current) {
       return;
     }
 
@@ -206,7 +203,7 @@ export default function QuizGame({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [timeLeft, showAnswer, secondTurn, current, timerEnabled, showJudge]);
+  }, [timeLeft, showAnswer, secondTurn, current, timerEnabled]);
 
   function useHint() {
     if (!canUseHint) return;
@@ -247,7 +244,6 @@ export default function QuizGame({
     setShowOptions(false);
 
     setSecondTurn(false);
-    setShowJudge(false);
 
     setTimeLeft(timerSeconds);
   }
@@ -259,8 +255,6 @@ export default function QuizGame({
 
     setSide1Score(next1);
     setSide2Score(next2);
-
-    setShowJudge(false);
 
     nextQuestion(next1, next2);
   }
@@ -319,6 +313,7 @@ export default function QuizGame({
         turn={activeTeamName}
         turnSide={activeTurn}
         currentRound={currentRound}
+        game="quiz"
       >
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -411,26 +406,21 @@ export default function QuizGame({
                 </button>
               </>
             ) : (
-              <button
-                type="button"
-                onClick={() => setShowJudge(true)}
-                className="btn-primary min-w-[170px]"
-              >
-                {isLastQuestion ? "إنهاء الجولة" : "السؤال اللي بعده"}
-              </button>
+              <InlineTeamPick
+                resetKey={index}
+                title={
+                  isLastQuestion
+                    ? "مين جاوب صح؟ وبعدها تخلص الجولة"
+                    : "مين جاوب صح؟"
+                }
+                side1Name={side1Name}
+                side2Name={side2Name}
+                onPick={givePoint}
+              />
             )}
           </div>
         </div>
       </GameLayout>
-
-      <TeamPickModal
-        show={showJudge}
-        kicker={`السؤال ${index + 1}`}
-        title="مين جاوب صح؟ ✅"
-        side1Name={side1Name}
-        side2Name={side2Name}
-        onPick={givePoint}
-      />
     </>
   );
 }
