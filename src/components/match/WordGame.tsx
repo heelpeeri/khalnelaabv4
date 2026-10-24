@@ -27,12 +27,21 @@ function normalizeArabic(text: string) {
     .replace(/ى/g, "ي");
 }
 
+const keyboardLetters = keyboardRows.join("");
+
 const wordDeck = createDeck(
-  WORDS.filter(
-    (word) =>
-      normalizeArabic(word.answer).length ===
-      WORD_LENGTH
-  )
+  WORDS.filter((word) => {
+    const letters = Array.from(
+      normalizeArabic(word.answer)
+    );
+
+    return (
+      letters.length === WORD_LENGTH &&
+      letters.every((letter) =>
+        keyboardLetters.includes(letter)
+      )
+    );
+  })
 );
 
 function evaluateGuess(
@@ -679,7 +688,7 @@ export default function WordGame({
 
     const letter = normalizeArabic(event.key);
 
-    if (keyboardRows.join("").includes(letter)) {
+    if (keyboardLetters.includes(letter)) {
       event.preventDefault();
       handleKeyboardClick(letter);
     }
