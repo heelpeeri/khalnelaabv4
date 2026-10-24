@@ -16,6 +16,7 @@ import {
 } from "@/data/wheel";
 
 import { createDeck } from "@/lib/deck";
+import { getPointsWinner } from "@/lib/scoring";
 import {
   readRoundState,
   writeRoundState,
@@ -480,12 +481,7 @@ export default function WheelGame({
   ) {
     if (phase === "celebrate") return;
 
-    const winner: WinnerType =
-      final1 > final2
-        ? "side1"
-        : final2 > final1
-          ? "side2"
-          : "none";
+    const winner = getPointsWinner(final1, final2);
 
     setWinnerName(
       winner === "side1"

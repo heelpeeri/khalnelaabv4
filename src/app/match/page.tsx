@@ -21,19 +21,16 @@ import {
   quizCategoryMeta,
   type QuizCategoryKey,
 } from "@/data/quiz/meta";
-import { shuffle } from "@/lib/deck";
+import {
+  buildRoundQueue,
+  getDefaultRounds,
+  isGameType,
+  isQuizCategory,
+  type GameType,
+  type Round,
+} from "@/lib/matchQueue";
 import { clearRoundState } from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
-
-type GameType =
-  | "word"
-  | "quiz"
-  | "scramble"
-  | "wheel"
-  | "categories"
-  | "draw"
-  | "logo"
-  | "country";
 
 type ModeType = "session" | "quick";
 
@@ -43,11 +40,6 @@ type PhaseType =
   | "playing"
   | "transition"
   | "finished";
-
-type Round = {
-  game: GameType;
-  category: QuizCategoryKey | null;
-};
 
 type RoundStat = {
   game: GameType;
@@ -63,17 +55,6 @@ type GameStat = {
   total: number;
 };
 
-const VALID_GAMES: GameType[] = [
-  "word",
-  "quiz",
-  "scramble",
-  "wheel",
-  "categories",
-  "draw",
-  "logo",
-  "country",
-];
-
 const GAME_NAMES: Record<GameType, string> = {
   word: "💬 خمن الكلمة",
   quiz: "❓ أسئلة وأجوبة",
@@ -83,17 +64,6 @@ const GAME_NAMES: Record<GameType, string> = {
   draw: "✏️ خمن المثل",
   logo: "🏷️ خمن الشعار",
   country: "🚩 خمن العلم",
-};
-
-const DEFAULT_ROUNDS: Record<GameType, number> = {
-  word: 2,
-  quiz: 1,
-  scramble: 2,
-  wheel: 1,
-  categories: 1,
-  draw: 2,
-  logo: 2,
-  country: 2,
 };
 
 const GAME_LOADERS = {
@@ -157,29 +127,6 @@ const CountryGame = dynamic(GAME_LOADERS.country, {
   loading: GameLoading,
 });
 
-function isGameType(value: string | null): value is GameType {
-  return (
-    value !== null &&
-    VALID_GAMES.includes(value as GameType)
-  );
-}
-
-function isQuizCategory(
-  value: string | null
-): value is QuizCategoryKey {
-  return (
-    value !== null &&
-    Object.prototype.hasOwnProperty.call(
-      quizCategoryMeta,
-      value
-    )
-  );
-}
-
-function getDefaultRounds(game: GameType) {
-  return DEFAULT_ROUNDS[game];
-}
-
 function getGameName(game: GameType) {
   return GAME_NAMES[game];
 }
@@ -190,58 +137,6 @@ function getRoundsLabel(count: number) {
   if (count >= 3 && count <= 10) return `${count} جولات`;
 
   return `${count} جولة`;
-}
-
-function getRoundCount(
-  game: GameType,
-  gameRounds: Record<string, number>
-) {
-  const value = Math.floor(
-    Number(gameRounds[game])
-  );
-
-  return Number.isFinite(value) && value > 0
-    ? Math.min(value, 10)
-    : getDefaultRounds(game);
-}
-
-function buildRoundQueue(
-  selectedGames: GameType[],
-  gameRounds: Record<string, number>,
-  quizCategories: QuizCategoryKey[]
-): Round[] {
-  const queue: Round[] = [];
-
-  const shuffledCategories =
-    shuffle(quizCategories);
-
-  selectedGames.forEach((game) => {
-    if (game === "quiz") {
-      shuffledCategories.forEach((category) => {
-        queue.push({ game, category });
-      });
-
-      return;
-    }
-
-    const count = getRoundCount(
-      game,
-      gameRounds
-    );
-
-    for (
-      let i = 0;
-      i < count;
-      i += 1
-    ) {
-      queue.push({
-        game,
-        category: null,
-      });
-    }
-  });
-
-  return queue;
 }
 
 const SAVED_MATCH_KEY = "khal-nelab-match";
@@ -1550,6 +1445,9 @@ export default function MatchPage() {
     };
   }
 
+  const snapshotRef = useRef(snapshot);
+  snapshotRef.current = snapshot;
+
   function clearFlowTimers() {
     if (transitionTimer.current) {
       clearTimeout(transitionTimer.current);
@@ -1844,7 +1742,7 @@ export default function MatchPage() {
     }
 
     const startTimer = setTimeout(() => {
-      saveMatch(snapshot({ index: 0 }));
+      saveMatch(snapshotRef.current({ index: 0 }));
       setStarted(true);
       setPhase("playing");
     }, 650);
