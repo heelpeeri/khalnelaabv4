@@ -51,49 +51,6 @@ function splitAnswerWords(answer: string) {
   return answer.trim().split(/\s+/);
 }
 
-function HelpModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  if (!open) return null;
-
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/75 px-4"
-    >
-      <div className="w-full max-w-lg rounded-[28px] border border-white/15 bg-[#120d2c]/95 p-6 text-right shadow-2xl">
-        <div className="flex items-center justify-between gap-3">
-          <h3 className="text-2xl font-black">طريقة اللعب</h3>
-
-          <button
-            onClick={onClose}
-            aria-label="إغلاق"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-lg font-bold text-white transition hover:bg-white/10"
-            type="button"
-          >
-            ×
-          </button>
-        </div>
-
-        <div className="mt-5 space-y-3 text-sm leading-7 text-white/85 md:text-base">
-          <p>1. لف العجلة عشان تحدد قيمة الحرف.</p>
-          <p>2. إذا طلعت خسارة الدور أو إفلاس ينتقل الدور مباشرة.</p>
-          <p>3. بعد الدوران اختر حرف من الكلمة.</p>
-          <p>4. كل حرف صحيح يضيف نفس قيمة العجلة.</p>
-          <p>5. لما تنحل الكلمة، الفريق اللي نقاطه أكثر ياخذ الجولة.</p>
-        </div>
-
-        <button
-          onClick={onClose}
-          className="btn-primary mt-6 min-w-[140px]"
-          type="button"
-        >
-          فهمت
-        </button>
-      </div>
-    </div>
-  );
-}
-
 export default function WheelGame({
   side1Name,
   side2Name,
@@ -136,7 +93,6 @@ export default function WheelGame({
     null,
   );
 
-  const [showHelp, setShowHelp] = useState(false);
   const [solveOpen, setSolveOpen] = useState(false);
   const [solveGuess, setSolveGuess] = useState("");
   const [loaded, setLoaded] = useState(false);
@@ -671,6 +627,7 @@ export default function WheelGame({
         turnSide={turn}
 
         currentRound={currentRound}
+        game="wheel"
       >
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -679,14 +636,6 @@ export default function WheelGame({
 
               <span>{category}</span>
             </div>
-
-            <button
-              onClick={() => setShowHelp(true)}
-              type="button"
-              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white transition hover:bg-white/10"
-            >
-              طريقة اللعب
-            </button>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-base font-bold md:text-lg">
@@ -929,8 +878,6 @@ export default function WheelGame({
           </div>
         </div>
       </GameLayout>
-
-      <HelpModal open={showHelp} onClose={() => setShowHelp(false)} />
     </>
   );
 }

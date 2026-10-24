@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import QrCode from "@/components/QrCode";
 import GameLayout from "@/components/match/GameLayout";
-import { JudgeModal } from "@/components/match/Overlays";
+import { InlineJudge } from "@/components/match/Overlays";
 import { WHO_GAME } from "@/data/scramble";
 import { createDeck } from "@/lib/deck";
 import { readRoundState, writeRoundState } from "@/lib/roundState";
@@ -51,8 +51,6 @@ export default function ScrambleGame({
 
   const [revealed, setRevealed] = useState(false);
 
-  const [showJudge, setShowJudge] = useState(false);
-
   const [timeLeft, setTimeLeft] = useState(timerSeconds);
 
   const [origin, setOrigin] = useState("");
@@ -68,7 +66,6 @@ export default function ScrambleGame({
   useEffect(() => {
     setLoaded(true);
 
-    setShowJudge(false);
     setTimeLeft(timerSeconds);
 
     const saved = readRoundState<ScrambleRoundState>("scramble", roundKey);
@@ -131,7 +128,7 @@ export default function ScrambleGame({
   const personUrl = current && origin ? `${origin}/person/${current.id}` : "";
 
   useEffect(() => {
-    if (!timerEnabled || !started || revealed || !current || showJudge) {
+    if (!timerEnabled || !started || revealed || !current) {
       return;
     }
 
@@ -145,7 +142,7 @@ export default function ScrambleGame({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [timerEnabled, started, revealed, timeLeft, current, showJudge]);
+  }, [timerEnabled, started, revealed, timeLeft, current]);
 
   function startGuessing() {
     setStarted(true);
@@ -177,7 +174,6 @@ export default function ScrambleGame({
 
     setStarted(false);
     setRevealed(false);
-    setShowJudge(false);
 
     setTimeLeft(timerSeconds);
   }
@@ -189,8 +185,6 @@ export default function ScrambleGame({
 
     setSide1Score(next1);
     setSide2Score(next2);
-
-    setShowJudge(false);
 
     goNext(next1, next2);
   }
@@ -228,8 +222,6 @@ export default function ScrambleGame({
         ? "text-yellow-300"
         : "text-cyan-300";
 
-  const isLastCharacter = index + 1 >= rounds.length;
-
   return (
     <>
       <GameLayout
@@ -241,6 +233,7 @@ export default function ScrambleGame({
         turn={activeTeamName}
         turnSide={activeSide}
         currentRound={currentRound}
+        game="scramble"
       >
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -327,24 +320,16 @@ export default function ScrambleGame({
             )}
 
             {revealed && (
-              <button
-                type="button"
-                onClick={() => setShowJudge(true)}
-                className="btn-primary min-w-[170px]"
-              >
-                {isLastCharacter ? "إنهاء الجولة" : "الشخصية اللي بعدها"}
-              </button>
+              <InlineJudge
+                resetKey={index}
+                teamName={activeTeamName}
+                onCorrect={markCorrect}
+                onWrong={markWrong}
+              />
             )}
           </div>
         </div>
       </GameLayout>
-
-      <JudgeModal
-        show={showJudge}
-        teamName={activeTeamName}
-        onCorrect={markCorrect}
-        onWrong={markWrong}
-      />
     </>
   );
 }

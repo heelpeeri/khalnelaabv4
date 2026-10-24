@@ -1,6 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
+import HowToPlayButton from "@/components/match/HowToPlayButton";
+import type { GameType } from "@/lib/matchQueue";
 
 type TeamSide = "side1" | "side2";
 
@@ -25,6 +27,8 @@ type GameLayoutProps = {
   currentRound?: number;
 
   neutralTurnStyle?: "default" | "duo";
+
+  game?: GameType;
 
   children: ReactNode;
 };
@@ -104,6 +108,8 @@ export default function GameLayout({
 
   neutralTurnStyle = "default",
 
+  game,
+
   children,
 }: GameLayoutProps) {
   const cleanTurn = normalizeTeamName(turn);
@@ -171,7 +177,11 @@ export default function GameLayout({
             <GameTitle title={title} />
           </div>
 
-          <div className="w-9 shrink-0" />
+          {game ? (
+            <HowToPlayButton game={game} />
+          ) : (
+            <div className="w-9 shrink-0" />
+          )}
         </div>
 
         <div className="mb-2 grid grid-cols-3 gap-1.5 sm:gap-2">
@@ -205,7 +215,7 @@ export default function GameLayout({
                   : `
                     border-fuchsia-300/15
                     bg-fuchsia-500/[0.06]
-                    opacity-50
+                    opacity-75
                   `
               }
             `}
@@ -220,7 +230,7 @@ export default function GameLayout({
                 transition-colors
                 duration-500
 
-                ${isSide1Turn ? "text-fuchsia-100" : "text-white/45"}
+                ${isSide1Turn ? "text-fuchsia-100" : "text-white/75"}
               `}
             >
               {side1}
@@ -239,7 +249,7 @@ export default function GameLayout({
                 duration-500
                 sm:text-[52px]
 
-                ${isSide1Turn ? "text-fuchsia-100" : "text-fuchsia-200/50"}
+                ${isSide1Turn ? "text-fuchsia-100" : "text-fuchsia-200/75"}
               `}
             >
               {sideStatus ? (
@@ -381,7 +391,7 @@ export default function GameLayout({
                   : `
                     border-cyan-300/15
                     bg-cyan-400/[0.06]
-                    opacity-50
+                    opacity-75
                   `
               }
             `}
@@ -396,7 +406,7 @@ export default function GameLayout({
                 transition-colors
                 duration-500
 
-                ${isSide2Turn ? "text-cyan-100" : "text-white/45"}
+                ${isSide2Turn ? "text-cyan-100" : "text-white/75"}
               `}
             >
               {side2}
@@ -415,7 +425,7 @@ export default function GameLayout({
                 duration-500
                 sm:text-[52px]
 
-                ${isSide2Turn ? "text-cyan-100" : "text-cyan-200/50"}
+                ${isSide2Turn ? "text-cyan-100" : "text-cyan-200/75"}
               `}
             >
               {sideStatus ? (

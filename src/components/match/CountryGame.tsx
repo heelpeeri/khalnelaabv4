@@ -137,6 +137,7 @@ export default function CountryGame({
       turn={started ? "خمنوا الأعلام" : "جاهزين؟ 👀"}
       neutralTurnStyle="duo"
       currentRound={currentRound}
+      game="country"
     >
       <div className="mx-auto w-full max-w-5xl" dir="rtl">
         {!started ? (

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import GameLayout from "@/components/match/GameLayout";
-import { JudgeModal } from "@/components/match/Overlays";
+import { InlineJudge } from "@/components/match/Overlays";
 import { LOGOS, type LogoItem } from "@/data/logos";
 import { createDeck } from "@/lib/deck";
 import { readRoundState, writeRoundState } from "@/lib/roundState";
@@ -213,8 +213,6 @@ export default function LogoGame({
 
   const [revealed, setRevealed] = useState(false);
 
-  const [showJudge, setShowJudge] = useState(false);
-
   const [timeLeft, setTimeLeft] = useState(timerSeconds);
 
   const [side1Score, setSide1Score] = useState(0);
@@ -225,8 +223,6 @@ export default function LogoGame({
 
   useEffect(() => {
     setLoaded(true);
-
-    setShowJudge(false);
 
     setTimeLeft(timerSeconds);
 
@@ -277,7 +273,7 @@ export default function LogoGame({
     activeSide === "side1" ? side1Name || "فريق 1" : side2Name || "فريق 2";
 
   useEffect(() => {
-    if (!timerEnabled || revealed || !current || showJudge) {
+    if (!timerEnabled || revealed || !current) {
       return;
     }
 
@@ -292,7 +288,7 @@ export default function LogoGame({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [timerEnabled, revealed, timeLeft, current, showJudge]);
+  }, [timerEnabled, revealed, timeLeft, current]);
 
   function finishGame(final1: number, final2: number) {
     if (final1 > final2) {
@@ -321,8 +317,6 @@ export default function LogoGame({
 
     setRevealed(false);
 
-    setShowJudge(false);
-
     setTimeLeft(timerSeconds);
   }
 
@@ -334,8 +328,6 @@ export default function LogoGame({
     setSide1Score(next1);
 
     setSide2Score(next2);
-
-    setShowJudge(false);
 
     goNext(next1, next2);
   }
@@ -373,8 +365,6 @@ export default function LogoGame({
         ? "text-yellow-300"
         : "text-cyan-300";
 
-  const isLastLogo = index + 1 >= rounds.length;
-
   return (
     <>
       <GameLayout
@@ -386,6 +376,7 @@ export default function LogoGame({
         turn={activeTeamName}
         turnSide={activeSide}
         currentRound={currentRound}
+        game="logo"
       >
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -446,24 +437,16 @@ export default function LogoGame({
             )}
 
             {revealed && (
-              <button
-                type="button"
-                onClick={() => setShowJudge(true)}
-                className="btn-primary min-w-[170px]"
-              >
-                {isLastLogo ? "إنهاء الجولة" : "الشعار اللي بعده"}
-              </button>
+              <InlineJudge
+                resetKey={index}
+                teamName={activeTeamName}
+                onCorrect={markCorrect}
+                onWrong={markWrong}
+              />
             )}
           </div>
         </div>
       </GameLayout>
-
-      <JudgeModal
-        show={showJudge}
-        teamName={activeTeamName}
-        onCorrect={markCorrect}
-        onWrong={markWrong}
-      />
     </>
   );
 }

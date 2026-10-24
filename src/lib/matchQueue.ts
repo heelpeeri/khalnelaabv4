@@ -94,3 +94,9 @@ export function buildRoundQueue(
 
   return queue;
 }
+
+const LONG_TIMER_GAMES: GameType[] = ["categories", "country"];
+
+export function getTimerSeconds(game: GameType, baseSeconds: number) {
+  return LONG_TIMER_GAMES.includes(game) ? baseSeconds * 2 : baseSeconds;
+}

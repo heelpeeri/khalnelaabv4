@@ -3,117 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-
-const games = [
-  {
-    image: "/images/posters/Wheelgame.png",
-    title: "لف وخمن",
-    how: [
-      "لف العجلة وشف وش تطلع لك",
-      "اختر حرف تتوقع إنه موجود بالكلمة",
-      "إذا الحرف موجود تاخذ قيمة العجلة",
-      "إذا الحرف مكرر، تاخذ النقاط على كل مرة ظهر فيها",
-      "إذا الحرف مو موجود، يروح الدور للفريق الثاني",
-      "انتبه للإفلاس وتخطي الدور",
-      "لما تنحل الكلمة، اللي نقاطه أكثر يفوز",
-    ],
-    example: "طلعت لك 200 واخترتوا حرف موجود مرتين؟ تاخذون 400.",
-  },
-
-  {
-    image: "/images/posters/wordgame.png",
-    title: "خمن الكلمة",
-    how: [
-      "كل مرة يكون الدور على فريق",
-      "اكتبوا كلمة من 5 حروف",
-      "الأخضر: الحرف صح ومكانه صح",
-      "الأصفر: الحرف موجود بس بمكان ثاني",
-      "الرمادي: الحرف مو موجود",
-      "بعد كل محاولة يروح الدور للفريق الثاني",
-      "أول فريق يجيب الكلمة يفوز",
-    ],
-  },
-
-  {
-    image: "/images/posters/Quizgame.png",
-    title: "أسئلة وأجوبة",
-    how: [
-      "كل فئة تختارونها جولة فيها 6 أسئلة",
-      "كل سؤال يبدأ فيه فريق",
-      "جاوبوا قبل ما يخلص الوقت",
-      "إذا راحت الفرصة، الفريق الثاني يحاول",
-      "تقدرون تستخدمون المساعدة وتطلعون الخيارات",
-      "بعد ظهور الإجابة، حددوا مين جاوب صح",
-      "كل إجابة صح تحسب نقطة",
-    ],
-  },
-
-  {
-    image: "/images/posters/Proverbgame.png",
-    title: "خمن المثل",
-    how: [
-      "بيطلع لكم لغز يمثل مثل معروف",
-      "الفريق اللي عليه الدور يحاول يعرف المثل",
-      "إذا ما جاوب، تروح الفرصة للفريق الثاني",
-      "بعدها تطلع الإجابة",
-      "حددوا مين جاوب صح",
-    ],
-  },
-
-  {
-    image: "/images/posters/Whogame.png",
-    title: "منهو ذا؟",
-    how: [
-      "يطلع كود QR لشخصية",
-      "واحد يمسح الكود ويشوف الشخصية بدون ما يوري الباقين",
-      "يوصف الشخصية بدون ما يقول اسمها",
-      "الفريق يحاول يعرف منهو",
-      "بعد المحاولة تطلع الشخصية على الشاشة",
-      "حددوا إذا التخمين صح أو لا",
-      "بعدها يجي دور الفريق الثاني",
-    ],
-  },
-
-  {
-    image: "/images/posters/Categoriesgame.png",
-    title: "إنسان حيوان نبات جماد بلاد",
-    how: [
-      "بيطلع حرف واحد للفريقين",
-      "كل فريق يفكر بإجابة لكل تصنيف بنفس الحرف",
-      "إذا خلص فريق، يسجل صاحب الجلسة إنه خلص",
-      "اللعبة تسجل وقت كل فريق",
-      "بعدها راجعوا الإجابات",
-      "إذا الفريقين صح، الأسرع يفوز",
-    ],
-  },
-
-  {
-    image: "/images/posters/Logogame.png",
-    title: "خمن الشعار",
-    how: [
-      "يطلع شعار مبكسل للفريق اللي عليه الدور",
-      "حاولوا تعرفونه قبل ما تكشفونه",
-      "بعد الكشف يطلع الشعار واضح مع اسمه",
-      "صاحب الجلسة يحدد إذا جوابكم صح",
-      "بعدها يجي دور الفريق الثاني بشعار جديد",
-      "الفريق اللي يجمع نقاط أكثر يفوز",
-    ],
-  },
-
-  {
-    image: "/images/posters/Countries.png",
-    title: "خمن العلم",
-    how: [
-      "يطلع كود QR لكل فريق",
-      "كل فريق يمسح كوده ويشوف العلم اللي لازم الفريق الثاني يخمنه",
-      "لا تورونه للفريق الثاني",
-      "كل فريق يخمن علمه بأسئلة جوابها نعم أو لا",
-      "بعدها اكشفوا الأعلام",
-      "صاحب الجلسة يحدد الفائز",
-    ],
-    example: "اللي يسكن كود الفريق اللي ضده يا ويله 👀",
-  },
-];
+import { HOW_TO_PLAY as games } from "@/data/howToPlay";
 
 export default function GuidePage() {
   const [flippedCard, setFlippedCard] = useState<number | null>(null);
@@ -278,7 +168,7 @@ export default function GuidePage() {
                     <div className="relative flex h-full flex-col">
                       <div className="flex shrink-0 items-center justify-between gap-3">
                         <div>
-                          <p className="text-[10px] font-black text-cyan-300/55">
+                          <p className="text-xs font-black text-cyan-300/70">
                             طريقة اللعب
                           </p>
 
@@ -340,7 +230,7 @@ export default function GuidePage() {
                               {stepIndex + 1}
                             </div>
 
-                            <p className="text-xs font-bold leading-5 text-white/80 lg:text-[10px] lg:leading-[16px] xl:text-[11px] xl:leading-[18px]">
+                            <p className="text-xs font-bold leading-5 text-white/80 lg:text-[11px] lg:leading-[17px] xl:text-xs xl:leading-[19px]">
                               {step}
                             </p>
                           </div>
@@ -360,7 +250,7 @@ export default function GuidePage() {
                             py-2
                           "
                         >
-                          <span className="text-xs font-bold leading-5 text-yellow-50/75 lg:text-[10px] lg:leading-4 xl:text-[11px]">
+                          <span className="text-xs font-bold leading-5 text-yellow-50/75 lg:text-[11px] lg:leading-4 xl:text-xs">
                             {game.example}
                           </span>
                         </div>

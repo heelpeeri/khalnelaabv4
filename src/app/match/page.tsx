@@ -18,6 +18,7 @@ import type { QuizCategoryKey } from "@/data/quiz/meta";
 import {
   buildRoundQueue,
   getDefaultRounds,
+  getTimerSeconds,
   isGameType,
   isQuizCategory,
   type GameType,
@@ -239,6 +240,10 @@ export default function MatchPage() {
       return;
     }
 
+    beginMatch();
+  }
+
+  function beginMatch() {
     if (selectedGames.length === 0) {
       return;
     }
@@ -399,14 +404,17 @@ export default function MatchPage() {
     setShowRoundWinnerPicker(true);
   }
 
-  function restart() {
-    resetRoundFlow();
-
-    if (mode === "session") {
-      setSelectedGames([]);
-      setGameRounds({});
-      setQuizCategories([]);
+  function replay() {
+    if (phase !== "finished") {
+      return;
     }
+
+    clearSavedMatch();
+    beginMatch();
+  }
+
+  function changeGames() {
+    resetRoundFlow();
   }
 
   function goHome() {
@@ -588,7 +596,9 @@ export default function MatchPage() {
     side2Name: side2,
     currentRound: index + 1,
     timerEnabled,
-    timerSeconds,
+    timerSeconds: current
+      ? getTimerSeconds(current.game, timerSeconds)
+      : timerSeconds,
   };
 
   function renderCurrentGame() {
@@ -666,7 +676,8 @@ export default function MatchPage() {
         side2Score={side2Score}
         roundStats={roundStats}
         sharing={sharing}
-        onRestart={restart}
+        onReplay={replay}
+        onChangeGames={changeGames}
         onGoHome={goHome}
         onShare={handleShareResult}
       />
