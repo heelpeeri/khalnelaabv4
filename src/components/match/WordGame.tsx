@@ -651,6 +651,7 @@ export default function WordGame({
   physicalKeyRef.current = (event) => {
     if (
       showHelp ||
+      document.querySelector('[role="dialog"]') ||
       event.ctrlKey ||
       event.metaKey ||
       event.altKey

@@ -395,7 +395,7 @@ export default function SetupGame({
         <div
           className={`mt-3 grid items-start gap-2.5 ${
             isQuickMode
-              ? "mx-auto max-w-[260px] grid-cols-1"
+              ? "mx-auto max-w-[230px] grid-cols-1"
               : "grid-cols-2 sm:grid-cols-4 lg:grid-cols-8"
           }`}
         >
@@ -437,7 +437,7 @@ export default function SetupGame({
                     fill
                     sizes={
                       isQuickMode
-                        ? "260px"
+                        ? "230px"
                         : "(max-width: 640px) 45vw, (max-width: 1024px) 24vw, 13vw"
                     }
                     className={`object-cover transition-transform duration-500 ease-out ${
