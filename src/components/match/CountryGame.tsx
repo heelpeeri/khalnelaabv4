@@ -9,6 +9,10 @@ import {
   type CountryItem,
 } from "@/data/countries";
 import { createDeck } from "@/lib/deck";
+import {
+  readRoundState,
+  writeRoundState,
+} from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 type Props = {
@@ -22,6 +26,12 @@ type Props = {
 };
 
 const countryDeck = createDeck(COUNTRIES);
+
+type CountryRoundState = {
+  countries: [CountryItem, CountryItem];
+  started: boolean;
+  revealed: boolean;
+};
 
 const actionButtonClass =
   "btn-primary mt-5 w-full py-3 text-lg";
@@ -85,6 +95,23 @@ export default function CountryGame({
       window.location.origin
     );
 
+    setTimeLeft(
+      timerSeconds
+    );
+
+    const saved =
+      readRoundState<CountryRoundState>(
+        "country",
+        roundKey
+      );
+
+    if (saved && saved.countries.length === 2) {
+      setCountries(saved.countries);
+      setStarted(saved.started);
+      setRevealed(saved.revealed);
+      return;
+    }
+
     const picked =
       countryDeck.draw(2);
 
@@ -101,13 +128,30 @@ export default function CountryGame({
 
     setStarted(false);
     setRevealed(false);
-
-    setTimeLeft(
-      timerSeconds
-    );
   }, [
     roundKey,
     timerSeconds,
+  ]);
+
+  useEffect(() => {
+    if (!countries) {
+      return;
+    }
+
+    writeRoundState<CountryRoundState>(
+      "country",
+      roundKey,
+      {
+        countries,
+        started,
+        revealed,
+      }
+    );
+  }, [
+    roundKey,
+    countries,
+    started,
+    revealed,
   ]);
 
   useEffect(() => {

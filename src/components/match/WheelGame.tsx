@@ -16,10 +16,26 @@ import {
 } from "@/data/wheel";
 
 import { createDeck } from "@/lib/deck";
+import {
+  readRoundState,
+  writeRoundState,
+} from "@/lib/roundState";
 import type { TeamTurn as Turn, WinnerType } from "@/types/game";
 import type { WheelValue as Value } from "@/data/wheel";
 
 const puzzleDeck = createDeck(PUZZLES);
+
+type WheelRoundState = {
+  answer: string;
+  category: string;
+  revealed: string[];
+  usedLetters: string[];
+  turn: Turn;
+  phase: "spin" | "guess";
+  currentValue: Value | null;
+  score1: number;
+  score2: number;
+};
 
 type Phase = "spin" | "result" | "guess" | "celebrate";
 
@@ -166,10 +182,51 @@ export default function WheelGame({
   useEffect(() => {
     setLoaded(true);
 
+    const cleanup = () => {
+      if (tickTimerRef.current) {
+        clearInterval(tickTimerRef.current);
+      }
+
+      clearFlowTimers();
+    };
+
+    setRotation(0);
+    setSpinning(false);
+    setWinnerName("");
+    setTimeLeft(timerSeconds);
+    setWheelGlow(false);
+    setActiveSegmentIndex(null);
+
+    const saved =
+      readRoundState<WheelRoundState>(
+        "wheel",
+        roundKey
+      );
+
+    if (saved && saved.answer) {
+      const guessing =
+        saved.phase === "guess" &&
+        typeof saved.currentValue === "number";
+
+      setAnswer(saved.answer);
+      setCategory(saved.category);
+      setRevealed(saved.revealed);
+      setUsedLetters(saved.usedLetters);
+      setTurn(saved.turn);
+      setPhase(guessing ? "guess" : "spin");
+      setCurrentValue(
+        guessing ? saved.currentValue : null
+      );
+      setScore1(saved.score1);
+      setScore2(saved.score2);
+
+      return cleanup;
+    }
+
     const [q] = puzzleDeck.draw(1);
 
     if (!q) {
-      return;
+      return cleanup;
     }
 
     setAnswer(q.answer);
@@ -181,28 +238,54 @@ export default function WheelGame({
     setTurn("side1");
     setPhase("spin");
 
-    setRotation(0);
-    setSpinning(false);
-
     setCurrentValue(null);
-    setWinnerName("");
 
     setScore1(0);
     setScore2(0);
 
-    setTimeLeft(timerSeconds);
-
-    setWheelGlow(false);
-    setActiveSegmentIndex(null);
-
-    return () => {
-      if (tickTimerRef.current) {
-        clearInterval(tickTimerRef.current);
-      }
-
-      clearFlowTimers();
-    };
+    return cleanup;
   }, [roundKey, timerSeconds]);
+
+  useEffect(() => {
+    if (
+      !loaded ||
+      !answer ||
+      phase === "celebrate" ||
+      phase === "result" ||
+      spinning
+    ) {
+      return;
+    }
+
+    writeRoundState<WheelRoundState>(
+      "wheel",
+      roundKey,
+      {
+        answer,
+        category,
+        revealed,
+        usedLetters,
+        turn,
+        phase,
+        currentValue,
+        score1,
+        score2,
+      }
+    );
+  }, [
+    loaded,
+    roundKey,
+    answer,
+    category,
+    revealed,
+    usedLetters,
+    turn,
+    phase,
+    currentValue,
+    score1,
+    score2,
+    spinning,
+  ]);
 
   useEffect(() => {
     return () => {

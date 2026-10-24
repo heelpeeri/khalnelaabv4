@@ -4,6 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import GameLayout from "@/components/match/GameLayout";
 import { WORDS } from "@/data/words";
 import { createDeck } from "@/lib/deck";
+import {
+  readRoundState,
+  writeRoundState,
+} from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 type CellState = "correct" | "present" | "absent";
@@ -28,6 +32,18 @@ function normalizeArabic(text: string) {
 }
 
 const keyboardLetters = keyboardRows.join("");
+
+type WordRoundState = {
+  answer: string;
+  category: string;
+  guesses: string[];
+  status: "playing" | "lost";
+  keyStatus: Record<string, CellState>;
+  removedLetters: string[];
+  activeSide: TeamSide;
+  side1HintUsed: boolean;
+  side2HintUsed: boolean;
+};
 
 const wordDeck = createDeck(
   WORDS.filter((word) => {
@@ -280,6 +296,36 @@ export default function WordGame({
       currentRound % 2 === 1
         ? "side1"
         : "side2";
+
+    const saved =
+      readRoundState<WordRoundState>(
+        "word",
+        roundKey
+      );
+
+    if (saved && saved.answer) {
+      setAnswer(saved.answer);
+      setCategory(saved.category);
+      setGuesses(saved.guesses);
+      setCurrent("");
+      setStatus(saved.status);
+      setKeyStatus(saved.keyStatus);
+      setRemovedLetters(saved.removedLetters);
+      setActiveSide(saved.activeSide);
+      setTimeLeft(timerSeconds);
+      setSide1HintUsed(saved.side1HintUsed);
+      setSide2HintUsed(saved.side2HintUsed);
+      setFeedback(
+        saved.status === "lost"
+          ? "انتهت المحاولات"
+          : `الدور على ${
+              saved.activeSide === "side1"
+                ? side1Name
+                : side2Name
+            }`
+      );
+      return;
+    }
 
     const [randomWord] =
       wordDeck.draw(1);
@@ -643,6 +689,40 @@ export default function WordGame({
         previous + key
     );
   }
+
+  useEffect(() => {
+    if (!loaded || !answer || status === "won") {
+      return;
+    }
+
+    writeRoundState<WordRoundState>(
+      "word",
+      roundKey,
+      {
+        answer,
+        category,
+        guesses,
+        status,
+        keyStatus,
+        removedLetters,
+        activeSide,
+        side1HintUsed,
+        side2HintUsed,
+      }
+    );
+  }, [
+    loaded,
+    roundKey,
+    answer,
+    category,
+    guesses,
+    status,
+    keyStatus,
+    removedLetters,
+    activeSide,
+    side1HintUsed,
+    side2HintUsed,
+  ]);
 
   const physicalKeyRef = useRef<
     (event: KeyboardEvent) => void

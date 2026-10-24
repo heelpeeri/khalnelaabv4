@@ -4,9 +4,23 @@ import { useEffect, useState } from "react";
 import { GameTitle } from "@/components/match/GameLayout";
 import { CATEGORY_LETTERS as letters } from "@/data/categories";
 import { createDeck } from "@/lib/deck";
+import {
+  readRoundState,
+  writeRoundState,
+} from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 const letterDeck = createDeck(letters);
+
+type CategoriesRoundState = {
+  letter: string;
+  revealed: boolean;
+  side1Ready: boolean;
+  side2Ready: boolean;
+  side1Time: number | null;
+  side2Time: number | null;
+  roundStartedAt: number;
+};
 
 export default function CategoriesGame({
   side1Name,
@@ -39,10 +53,28 @@ export default function CategoriesGame({
   const [roundStartedAt, setRoundStartedAt] = useState(() => Date.now());
 
   useEffect(() => {
+    setTimeLeft(timerSeconds);
+
+    const saved =
+      readRoundState<CategoriesRoundState>(
+        "categories",
+        roundKey
+      );
+
+    if (saved && saved.letter) {
+      setLetter(saved.letter);
+      setRevealed(saved.revealed);
+      setSide1Ready(saved.side1Ready);
+      setSide2Ready(saved.side2Ready);
+      setSide1Time(saved.side1Time);
+      setSide2Time(saved.side2Time);
+      setRoundStartedAt(saved.roundStartedAt);
+      return;
+    }
+
     const [next] = letterDeck.draw(1);
 
     setLetter(next ?? "");
-    setTimeLeft(timerSeconds);
     setRevealed(false);
 
     setSide1Ready(false);
@@ -53,6 +85,35 @@ export default function CategoriesGame({
 
     setRoundStartedAt(Date.now());
   }, [roundKey, timerSeconds]);
+
+  useEffect(() => {
+    if (!letter) {
+      return;
+    }
+
+    writeRoundState<CategoriesRoundState>(
+      "categories",
+      roundKey,
+      {
+        letter,
+        revealed,
+        side1Ready,
+        side2Ready,
+        side1Time,
+        side2Time,
+        roundStartedAt,
+      }
+    );
+  }, [
+    roundKey,
+    letter,
+    revealed,
+    side1Ready,
+    side2Ready,
+    side1Time,
+    side2Time,
+    roundStartedAt,
+  ]);
 
   useEffect(() => {
     if (revealed) return;

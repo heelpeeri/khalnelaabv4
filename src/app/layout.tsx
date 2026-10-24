@@ -19,9 +19,30 @@ const somar = localFont({
   display: "swap",
 });
 
+const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : "http://localhost:3000";
+
+const description =
+  "ألعاب جماعية للجلسات: فريقين، ثمان ألعاب، وبطل واحد.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "خل نلعب",
-  description: "ألعاب جماعية للجلسات: فريقين، ثمان ألعاب، وبطل واحد.",
+  description,
+  applicationName: "خل نلعب",
+  openGraph: {
+    title: "خل نلعب",
+    description,
+    siteName: "خل نلعب",
+    locale: "ar_SA",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "خل نلعب",
+    description,
+  },
 };
 
 export const viewport: Viewport = {

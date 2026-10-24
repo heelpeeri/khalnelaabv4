@@ -5,6 +5,10 @@ import GameLayout from "@/components/match/GameLayout";
 import { TeamPickModal } from "@/components/match/Overlays";
 import { PROVERB_PUZZLES as puzzles } from "@/data/proverbs";
 import { createDeck } from "@/lib/deck";
+import {
+  readRoundState,
+  writeRoundState,
+} from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_ROUNDS = 6;
@@ -13,6 +17,15 @@ const SECOND_TIME = 10;
 type TeamSide = "side1" | "side2";
 
 const proverbDeck = createDeck(puzzles);
+
+type ProverbRoundState = {
+  rounds: typeof puzzles;
+  index: number;
+  revealed: boolean;
+  secondTurn: boolean;
+  side1Score: number;
+  side2Score: number;
+};
 
 export default function ProverbGame({
   side1Name,
@@ -61,21 +74,66 @@ export default function ProverbGame({
   useEffect(() => {
     setLoaded(true);
 
+    setTimeLeft(timerSeconds);
+    setShowWinnerPicker(false);
+
+    const saved =
+      readRoundState<ProverbRoundState>(
+        "draw",
+        roundKey
+      );
+
+    if (saved && saved.rounds.length > 0) {
+      setRounds(saved.rounds);
+      setIndex(saved.index);
+      setRevealed(saved.revealed);
+      setSecondTurn(saved.secondTurn);
+      setSide1Score(saved.side1Score);
+      setSide2Score(saved.side2Score);
+      return;
+    }
+
     setRounds(
       proverbDeck.draw(TOTAL_ROUNDS)
     );
 
     setIndex(0);
 
-    setTimeLeft(timerSeconds);
-
     setRevealed(false);
     setSecondTurn(false);
-    setShowWinnerPicker(false);
 
     setSide1Score(0);
     setSide2Score(0);
   }, [roundKey, timerSeconds]);
+
+  useEffect(() => {
+    if (!loaded || rounds.length === 0) {
+      return;
+    }
+
+    writeRoundState<ProverbRoundState>(
+      "draw",
+      roundKey,
+      {
+        rounds,
+        index,
+        revealed,
+        secondTurn,
+        side1Score,
+        side2Score,
+      }
+    );
+  }, [
+    loaded,
+    roundKey,
+    rounds,
+    index,
+    revealed,
+    secondTurn,
+    side1Score,
+    side2Score,
+  ]);
+
 
   const current = rounds[index];
 

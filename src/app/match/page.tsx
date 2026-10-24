@@ -22,6 +22,7 @@ import {
   type QuizCategoryKey,
 } from "@/data/quiz/meta";
 import { shuffle } from "@/lib/deck";
+import { clearRoundState } from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 type GameType =
@@ -272,6 +273,8 @@ function saveMatch(match: SavedMatch) {
 }
 
 function clearSavedMatch() {
+  clearRoundState();
+
   try {
     sessionStorage.removeItem(SAVED_MATCH_KEY);
   } catch {}
@@ -1617,6 +1620,7 @@ export default function MatchPage() {
 
     clearFlowTimers();
     resetRoundGuards();
+    clearRoundState();
 
     setQueue(builtQueue);
 
@@ -1702,6 +1706,8 @@ export default function MatchPage() {
 
     resolvedRoundRef.current = index;
     endingRoundRef.current = index;
+
+    clearRoundState();
 
     const finalWinner = winner ?? "none";
 
