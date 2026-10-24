@@ -5,33 +5,23 @@ import GameLayout from "@/components/match/GameLayout";
 import { WORDS } from "@/data/words";
 import { createDeck } from "@/lib/deck";
 import {
+  WORD_LENGTH,
+  evaluateGuess,
+  isPlayableWord,
+  keyboardLetters,
+  keyboardRows,
+  normalizeArabic,
+  type CellState,
+} from "@/lib/wordRules";
+import {
   readRoundState,
   writeRoundState,
 } from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
-type CellState = "correct" | "present" | "absent";
 type TeamSide = "side1" | "side2";
 
-const WORD_LENGTH = 5;
 const MAX_TRIES = 6;
-
-const keyboardRows = [
-  "جحخهعغفقثصض",
-  "كمنتالبيسش",
-  "ورزدذطظ",
-];
-
-function normalizeArabic(text: string) {
-  return text
-    .trim()
-    .replace(/\s+/g, "")
-    .replace(/ة/g, "ه")
-    .replace(/أ|إ|آ/g, "ا")
-    .replace(/ى/g, "ي");
-}
-
-const keyboardLetters = keyboardRows.join("");
 
 type WordRoundState = {
   answer: string;
@@ -46,74 +36,8 @@ type WordRoundState = {
 };
 
 const wordDeck = createDeck(
-  WORDS.filter((word) => {
-    const letters = Array.from(
-      normalizeArabic(word.answer)
-    );
-
-    return (
-      letters.length === WORD_LENGTH &&
-      letters.every((letter) =>
-        keyboardLetters.includes(letter)
-      )
-    );
-  })
+  WORDS.filter((word) => isPlayableWord(word.answer))
 );
-
-function evaluateGuess(
-  guess: string,
-  answer: string
-): CellState[] {
-  const guessLetters = Array.from(
-    normalizeArabic(guess)
-  );
-
-  const answerLetters = Array.from(
-    normalizeArabic(answer)
-  );
-
-  const result: CellState[] = Array(
-    guessLetters.length
-  ).fill("absent");
-
-  const remainingLetters: Record<
-    string,
-    number
-  > = {};
-
-  guessLetters.forEach((letter, index) => {
-    if (letter === answerLetters[index]) {
-      result[index] = "correct";
-    } else {
-      const answerLetter =
-        answerLetters[index];
-
-      if (answerLetter) {
-        remainingLetters[answerLetter] =
-          (remainingLetters[answerLetter] ??
-            0) + 1;
-      }
-    }
-  });
-
-  guessLetters.forEach((letter, index) => {
-    if (result[index] === "correct") {
-      return;
-    }
-
-    const remainingCount =
-      remainingLetters[letter] ?? 0;
-
-    if (remainingCount > 0) {
-      result[index] = "present";
-
-      remainingLetters[letter] =
-        remainingCount - 1;
-    }
-  });
-
-  return result;
-}
 
 function HelpModal({
   open,
@@ -254,9 +178,15 @@ export default function WordGame({
   const [showHelp, setShowHelp] =
     useState(false);
 
+  const resetRoundRef = useRef(resetRound);
+  resetRoundRef.current = resetRound;
+
+  const switchTurnRef = useRef(switchTurn);
+  switchTurnRef.current = switchTurn;
+
   useEffect(() => {
     setLoaded(true);
-    resetRound();
+    resetRoundRef.current();
   }, [
     roundKey,
     currentRound,
@@ -272,7 +202,7 @@ export default function WordGame({
     }
 
     if (timeLeft <= 0) {
-      switchTurn();
+      switchTurnRef.current();
       return;
     }
 
