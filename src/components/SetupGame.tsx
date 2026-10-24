@@ -5,7 +5,7 @@ import type { Dispatch, SetStateAction } from "react";
 import {
   quizCategoryList,
   type QuizCategoryKey,
-} from "@/data/quiz";
+} from "@/data/quiz/meta";
 
 type SetupGameId =
   | "word"
@@ -395,7 +395,7 @@ export default function SetupGame({
         <div
           className={`mt-3 grid items-start gap-2.5 ${
             isQuickMode
-              ? "mx-auto max-w-[260px] grid-cols-1"
+              ? "mx-auto max-w-[230px] grid-cols-1"
               : "grid-cols-2 sm:grid-cols-4 lg:grid-cols-8"
           }`}
         >
@@ -437,7 +437,7 @@ export default function SetupGame({
                     fill
                     sizes={
                       isQuickMode
-                        ? "260px"
+                        ? "230px"
                         : "(max-width: 640px) 45vw, (max-width: 1024px) 24vw, 13vw"
                     }
                     className={`object-cover transition-transform duration-500 ease-out ${
@@ -502,7 +502,7 @@ export default function SetupGame({
                     ) : (
                       <>
                         <p className="mb-1.5 text-center text-[11px] font-black text-white/60">
-                          الفئات
+                          الفئات · كل فئة جولة
                         </p>
 
                         <div className="grid grid-cols-2 gap-1.5">

@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { WHO_GAME } from "@/data/scramble";
 
 export default async function PersonPage({
@@ -10,13 +12,7 @@ export default async function PersonPage({
   const person = WHO_GAME.find((p) => p.id === id);
 
   if (!person) {
-    return (
-      <main className="flex min-h-[100dvh] items-center justify-center px-5 text-center text-white">
-        <h1 className="text-2xl font-black">
-          ما لقينا الشخصية 🤔
-        </h1>
-      </main>
-    );
+    notFound();
   }
 
   return (

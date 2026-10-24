@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import QrCode from "@/components/QrCode";
 import GameLayout from "@/components/match/GameLayout";
 import {
   COUNTRIES,
@@ -21,14 +22,6 @@ type Props = {
 };
 
 const countryDeck = createDeck(COUNTRIES);
-
-function createQrUrl(
-  value: string
-) {
-  return `https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=8&data=${encodeURIComponent(
-    value
-  )}`;
-}
 
 const actionButtonClass =
   "btn-primary mt-5 w-full py-3 text-lg";
@@ -185,6 +178,13 @@ export default function CountryGame({
       side2={side2}
       side1Score={0}
       side2Score={0}
+      sideStatus={
+        revealed
+          ? { side1: "🚩 انكشف", side2: "🚩 انكشف" }
+          : started
+            ? { side1: "يخمنون 🤔", side2: "يخمنون 🤔" }
+            : { side1: "يمسحون 📱", side2: "يمسحون 📱" }
+      }
       turn={
         started
           ? "خمنوا الأعلام"
@@ -241,13 +241,9 @@ export default function CountryGame({
 
                 <div className="mx-auto mt-3 w-fit rounded-[16px] bg-white p-2">
                   {side2FlagUrl ? (
-                    <img
-                      src={createQrUrl(
-                        side2FlagUrl
-                      )}
-                      alt={`QR ${side1}`}
-                      width={200}
-                      height={200}
+                    <QrCode
+                      value={side2FlagUrl}
+                      label={`كود ${side1}`}
                       className="h-[200px] w-[200px]"
                     />
                   ) : (
@@ -276,13 +272,9 @@ export default function CountryGame({
 
                 <div className="mx-auto mt-3 w-fit rounded-[16px] bg-white p-2">
                   {side1FlagUrl ? (
-                    <img
-                      src={createQrUrl(
-                        side1FlagUrl
-                      )}
-                      alt={`QR ${side2}`}
-                      width={200}
-                      height={200}
+                    <QrCode
+                      value={side1FlagUrl}
+                      label={`كود ${side2}`}
                       className="h-[200px] w-[200px]"
                     />
                   ) : (

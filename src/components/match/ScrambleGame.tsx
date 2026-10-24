@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
+import QrCode from "@/components/QrCode";
 import GameLayout from "@/components/match/GameLayout";
 import { JudgeModal } from "@/components/match/Overlays";
 import { WHO_GAME } from "@/data/scramble";
@@ -310,13 +311,9 @@ export default function ScrambleGame({
               <div className="flex flex-col items-center gap-4">
                 <div className="rounded-2xl bg-white p-2.5">
                   {personUrl ? (
-                    <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=480x480&margin=8&data=${encodeURIComponent(
-                        personUrl
-                      )}`}
-                      alt="كود الشخصية"
-                      width={240}
-                      height={240}
+                    <QrCode
+                      value={personUrl}
+                      label="كود الشخصية"
                       className="h-[220px] w-[220px] sm:h-[240px] sm:w-[240px]"
                     />
                   ) : (

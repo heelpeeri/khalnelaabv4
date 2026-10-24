@@ -1,6 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import GameLayout from "@/components/match/GameLayout";
 
 import {
@@ -67,6 +73,7 @@ function HelpModal({
           <p>2. إذا طلعت خسارة الدور أو إفلاس ينتقل الدور مباشرة.</p>
           <p>3. بعد الدوران اختر حرف من الكلمة.</p>
           <p>4. كل حرف صحيح يضيف نفس قيمة العجلة.</p>
+          <p>5. لما تنحل الكلمة، الفريق اللي نقاطه أكثر ياخذ الجولة.</p>
         </div>
 
         <button
@@ -123,6 +130,8 @@ export default function WheelGame({
     useState<number | null>(null);
 
   const [showHelp, setShowHelp] = useState(false);
+  const [solveOpen, setSolveOpen] = useState(false);
+  const [solveGuess, setSolveGuess] = useState("");
   const [loaded, setLoaded] = useState(false);
 
   const tickTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -382,13 +391,25 @@ export default function WheelGame({
     );
   }
 
-  function finishRound(winner: WinnerType) {
+  function finishRound(
+    final1: number,
+    final2: number
+  ) {
     if (phase === "celebrate") return;
+
+    const winner: WinnerType =
+      final1 > final2
+        ? "side1"
+        : final2 > final1
+          ? "side2"
+          : "none";
 
     setWinnerName(
       winner === "side1"
         ? side1Name
-        : side2Name
+        : winner === "side2"
+          ? side2Name
+          : ""
     );
 
     setPhase("celebrate");
@@ -596,7 +617,12 @@ export default function WheelGame({
         );
 
       if (solved) {
-        finishRound(turn);
+        finishRound(
+          score1 +
+            (turn === "side1" ? gained : 0),
+          score2 +
+            (turn === "side2" ? gained : 0)
+        );
       }
 
       return;
@@ -611,11 +637,17 @@ export default function WheelGame({
     setTimeLeft(timerSeconds);
   }
 
-  function solveWord() {
+  useEffect(() => {
+    setSolveOpen(false);
+    setSolveGuess("");
+  }, [phase, turn]);
+
+  function solveWord(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
     if (phase !== "guess") return;
 
-    const guess =
-      window.prompt("اكتبوا الجواب كامل");
+    const guess = solveGuess.trim();
 
     if (!guess) return;
 
@@ -623,7 +655,15 @@ export default function WheelGame({
       normalizeArabic(guess) ===
       normalizeArabic(answer)
     ) {
-      finishRound(turn);
+      setRevealed(
+        answer
+          .split("")
+          .map((char) =>
+            char === " " ? "" : char
+          )
+      );
+
+      finishRound(score1, score2);
       return;
     }
 
@@ -934,15 +974,51 @@ export default function WheelGame({
                   )}
                 </div>
 
-                <div className="flex justify-center">
-                  <button
-                    type="button"
-                    onClick={solveWord}
-                    className="btn-primary min-w-[170px]"
+                {solveOpen ? (
+                  <form
+                    onSubmit={solveWord}
+                    className="mx-auto flex w-full max-w-md flex-col gap-2 sm:flex-row"
                   >
-                    عرفتوها؟ حلّوها
-                  </button>
-                </div>
+                    <input
+                      autoFocus
+                      value={solveGuess}
+                      onChange={(event) =>
+                        setSolveGuess(event.target.value)
+                      }
+                      placeholder="اكتبوا الجواب كامل"
+                      aria-label="الجواب"
+                      className="h-12 min-w-0 flex-1 rounded-2xl border border-white/15 bg-black/25 px-4 text-center text-lg font-black text-white outline-none placeholder:text-white/35 focus:border-cyan-300/60"
+                    />
+
+                    <div className="grid grid-cols-2 gap-2 sm:flex">
+                      <button
+                        type="submit"
+                        disabled={!solveGuess.trim()}
+                        className="btn-primary"
+                      >
+                        تأكيد
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setSolveOpen(false)}
+                        className="btn-secondary"
+                      >
+                        رجوع
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setSolveOpen(true)}
+                      className="btn-primary min-w-[170px]"
+                    >
+                      عرفتوها؟ حلّوها
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -950,15 +1026,17 @@ export default function WheelGame({
               <div className="mt-4">
                 <div className="rounded-3xl border border-yellow-300/40 bg-yellow-400/15 px-6 py-8 shadow-2xl">
                   <p className="text-5xl">
-                    🏆
+                    {winnerName ? "🏆" : "🤝"}
                   </p>
 
                   <p className="mt-4 text-3xl font-black">
-                    {winnerName}
+                    {winnerName || "تعادل"}
                   </p>
 
                   <p className="mt-2 text-lg text-white/85">
-                    أخذ الجولة!
+                    {winnerName
+                      ? `أخذ الجولة بـ ${Math.max(score1, score2)} نقطة`
+                      : `النقاط متساوية: ${score1}`}
                   </p>
                 </div>
               </div>

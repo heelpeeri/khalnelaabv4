@@ -2,7 +2,7 @@ import type { QuizQuestion } from "./index";
 
 export const footballQuestions: QuizQuestion[] = [
   {
-    question: "أي نادٍ سعودي حقق دوري أبطال آسيا للنخبة في موسمي 2024-2025 و2025-2026؟",
+    question: "أي نادٍ سعودي حقق أول نسخة من دوري أبطال آسيا للنخبة في موسم 2024-2025؟",
     answer: "الأهلي",
     options: ["الأهلي", "الاتحاد", "الهلال", "النصر"],
   },
