@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import GameLayout from "@/components/match/GameLayout";
 import { WORDS } from "@/data/words";
 import { createDeck } from "@/lib/deck";
@@ -634,6 +634,66 @@ export default function WordGame({
         previous + key
     );
   }
+
+  const physicalKeyRef = useRef<
+    (event: KeyboardEvent) => void
+  >(() => {});
+
+  physicalKeyRef.current = (event) => {
+    if (
+      showHelp ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    const target = event.target as HTMLElement | null;
+
+    if (target?.closest("input, textarea")) {
+      return;
+    }
+
+    if (event.key === "Enter") {
+      if (
+        current.length === WORD_LENGTH &&
+        !target?.closest("button, a")
+      ) {
+        event.preventDefault();
+        submitGuess();
+      }
+
+      return;
+    }
+
+    if (event.key === "Backspace") {
+      event.preventDefault();
+      setCurrent((previous) => previous.slice(0, -1));
+      return;
+    }
+
+    if (event.key.length !== 1) {
+      return;
+    }
+
+    const letter = normalizeArabic(event.key);
+
+    if (keyboardRows.join("").includes(letter)) {
+      event.preventDefault();
+      handleKeyboardClick(letter);
+    }
+  };
+
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) =>
+      physicalKeyRef.current(event);
+
+    window.addEventListener("keydown", listener);
+
+    return () =>
+      window.removeEventListener("keydown", listener);
+  }, []);
 
   function getCellColor(
     guess: string,

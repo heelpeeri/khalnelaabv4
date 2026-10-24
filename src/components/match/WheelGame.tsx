@@ -1,6 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import GameLayout from "@/components/match/GameLayout";
 
 import {
@@ -124,6 +130,8 @@ export default function WheelGame({
     useState<number | null>(null);
 
   const [showHelp, setShowHelp] = useState(false);
+  const [solveOpen, setSolveOpen] = useState(false);
+  const [solveGuess, setSolveGuess] = useState("");
   const [loaded, setLoaded] = useState(false);
 
   const tickTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -629,11 +637,17 @@ export default function WheelGame({
     setTimeLeft(timerSeconds);
   }
 
-  function solveWord() {
+  useEffect(() => {
+    setSolveOpen(false);
+    setSolveGuess("");
+  }, [phase, turn]);
+
+  function solveWord(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
     if (phase !== "guess") return;
 
-    const guess =
-      window.prompt("اكتبوا الجواب كامل");
+    const guess = solveGuess.trim();
 
     if (!guess) return;
 
@@ -960,15 +974,51 @@ export default function WheelGame({
                   )}
                 </div>
 
-                <div className="flex justify-center">
-                  <button
-                    type="button"
-                    onClick={solveWord}
-                    className="btn-primary min-w-[170px]"
+                {solveOpen ? (
+                  <form
+                    onSubmit={solveWord}
+                    className="mx-auto flex w-full max-w-md flex-col gap-2 sm:flex-row"
                   >
-                    عرفتوها؟ حلّوها
-                  </button>
-                </div>
+                    <input
+                      autoFocus
+                      value={solveGuess}
+                      onChange={(event) =>
+                        setSolveGuess(event.target.value)
+                      }
+                      placeholder="اكتبوا الجواب كامل"
+                      aria-label="الجواب"
+                      className="h-12 min-w-0 flex-1 rounded-2xl border border-white/15 bg-black/25 px-4 text-center text-lg font-black text-white outline-none placeholder:text-white/35 focus:border-cyan-300/60"
+                    />
+
+                    <div className="grid grid-cols-2 gap-2 sm:flex">
+                      <button
+                        type="submit"
+                        disabled={!solveGuess.trim()}
+                        className="btn-primary"
+                      >
+                        تأكيد
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setSolveOpen(false)}
+                        className="btn-secondary"
+                      >
+                        رجوع
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setSolveOpen(true)}
+                      className="btn-primary min-w-[170px]"
+                    >
+                      عرفتوها؟ حلّوها
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 

@@ -20,7 +20,7 @@ import {
 import {
   quizCategoryMeta,
   type QuizCategoryKey,
-} from "@/data/quiz";
+} from "@/data/quiz/meta";
 import { shuffle } from "@/lib/deck";
 import type { WinnerType } from "@/types/game";
 
@@ -195,10 +195,6 @@ function getRoundCount(
   game: GameType,
   gameRounds: Record<string, number>
 ) {
-  if (game === "quiz") {
-    return 1;
-  }
-
   const value = Math.floor(
     Number(gameRounds[game])
   );
@@ -219,10 +215,11 @@ function buildRoundQueue(
     shuffle(quizCategories);
 
   selectedGames.forEach((game) => {
-    if (
-      game === "quiz" &&
-      shuffledCategories.length === 0
-    ) {
+    if (game === "quiz") {
+      shuffledCategories.forEach((category) => {
+        queue.push({ game, category });
+      });
+
       return;
     }
 
@@ -238,16 +235,79 @@ function buildRoundQueue(
     ) {
       queue.push({
         game,
-        category:
-          game === "quiz"
-            ? shuffledCategories[0] ??
-              null
-            : null,
+        category: null,
       });
     }
   });
 
   return queue;
+}
+
+const SAVED_MATCH_KEY = "khal-nelab-match";
+
+type SavedMatch = {
+  search: string;
+  mode: ModeType;
+  side1: string;
+  side2: string;
+  selectedGames: GameType[];
+  gameRounds: Record<string, number>;
+  quizCategories: QuizCategoryKey[];
+  timerEnabled: boolean;
+  timerSeconds: number;
+  queue: Round[];
+  index: number;
+  side1Score: number;
+  side2Score: number;
+  roundStats: RoundStat[];
+};
+
+function saveMatch(match: SavedMatch) {
+  try {
+    sessionStorage.setItem(
+      SAVED_MATCH_KEY,
+      JSON.stringify(match)
+    );
+  } catch {}
+}
+
+function clearSavedMatch() {
+  try {
+    sessionStorage.removeItem(SAVED_MATCH_KEY);
+  } catch {}
+}
+
+function readSavedMatch(
+  search: string
+): SavedMatch | null {
+  try {
+    const raw = sessionStorage.getItem(
+      SAVED_MATCH_KEY
+    );
+
+    if (!raw) return null;
+
+    const match = JSON.parse(raw) as SavedMatch;
+
+    const valid =
+      match.search === search &&
+      Array.isArray(match.queue) &&
+      match.queue.length > 0 &&
+      match.queue.every(
+        (round) =>
+          isGameType(round.game) &&
+          (round.category === null ||
+            isQuizCategory(round.category))
+      ) &&
+      Number.isInteger(match.index) &&
+      match.index >= 0 &&
+      match.index < match.queue.length &&
+      Array.isArray(match.roundStats);
+
+    return valid ? match : null;
+  } catch {
+    return null;
+  }
 }
 
 function preloadGames(games: GameType[]) {
@@ -811,6 +871,17 @@ async function createResultShareImage({
   canvas.width = 1080;
   canvas.height = 1350;
 
+  const fontFamily =
+    getComputedStyle(document.body).fontFamily ||
+    "Arial, sans-serif";
+
+  try {
+    await Promise.all([
+      document.fonts.load(`700 40px ${fontFamily}`, "خل نلعب"),
+      document.fonts.load(`500 28px ${fontFamily}`, "خل نلعب"),
+    ]);
+  } catch {}
+
   const ctx =
     canvas.getContext("2d");
 
@@ -860,10 +931,10 @@ async function createResultShareImage({
 
   const pinkGlow =
     ctx.createRadialGradient(
-      150,
+      930,
       470,
       20,
-      150,
+      930,
       470,
       430
     );
@@ -890,10 +961,10 @@ async function createResultShareImage({
 
   const cyanGlow =
     ctx.createRadialGradient(
-      930,
+      150,
       500,
       20,
-      930,
+      150,
       500,
       430
     );
@@ -967,7 +1038,7 @@ async function createResultShareImage({
     "#67e8f9";
 
   ctx.font =
-    "900 35px Arial";
+    `900 35px ${fontFamily}`;
 
   ctx.fillText(
     "خل نلعب 🎮",
@@ -979,7 +1050,7 @@ async function createResultShareImage({
     "#ffffff";
 
   ctx.font =
-    "900 72px Arial";
+    `900 72px ${fontFamily}`;
 
   ctx.fillText(
     isDraw
@@ -990,7 +1061,7 @@ async function createResultShareImage({
   );
 
   ctx.font =
-    "900 40px Arial";
+    `900 40px ${fontFamily}`;
 
   ctx.fillStyle =
     "#f5e9ff";
@@ -1005,7 +1076,7 @@ async function createResultShareImage({
 
   drawRoundedRect(
     ctx,
-    105,
+    585,
     390,
     390,
     270,
@@ -1014,9 +1085,9 @@ async function createResultShareImage({
 
   const team1Gradient =
     ctx.createLinearGradient(
-      105,
+      585,
       390,
-      495,
+      975,
       660
     );
 
@@ -1046,26 +1117,26 @@ async function createResultShareImage({
     "#fae8ff";
 
   ctx.font =
-    "900 32px Arial";
+    `900 32px ${fontFamily}`;
 
   ctx.fillText(
     side1 || "فريق 1",
-    300,
+    780,
     460
   );
 
   ctx.font =
-    "900 110px Arial";
+    `900 110px ${fontFamily}`;
 
   ctx.fillText(
     String(side1Score),
-    300,
+    780,
     590
   );
 
   drawRoundedRect(
     ctx,
-    585,
+    105,
     390,
     390,
     270,
@@ -1074,9 +1145,9 @@ async function createResultShareImage({
 
   const team2Gradient =
     ctx.createLinearGradient(
-      585,
+      105,
       390,
-      975,
+      495,
       660
     );
 
@@ -1106,20 +1177,20 @@ async function createResultShareImage({
     "#cffafe";
 
   ctx.font =
-    "900 32px Arial";
+    `900 32px ${fontFamily}`;
 
   ctx.fillText(
     side2 || "فريق 2",
-    780,
+    300,
     460
   );
 
   ctx.font =
-    "900 110px Arial";
+    `900 110px ${fontFamily}`;
 
   ctx.fillText(
     String(side2Score),
-    780,
+    300,
     590
   );
 
@@ -1127,7 +1198,7 @@ async function createResultShareImage({
     "rgba(255,255,255,0.35)";
 
   ctx.font =
-    "900 48px Arial";
+    `900 48px ${fontFamily}`;
 
   ctx.fillText(
     "-",
@@ -1158,7 +1229,7 @@ async function createResultShareImage({
     "#ffffff";
 
   ctx.font =
-    "900 40px Arial";
+    `900 40px ${fontFamily}`;
 
   ctx.fillText(
     "نتيجة الجلسة",
@@ -1170,7 +1241,7 @@ async function createResultShareImage({
     "rgba(255,255,255,0.68)";
 
   ctx.font =
-    "700 28px Arial";
+    `700 28px ${fontFamily}`;
 
   ctx.fillText(
     `${roundText}  •  ${drawText}`,
@@ -1203,7 +1274,7 @@ async function createResultShareImage({
     "#ffffff";
 
   ctx.font =
-    "900 44px Arial";
+    `900 44px ${fontFamily}`;
 
   ctx.fillText(
     "تقدرون تتحدونا؟ 👀",
@@ -1215,7 +1286,7 @@ async function createResultShareImage({
     "rgba(255,255,255,0.60)";
 
   ctx.font =
-    "700 27px Arial";
+    `700 27px ${fontFamily}`;
 
   ctx.fillText(
     "العبوا خل نلعب وشوفوا مين يفوز",
@@ -1227,7 +1298,7 @@ async function createResultShareImage({
     "#67e8f9";
 
   ctx.font =
-    "900 38px Arial";
+    `900 38px ${fontFamily}`;
 
   ctx.fillText(
     "خل نلعب",
@@ -1239,7 +1310,7 @@ async function createResultShareImage({
     "rgba(255,255,255,0.38)";
 
   ctx.font =
-    "600 23px Arial";
+    `600 23px ${fontFamily}`;
 
   ctx.fillText(
     window.location.host,
@@ -1386,6 +1457,28 @@ export default function MatchPage() {
     )
   );
 
+  function snapshot(
+    overrides: Partial<SavedMatch>
+  ): SavedMatch {
+    return {
+      search: window.location.search,
+      mode,
+      side1,
+      side2,
+      selectedGames,
+      gameRounds,
+      quizCategories,
+      timerEnabled,
+      timerSeconds,
+      queue,
+      index,
+      side1Score,
+      side2Score,
+      roundStats,
+      ...overrides,
+    };
+  }
+
   function clearFlowTimers() {
     if (transitionTimer.current) {
       clearTimeout(transitionTimer.current);
@@ -1406,6 +1499,7 @@ export default function MatchPage() {
   function resetRoundFlow() {
     clearFlowTimers();
     resetRoundGuards();
+    clearSavedMatch();
 
     setStarted(false);
     setIndex(0);
@@ -1551,14 +1645,16 @@ export default function MatchPage() {
       side2Score +
       (finalWinner === "side2" ? 1 : 0);
 
-    setRoundStats((previous) => [
-      ...previous,
+    const nextRoundStats: RoundStat[] = [
+      ...roundStats,
       {
         game: current.game,
         round: index + 1,
         winner: finalWinner,
       },
-    ]);
+    ];
+
+    setRoundStats(nextRoundStats);
 
     setSide1Score(nextSide1Score);
     setSide2Score(nextSide2Score);
@@ -1566,6 +1662,8 @@ export default function MatchPage() {
     setShowRoundWinnerPicker(false);
 
     if (index + 1 >= queue.length) {
+      clearSavedMatch();
+
       finishSession(
         nextSide1Score,
         nextSide2Score
@@ -1573,6 +1671,15 @@ export default function MatchPage() {
 
       return;
     }
+
+    saveMatch(
+      snapshot({
+        index: index + 1,
+        side1Score: nextSide1Score,
+        side2Score: nextSide2Score,
+        roundStats: nextRoundStats,
+      })
+    );
 
     setRoundResultWinner(finalWinner);
     setShowRoundResult(true);
@@ -1620,6 +1727,7 @@ export default function MatchPage() {
 
   function goHome() {
     clearFlowTimers();
+    clearSavedMatch();
     router.push("/");
   }
 
@@ -1642,6 +1750,7 @@ export default function MatchPage() {
     }
 
     clearFlowTimers();
+    clearSavedMatch();
   }
 
   useEffect(() => {
@@ -1661,6 +1770,7 @@ export default function MatchPage() {
     }
 
     const startTimer = setTimeout(() => {
+      saveMatch(snapshot({ index: 0 }));
       setStarted(true);
       setPhase("playing");
     }, 650);
@@ -1677,6 +1787,29 @@ export default function MatchPage() {
     const gameParam = params.get("game");
     const categoryParam =
       params.get("category");
+
+    const saved = readSavedMatch(
+      window.location.search
+    );
+
+    if (saved) {
+      setMode(saved.mode);
+      setSide1(saved.side1);
+      setSide2(saved.side2);
+      setSelectedGames(saved.selectedGames);
+      setGameRounds(saved.gameRounds);
+      setQuizCategories(saved.quizCategories);
+      setTimerEnabled(saved.timerEnabled);
+      setTimerSeconds(saved.timerSeconds);
+      setQueue(saved.queue);
+      setIndex(saved.index);
+      setSide1Score(saved.side1Score);
+      setSide2Score(saved.side2Score);
+      setRoundStats(saved.roundStats);
+      setStarted(true);
+      setPhase("playing");
+      return;
+    }
 
     if (
       urlMode === "session" ||

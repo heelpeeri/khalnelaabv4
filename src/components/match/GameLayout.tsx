@@ -13,6 +13,11 @@ type GameLayoutProps = {
   side1Score: number;
   side2Score: number;
 
+  sideStatus?: {
+    side1: string;
+    side2: string;
+  };
+
   turn: string;
 
   turnSide?: TeamSide;
@@ -97,6 +102,8 @@ export default function GameLayout({
 
   side1Score,
   side2Score,
+
+  sideStatus,
 
   turn,
   turnSide,
@@ -264,7 +271,13 @@ export default function GameLayout({
                 }
               `}
             >
-              {side1Score}
+              {sideStatus ? (
+                <span className="py-1 text-base leading-tight sm:text-xl">
+                  {sideStatus.side1}
+                </span>
+              ) : (
+                side1Score
+              )}
             </p>
           </div>
 
@@ -446,7 +459,13 @@ export default function GameLayout({
                 }
               `}
             >
-              {side2Score}
+              {sideStatus ? (
+                <span className="py-1 text-base leading-tight sm:text-xl">
+                  {sideStatus.side2}
+                </span>
+              ) : (
+                side2Score
+              )}
             </p>
           </div>
         </div>

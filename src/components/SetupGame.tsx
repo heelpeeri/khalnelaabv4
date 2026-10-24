@@ -5,7 +5,7 @@ import type { Dispatch, SetStateAction } from "react";
 import {
   quizCategoryList,
   type QuizCategoryKey,
-} from "@/data/quiz";
+} from "@/data/quiz/meta";
 
 type SetupGameId =
   | "word"
@@ -502,7 +502,7 @@ export default function SetupGame({
                     ) : (
                       <>
                         <p className="mb-1.5 text-center text-[11px] font-black text-white/60">
-                          الفئات
+                          الفئات · كل فئة جولة
                         </p>
 
                         <div className="grid grid-cols-2 gap-1.5">
