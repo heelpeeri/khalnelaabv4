@@ -2,11 +2,7 @@ export type CellState = "correct" | "present" | "absent";
 
 export const WORD_LENGTH = 5;
 
-export const keyboardRows = [
-  "جحخهعغفقثصض",
-  "كمنتالبيسش",
-  "ورزدذطظ",
-];
+export const keyboardRows = ["جحخهعغفقثصض", "كمنتالبيسش", "ورزدذطظ"];
 
 export const keyboardLetters = keyboardRows.join("");
 
@@ -28,38 +24,24 @@ export function isPlayableWord(answer: string) {
   );
 }
 
-export function evaluateGuess(
-  guess: string,
-  answer: string
-): CellState[] {
-  const guessLetters = Array.from(
-    normalizeArabic(guess)
-  );
+export function evaluateGuess(guess: string, answer: string): CellState[] {
+  const guessLetters = Array.from(normalizeArabic(guess));
 
-  const answerLetters = Array.from(
-    normalizeArabic(answer)
-  );
+  const answerLetters = Array.from(normalizeArabic(answer));
 
-  const result: CellState[] = Array(
-    guessLetters.length
-  ).fill("absent");
+  const result: CellState[] = Array(guessLetters.length).fill("absent");
 
-  const remainingLetters: Record<
-    string,
-    number
-  > = {};
+  const remainingLetters: Record<string, number> = {};
 
   guessLetters.forEach((letter, index) => {
     if (letter === answerLetters[index]) {
       result[index] = "correct";
     } else {
-      const answerLetter =
-        answerLetters[index];
+      const answerLetter = answerLetters[index];
 
       if (answerLetter) {
         remainingLetters[answerLetter] =
-          (remainingLetters[answerLetter] ??
-            0) + 1;
+          (remainingLetters[answerLetter] ?? 0) + 1;
       }
     }
   });
@@ -69,14 +51,12 @@ export function evaluateGuess(
       return;
     }
 
-    const remainingCount =
-      remainingLetters[letter] ?? 0;
+    const remainingCount = remainingLetters[letter] ?? 0;
 
     if (remainingCount > 0) {
       result[index] = "present";
 
-      remainingLetters[letter] =
-        remainingCount - 1;
+      remainingLetters[letter] = remainingCount - 1;
     }
   });
 

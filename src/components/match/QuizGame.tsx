@@ -1,21 +1,12 @@
-'use client';
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import GameLayout from "@/components/match/GameLayout";
 import { TeamPickModal } from "@/components/match/Overlays";
-import {
-  quizQuestions,
-  quizCategoryMeta,
-} from "@/data/quiz";
-import type {
-  QuizCategoryKey,
-  QuizQuestion,
-} from "@/data/quiz";
+import { quizQuestions, quizCategoryMeta } from "@/data/quiz";
+import type { QuizCategoryKey, QuizQuestion } from "@/data/quiz";
 import { createDeck, type Deck } from "@/lib/deck";
-import {
-  readRoundState,
-  writeRoundState,
-} from "@/lib/roundState";
+import { readRoundState, writeRoundState } from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_QUESTIONS = 6;
@@ -35,20 +26,13 @@ const SECOND_TIME = 10;
 
 type TeamSide = "side1" | "side2";
 
-const quizDecks = new Map<
-  QuizCategoryKey,
-  Deck<QuizQuestion>
->();
+const quizDecks = new Map<QuizCategoryKey, Deck<QuizQuestion>>();
 
-function drawQuizQuestions(
-  category: QuizCategoryKey
-) {
+function drawQuizQuestions(category: QuizCategoryKey) {
   let deck = quizDecks.get(category);
 
   if (!deck) {
-    deck = createDeck(
-      quizQuestions[category] ?? []
-    );
+    deck = createDeck(quizQuestions[category] ?? []);
 
     quizDecks.set(category, deck);
   }
@@ -69,9 +53,7 @@ export default function QuizGame({
   side1Name: string;
   side2Name: string;
 
-  onRoundEnd: (
-    winner?: WinnerType
-  ) => void;
+  onRoundEnd: (winner?: WinnerType) => void;
 
   roundKey: number;
 
@@ -82,57 +64,29 @@ export default function QuizGame({
   timerEnabled?: boolean;
   timerSeconds?: number;
 }) {
-  const [questions, setQuestions] =
-    useState<QuizQuestion[]>([]);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
 
-  const [index, setIndex] =
-    useState(0);
+  const [index, setIndex] = useState(0);
 
-  const [loaded, setLoaded] =
-    useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  const [
-    showAnswer,
-    setShowAnswer,
-  ] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
 
-  const [
-    showOptions,
-    setShowOptions,
-  ] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
 
-  const [
-    secondTurn,
-    setSecondTurn,
-  ] = useState(false);
+  const [secondTurn, setSecondTurn] = useState(false);
 
-  const [
-    showJudge,
-    setShowJudge,
-  ] = useState(false);
+  const [showJudge, setShowJudge] = useState(false);
 
-  const [timeLeft, setTimeLeft] =
-    useState(timerSeconds);
+  const [timeLeft, setTimeLeft] = useState(timerSeconds);
 
-  const [
-    side1Score,
-    setSide1Score,
-  ] = useState(0);
+  const [side1Score, setSide1Score] = useState(0);
 
-  const [
-    side2Score,
-    setSide2Score,
-  ] = useState(0);
+  const [side2Score, setSide2Score] = useState(0);
 
-  const [
-    side1HintUsed,
-    setSide1HintUsed,
-  ] = useState(false);
+  const [side1HintUsed, setSide1HintUsed] = useState(false);
 
-  const [
-    side2HintUsed,
-    setSide2HintUsed,
-  ] = useState(false);
+  const [side2HintUsed, setSide2HintUsed] = useState(false);
 
   useEffect(() => {
     setLoaded(true);
@@ -142,11 +96,7 @@ export default function QuizGame({
     setShowJudge(false);
     setTimeLeft(timerSeconds);
 
-    const saved =
-      readRoundState<QuizRoundState>(
-        "quiz",
-        roundKey
-      );
+    const saved = readRoundState<QuizRoundState>("quiz", roundKey);
 
     if (saved && saved.questions.length > 0) {
       setQuestions(saved.questions);
@@ -161,9 +111,7 @@ export default function QuizGame({
       return;
     }
 
-    setQuestions(
-      drawQuizQuestions(category)
-    );
+    setQuestions(drawQuizQuestions(category));
 
     setIndex(0);
 
@@ -176,32 +124,24 @@ export default function QuizGame({
 
     setSide1HintUsed(false);
     setSide2HintUsed(false);
-  }, [
-    category,
-    roundKey,
-    timerSeconds,
-  ]);
+  }, [category, roundKey, timerSeconds]);
 
   useEffect(() => {
     if (!loaded || questions.length === 0) {
       return;
     }
 
-    writeRoundState<QuizRoundState>(
-      "quiz",
-      roundKey,
-      {
-        questions,
-        index,
-        showAnswer,
-        showOptions,
-        secondTurn,
-        side1Score,
-        side2Score,
-        side1HintUsed,
-        side2HintUsed,
-      }
-    );
+    writeRoundState<QuizRoundState>("quiz", roundKey, {
+      questions,
+      index,
+      showAnswer,
+      showOptions,
+      secondTurn,
+      side1Score,
+      side2Score,
+      side1HintUsed,
+      side2HintUsed,
+    });
   }, [
     loaded,
     roundKey,
@@ -216,54 +156,34 @@ export default function QuizGame({
     side2HintUsed,
   ]);
 
-  const current =
-    questions[index];
+  const current = questions[index];
 
-  const meta = category
-    ? quizCategoryMeta[category] ?? null
-    : null;
+  const meta = category ? (quizCategoryMeta[category] ?? null) : null;
 
-  const currentOptions =
-    current?.options ?? [];
+  const currentOptions = current?.options ?? [];
 
-  const mainTurn: TeamSide =
-    useMemo(
-      () =>
-        index % 2 === 0
-          ? "side1"
-          : "side2",
-      [index]
-    );
+  const mainTurn: TeamSide = useMemo(
+    () => (index % 2 === 0 ? "side1" : "side2"),
+    [index],
+  );
 
-  const activeTurn: TeamSide =
-    secondTurn
-      ? mainTurn === "side1"
-        ? "side2"
-        : "side1"
-      : mainTurn;
+  const activeTurn: TeamSide = secondTurn
+    ? mainTurn === "side1"
+      ? "side2"
+      : "side1"
+    : mainTurn;
 
   const activeTeamName =
-    activeTurn === "side1"
-      ? side1Name || "فريق 1"
-      : side2Name || "فريق 2";
+    activeTurn === "side1" ? side1Name || "فريق 1" : side2Name || "فريق 2";
 
   const activeTeamUsedHint =
-    activeTurn === "side1"
-      ? side1HintUsed
-      : side2HintUsed;
+    activeTurn === "side1" ? side1HintUsed : side2HintUsed;
 
   const canUseHint =
-    currentOptions.length > 0 &&
-    !showOptions &&
-    !activeTeamUsedHint;
+    currentOptions.length > 0 && !showOptions && !activeTeamUsedHint;
 
   useEffect(() => {
-    if (
-      !timerEnabled ||
-      showAnswer ||
-      !current ||
-      showJudge
-    ) {
+    if (!timerEnabled || showAnswer || !current || showJudge) {
       return;
     }
 
@@ -282,21 +202,11 @@ export default function QuizGame({
     }
 
     const timer = setTimeout(() => {
-      setTimeLeft(
-        (time) => time - 1
-      );
+      setTimeLeft((time) => time - 1);
     }, 1000);
 
-    return () =>
-      clearTimeout(timer);
-  }, [
-    timeLeft,
-    showAnswer,
-    secondTurn,
-    current,
-    timerEnabled,
-    showJudge,
-  ]);
+    return () => clearTimeout(timer);
+  }, [timeLeft, showAnswer, secondTurn, current, timerEnabled, showJudge]);
 
   function useHint() {
     if (!canUseHint) return;
@@ -310,10 +220,7 @@ export default function QuizGame({
     }
   }
 
-  function finishQuiz(
-    final1: number,
-    final2: number
-  ) {
+  function finishQuiz(final1: number, final2: number) {
     if (final1 > final2) {
       onRoundEnd("side1");
       return;
@@ -327,26 +234,14 @@ export default function QuizGame({
     onRoundEnd("none");
   }
 
-  function nextQuestion(
-    next1: number,
-    next2: number
-  ) {
-    if (
-      index + 1 >=
-      questions.length
-    ) {
-      finishQuiz(
-        next1,
-        next2
-      );
+  function nextQuestion(next1: number, next2: number) {
+    if (index + 1 >= questions.length) {
+      finishQuiz(next1, next2);
 
       return;
     }
 
-    setIndex(
-      (currentIndex) =>
-        currentIndex + 1
-    );
+    setIndex((currentIndex) => currentIndex + 1);
 
     setShowAnswer(false);
     setShowOptions(false);
@@ -357,33 +252,17 @@ export default function QuizGame({
     setTimeLeft(timerSeconds);
   }
 
-  function givePoint(
-    winner:
-      | "side1"
-      | "side2"
-      | "none"
-  ) {
-    const next1 =
-      side1Score +
-      (winner === "side1"
-        ? 1
-        : 0);
+  function givePoint(winner: "side1" | "side2" | "none") {
+    const next1 = side1Score + (winner === "side1" ? 1 : 0);
 
-    const next2 =
-      side2Score +
-      (winner === "side2"
-        ? 1
-        : 0);
+    const next2 = side2Score + (winner === "side2" ? 1 : 0);
 
     setSide1Score(next1);
     setSide2Score(next2);
 
     setShowJudge(false);
 
-    nextQuestion(
-      next1,
-      next2
-    );
+    nextQuestion(next1, next2);
   }
 
   if (!category || !meta) {
@@ -393,9 +272,7 @@ export default function QuizGame({
 
         <button
           type="button"
-          onClick={() =>
-            onRoundEnd("none")
-          }
+          onClick={() => onRoundEnd("none")}
           className="btn-primary mt-4"
         >
           إنهاء الجولة
@@ -409,15 +286,11 @@ export default function QuizGame({
 
     return (
       <div className="text-center text-white">
-        <p>
-          ما فيه أسئلة كافية
-        </p>
+        <p>ما فيه أسئلة كافية</p>
 
         <button
           type="button"
-          onClick={() =>
-            onRoundEnd("none")
-          }
+          onClick={() => onRoundEnd("none")}
           className="btn-primary mt-4"
         >
           إنهاء الجولة
@@ -433,19 +306,14 @@ export default function QuizGame({
         ? "text-yellow-300"
         : "text-cyan-300";
 
-  const isLastQuestion =
-    index + 1 >= questions.length;
+  const isLastQuestion = index + 1 >= questions.length;
 
   return (
     <>
       <GameLayout
         title="أسئلة وأجوبة"
-        side1={
-          side1Name || "فريق 1"
-        }
-        side2={
-          side2Name || "فريق 2"
-        }
+        side1={side1Name || "فريق 1"}
+        side2={side2Name || "فريق 2"}
         side1Score={side1Score}
         side2Score={side2Score}
         turn={activeTeamName}
@@ -453,36 +321,30 @@ export default function QuizGame({
         currentRound={currentRound}
       >
         <div className="flex flex-col gap-4">
-
           <div className="flex flex-wrap items-center justify-center gap-2">
             <div className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-black text-cyan-100">
               {meta.emoji} {meta.title}
             </div>
 
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
-              السؤال{" "}
-              <span className="text-white">
-                {index + 1}
-              </span>
+              السؤال <span className="text-white">{index + 1}</span>
               {" / "}
               {questions.length}
             </div>
 
-            {secondTurn &&
-              !showAnswer && (
-                <div className="rounded-full border border-yellow-300/25 bg-yellow-400/10 px-4 py-2 text-sm font-bold text-yellow-100">
-                  فرصة ثانية
-                </div>
-              )}
+            {secondTurn && !showAnswer && (
+              <div className="rounded-full border border-yellow-300/25 bg-yellow-400/10 px-4 py-2 text-sm font-bold text-yellow-100">
+                فرصة ثانية
+              </div>
+            )}
 
-            {timerEnabled &&
-              !showAnswer && (
-                <div
-                  className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 text-lg font-black ${timerColor}`}
-                >
-                  ⏱️ {timeLeft}
-                </div>
-              )}
+            {timerEnabled && !showAnswer && (
+              <div
+                className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 text-lg font-black ${timerColor}`}
+              >
+                ⏱️ {timeLeft}
+              </div>
+            )}
           </div>
 
           <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 sm:p-6">
@@ -498,29 +360,23 @@ export default function QuizGame({
               {current.question}
             </p>
 
-            {showOptions &&
-              currentOptions.length >
-                0 && (
-                <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  {currentOptions.map(
-                    (option) => (
-                      <div
-                        key={option}
-                        className="rounded-2xl border border-white/10 bg-black/20 p-4 text-base font-bold text-white sm:text-lg"
-                      >
-                        {option}
-                      </div>
-                    )
-                  )}
-                </div>
-              )}
+            {showOptions && currentOptions.length > 0 && (
+              <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {currentOptions.map((option) => (
+                  <div
+                    key={option}
+                    className="rounded-2xl border border-white/10 bg-black/20 p-4 text-base font-bold text-white sm:text-lg"
+                  >
+                    {option}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {showAnswer && (
             <div className="rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5">
-              <p className="text-sm font-bold text-white/60">
-                الإجابة
-              </p>
+              <p className="text-sm font-bold text-white/60">الإجابة</p>
 
               <p className="mt-2 text-xl font-black text-yellow-100">
                 {current.answer}
@@ -531,8 +387,7 @@ export default function QuizGame({
           <div className="flex flex-wrap items-center justify-center gap-3">
             {!showAnswer ? (
               <>
-                {currentOptions.length >
-                  0 && (
+                {currentOptions.length > 0 && (
                   <button
                     type="button"
                     onClick={useHint}
@@ -549,9 +404,7 @@ export default function QuizGame({
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowAnswer(true)
-                  }
+                  onClick={() => setShowAnswer(true)}
                   className="btn-primary"
                 >
                   إظهار الإجابة
@@ -560,14 +413,10 @@ export default function QuizGame({
             ) : (
               <button
                 type="button"
-                onClick={() =>
-                  setShowJudge(true)
-                }
+                onClick={() => setShowJudge(true)}
                 className="btn-primary min-w-[170px]"
               >
-                {isLastQuestion
-                  ? "إنهاء الجولة"
-                  : "السؤال اللي بعده"}
+                {isLastQuestion ? "إنهاء الجولة" : "السؤال اللي بعده"}
               </button>
             )}
           </div>

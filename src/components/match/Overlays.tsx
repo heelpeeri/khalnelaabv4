@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
 import type { WinnerType } from "@/types/game";
@@ -32,11 +32,7 @@ export function OverlayShell({
   zIndex?: string;
 }) {
   const width =
-    size === "lg"
-      ? "max-w-4xl"
-      : size === "sm"
-        ? "max-w-md"
-        : "max-w-xl";
+    size === "lg" ? "max-w-4xl" : size === "sm" ? "max-w-md" : "max-w-xl";
 
   return (
     <div
@@ -45,9 +41,7 @@ export function OverlayShell({
       className={`fixed inset-0 ${zIndex} overflow-y-auto bg-black/75 px-4 py-6`}
     >
       <div className="flex min-h-full items-center justify-center">
-        <div
-          className={`arcade-card w-full ${width} p-5 text-center sm:p-8`}
-        >
+        <div className={`arcade-card w-full ${width} p-5 text-center sm:p-8`}>
           {children}
         </div>
       </div>
@@ -67,9 +61,7 @@ export function OverlayHeading({
   return (
     <>
       {kicker && (
-        <p className="text-sm font-black text-cyan-300/80">
-          {kicker}
-        </p>
+        <p className="text-sm font-black text-cyan-300/80">{kicker}</p>
       )}
 
       <h1 className="arcade-title mt-3">{title}</h1>
@@ -108,11 +100,7 @@ export function TeamPickModal({
 
   return (
     <OverlayShell>
-      <OverlayHeading
-        kicker={kicker}
-        title={title}
-        subtitle={subtitle}
-      />
+      <OverlayHeading kicker={kicker} title={title} subtitle={subtitle} />
 
       <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2">
         <button
@@ -120,9 +108,7 @@ export function TeamPickModal({
           onClick={() => runOnce(() => onPick("side1"))}
           className="btn-team-1"
         >
-          <span className="block truncate">
-            {side1Name || "فريق 1"}
-          </span>
+          <span className="block truncate">{side1Name || "فريق 1"}</span>
         </button>
 
         <button
@@ -130,9 +116,7 @@ export function TeamPickModal({
           onClick={() => runOnce(() => onPick("side2"))}
           className="btn-team-2"
         >
-          <span className="block truncate">
-            {side2Name || "فريق 2"}
-          </span>
+          <span className="block truncate">{side2Name || "فريق 2"}</span>
         </button>
       </div>
 
@@ -164,10 +148,7 @@ export function JudgeModal({
 
   return (
     <OverlayShell>
-      <OverlayHeading
-        kicker={teamName}
-        title="عرفوها؟ 🎯"
-      />
+      <OverlayHeading kicker={teamName} title="عرفوها؟ 🎯" />
 
       <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2">
         <button

@@ -1,33 +1,87 @@
 export const PROVERB_PUZZLES = [
   { image: "/images/proverbs/proverb_01.png", answer: "القرد في عين امه غزال" },
   { image: "/images/proverbs/proverb_02.png", answer: "حبل الكذب قصير" },
-  { image: "/images/proverbs/proverb_03.png", answer: "ضربني وبكى سبقني واشتكى" },
-  { image: "/images/proverbs/proverb_04.png", answer: "طير باليد ولا عشره بالشجره" },
-  { image: "/images/proverbs/proverb_05.png", answer: "الباب اللي يجي منه ريح سده واستريح" },
+  {
+    image: "/images/proverbs/proverb_03.png",
+    answer: "ضربني وبكى سبقني واشتكى",
+  },
+  {
+    image: "/images/proverbs/proverb_04.png",
+    answer: "طير باليد ولا عشره بالشجره",
+  },
+  {
+    image: "/images/proverbs/proverb_05.png",
+    answer: "الباب اللي يجي منه ريح سده واستريح",
+  },
   { image: "/images/proverbs/proverb_06.png", answer: "مد رجلك على قد لحافك" },
-  { image: "/images/proverbs/proverb_07.png", answer: "اذا كان صاحبك عسل لا تلحسه كله" },
-  { image: "/images/proverbs/proverb_08.png", answer: "الطول طول نخله والعقل عقل صخله" },
+  {
+    image: "/images/proverbs/proverb_07.png",
+    answer: "اذا كان صاحبك عسل لا تلحسه كله",
+  },
+  {
+    image: "/images/proverbs/proverb_08.png",
+    answer: "الطول طول نخله والعقل عقل صخله",
+  },
   { image: "/images/proverbs/proverb_09.png", answer: "عين الحسود فيها عود" },
-  { image: "/images/proverbs/proverb_10.png", answer: "اللي ما يطول العنب حامض عنه يقول" },
-  { image: "/images/proverbs/proverb_11.png", answer: "اللي ما يعرف الصقر يشويه" },
+  {
+    image: "/images/proverbs/proverb_10.png",
+    answer: "اللي ما يطول العنب حامض عنه يقول",
+  },
+  {
+    image: "/images/proverbs/proverb_11.png",
+    answer: "اللي ما يعرف الصقر يشويه",
+  },
   { image: "/images/proverbs/proverb_12.png", answer: "الحب اعمى" },
   { image: "/images/proverbs/proverb_13.png", answer: "النوم سلطان" },
   { image: "/images/proverbs/proverb_14.png", answer: "يد وحده ما تصفق" },
   { image: "/images/proverbs/proverb_15.png", answer: "لسانك حصانك" },
-  { image: "/images/proverbs/proverb_16.png", answer: "اسال مجرب ولا تسال طبيب" },
-  { image: "/images/proverbs/proverb_17.png", answer: "لا تشب النار وتزعل من دخانها" },
+  {
+    image: "/images/proverbs/proverb_16.png",
+    answer: "اسال مجرب ولا تسال طبيب",
+  },
+  {
+    image: "/images/proverbs/proverb_17.png",
+    answer: "لا تشب النار وتزعل من دخانها",
+  },
   { image: "/images/proverbs/proverb_18.png", answer: "عنزه ولو طارت" },
-  { image: "/images/proverbs/proverb_19.png", answer: "الطيور على اشكالها تقع" },
+  {
+    image: "/images/proverbs/proverb_19.png",
+    answer: "الطيور على اشكالها تقع",
+  },
   { image: "/images/proverbs/proverb_20.png", answer: "من جد وجد" },
-  { image: "/images/proverbs/proverb_21.png", answer: "اقلب الجره على فمها تطلع على امها" },
-  { image: "/images/proverbs/proverb_22.png", answer: "القرش الابيض لليوم الاسود" },
-  { image: "/images/proverbs/proverb_23.png", answer: "يحسدون الاعمى على كبر عيونه" },
-  { image: "/images/proverbs/proverb_24.png", answer: "اللي رجله بالنار مو مثل اللي رجله بالموية" },
-  { image: "/images/proverbs/proverb_25.png", answer: "قالوا ثور قالوا احلبوه" },
-  { image: "/images/proverbs/proverb_26.png", answer: "ما لقوا للورد عيب قالوا يا احمر الخدين" },
+  {
+    image: "/images/proverbs/proverb_21.png",
+    answer: "اقلب الجره على فمها تطلع على امها",
+  },
+  {
+    image: "/images/proverbs/proverb_22.png",
+    answer: "القرش الابيض لليوم الاسود",
+  },
+  {
+    image: "/images/proverbs/proverb_23.png",
+    answer: "يحسدون الاعمى على كبر عيونه",
+  },
+  {
+    image: "/images/proverbs/proverb_24.png",
+    answer: "اللي رجله بالنار مو مثل اللي رجله بالموية",
+  },
+  {
+    image: "/images/proverbs/proverb_25.png",
+    answer: "قالوا ثور قالوا احلبوه",
+  },
+  {
+    image: "/images/proverbs/proverb_26.png",
+    answer: "ما لقوا للورد عيب قالوا يا احمر الخدين",
+  },
   { image: "/images/proverbs/proverb_27.png", answer: "التكرار يعلم الحمار" },
   { image: "/images/proverbs/proverb_28.png", answer: "التمر مسامير الركب" },
-  { image: "/images/proverbs/proverb_29.png", answer: "اذا حجت البقر على قرونها" },
-  { image: "/images/proverbs/proverb_30.png", answer: "شف وجه العنز واحلب لبن" },
+  {
+    image: "/images/proverbs/proverb_29.png",
+    answer: "اذا حجت البقر على قرونها",
+  },
+  {
+    image: "/images/proverbs/proverb_30.png",
+    answer: "شف وجه العنز واحلب لبن",
+  },
   { image: "/images/proverbs/proverb_31.png", answer: "لسانه يلوط اذانه" },
 ];

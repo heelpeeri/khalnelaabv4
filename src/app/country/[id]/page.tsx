@@ -1,7 +1,7 @@
-import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import Image from "next/image";
+import { notFound } from "next/navigation";
 
-import { COUNTRIES } from '@/data/countries';
+import { COUNTRIES } from "@/data/countries";
 
 export default async function CountryFlagPage({
   params,
@@ -10,15 +10,9 @@ export default async function CountryFlagPage({
     id: string;
   }>;
 }) {
-  const {
-    id,
-  } = await params;
+  const { id } = await params;
 
-  const country =
-    COUNTRIES.find(
-      (item) =>
-        item.id === id
-    );
+  const country = COUNTRIES.find((item) => item.id === id);
 
   if (!country) {
     notFound();
@@ -50,13 +44,9 @@ export default async function CountryFlagPage({
           shadow-2xl
         "
       >
-        <p className="text-sm font-black text-cyan-300/70">
-          خل نلعب
-        </p>
+        <p className="text-sm font-black text-cyan-300/70">خل نلعب</p>
 
-        <h1 className="mt-2 text-2xl font-black">
-          خمن العلم 🚩
-        </h1>
+        <h1 className="mt-2 text-2xl font-black">خمن العلم 🚩</h1>
 
         <p className="mt-2 text-sm font-bold text-white/55">
           هذا العلم اللي لازم الفريق الثاني يخمنه
@@ -73,9 +63,7 @@ export default async function CountryFlagPage({
           "
         >
           <Image
-            src={
-              country.flag
-            }
+            src={country.flag}
             alt="العلم"
             width={640}
             height={427}

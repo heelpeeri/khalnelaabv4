@@ -52,13 +52,13 @@ describe("createQrMatrix", () => {
   it("is deterministic and stays the same as the verified output", () => {
     for (const text of samples) {
       const rows = createQrMatrix(text).map((row) =>
-        row.map((dark) => (dark ? "1" : "0")).join("")
+        row.map((dark) => (dark ? "1" : "0")).join(""),
       );
 
       expect(rows).toEqual(
         createQrMatrix(text).map((row) =>
-          row.map((dark) => (dark ? "1" : "0")).join("")
-        )
+          row.map((dark) => (dark ? "1" : "0")).join(""),
+        ),
       );
       expect(rows.join("\n")).toMatchSnapshot();
     }

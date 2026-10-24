@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -17,8 +17,7 @@ const games = [
       "انتبه للإفلاس وتخطي الدور",
       "لما تنحل الكلمة، اللي نقاطه أكثر يفوز",
     ],
-    example:
-      "طلعت لك 200 واخترتوا حرف موجود مرتين؟ تاخذون 400.",
+    example: "طلعت لك 200 واخترتوا حرف موجود مرتين؟ تاخذون 400.",
   },
 
   {
@@ -112,8 +111,7 @@ const games = [
       "بعدها اكشفوا الأعلام",
       "صاحب الجلسة يحدد الفائز",
     ],
-    example:
-      "اللي يسكن كود الفريق اللي ضده يا ويله 👀",
+    example: "اللي يسكن كود الفريق اللي ضده يا ويله 👀",
   },
 ];
 
@@ -121,9 +119,7 @@ export default function GuidePage() {
   const [flippedCard, setFlippedCard] = useState<number | null>(null);
 
   function toggleCard(index: number) {
-    setFlippedCard((current) =>
-      current === index ? null : index
-    );
+    setFlippedCard((current) => (current === index ? null : index));
   }
 
   return (
@@ -131,19 +127,14 @@ export default function GuidePage() {
       <div className="mx-auto flex h-full max-w-7xl flex-col">
         <header className="flex shrink-0 items-center justify-between gap-4 pb-3">
           <div>
-            <h1 className="text-2xl font-black sm:text-3xl">
-              🎮 طريقة اللعب
-            </h1>
+            <h1 className="text-2xl font-black sm:text-3xl">🎮 طريقة اللعب</h1>
 
             <p className="mt-1 text-sm font-bold text-white/50">
               اضغطوا على اللعبة وتنقلب لكم
             </p>
           </div>
 
-          <Link
-            href="/"
-            className="nav-pill shrink-0"
-          >
+          <Link href="/" className="nav-pill shrink-0">
             <span aria-hidden="true">🏠</span>
             الرئيسية
           </Link>
@@ -173,9 +164,7 @@ export default function GuidePage() {
                 type="button"
                 onClick={() => toggleCard(index)}
                 aria-label={
-                  flipped
-                    ? `الرجوع إلى ${game.title}`
-                    : `عرض شرح ${game.title}`
+                  flipped ? `الرجوع إلى ${game.title}` : `عرض شرح ${game.title}`
                 }
                 className="
                   group
@@ -206,11 +195,8 @@ export default function GuidePage() {
                     [transform-style:preserve-3d]
                   "
                   style={{
-                    transform: flipped
-                      ? "rotateY(180deg)"
-                      : "rotateY(0deg)",
-                    transitionTimingFunction:
-                      "cubic-bezier(0.16, 1, 0.3, 1)",
+                    transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+                    transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
                   }}
                 >
                   <div

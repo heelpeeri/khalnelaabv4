@@ -23,8 +23,7 @@ const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   : "http://localhost:3000";
 
-const description =
-  "ألعاب جماعية للجلسات: فريقين، ثمان ألعاب، وبطل واحد.";
+const description = "ألعاب جماعية للجلسات: فريقين، ثمان ألعاب، وبطل واحد.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

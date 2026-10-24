@@ -87,9 +87,4 @@ export const WHEEL_PUZZLES = [
   { answer: "الأمير سلطان", category: "جامعة سعودية" },
 ];
 
-export const WHEEL_LETTER_ROWS = [
-  "دجحخهعغفقثصض",
-  "طكمنتالبيسش",
-  "ذظزوئر",
-];
-
+export const WHEEL_LETTER_ROWS = ["دجحخهعغفقثصض", "طكمنتالبيسش", "ذظزوئر"];

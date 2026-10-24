@@ -17,9 +17,7 @@ export default async function PersonPage({
 
   return (
     <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 px-4 py-6 text-center text-white">
-      <p className="text-sm font-black text-cyan-300/70">
-        منهو ذا؟
-      </p>
+      <p className="text-sm font-black text-cyan-300/70">منهو ذا؟</p>
 
       <img
         src={person.image}

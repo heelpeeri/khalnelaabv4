@@ -1,14 +1,11 @@
-'use client';
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import GameLayout from "@/components/match/GameLayout";
 import { TeamPickModal } from "@/components/match/Overlays";
 import { PROVERB_PUZZLES as puzzles } from "@/data/proverbs";
 import { createDeck } from "@/lib/deck";
-import {
-  readRoundState,
-  writeRoundState,
-} from "@/lib/roundState";
+import { readRoundState, writeRoundState } from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_ROUNDS = 6;
@@ -44,32 +41,23 @@ export default function ProverbGame({
   timerEnabled?: boolean;
   timerSeconds?: number;
 }) {
-  const [rounds, setRounds] =
-    useState<typeof puzzles>([]);
+  const [rounds, setRounds] = useState<typeof puzzles>([]);
 
-  const [index, setIndex] =
-    useState(0);
+  const [index, setIndex] = useState(0);
 
-  const [loaded, setLoaded] =
-    useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  const [timeLeft, setTimeLeft] =
-    useState(timerSeconds);
+  const [timeLeft, setTimeLeft] = useState(timerSeconds);
 
-  const [revealed, setRevealed] =
-    useState(false);
+  const [revealed, setRevealed] = useState(false);
 
-  const [secondTurn, setSecondTurn] =
-    useState(false);
+  const [secondTurn, setSecondTurn] = useState(false);
 
-  const [showWinnerPicker, setShowWinnerPicker] =
-    useState(false);
+  const [showWinnerPicker, setShowWinnerPicker] = useState(false);
 
-  const [side1Score, setSide1Score] =
-    useState(0);
+  const [side1Score, setSide1Score] = useState(0);
 
-  const [side2Score, setSide2Score] =
-    useState(0);
+  const [side2Score, setSide2Score] = useState(0);
 
   useEffect(() => {
     setLoaded(true);
@@ -77,11 +65,7 @@ export default function ProverbGame({
     setTimeLeft(timerSeconds);
     setShowWinnerPicker(false);
 
-    const saved =
-      readRoundState<ProverbRoundState>(
-        "draw",
-        roundKey
-      );
+    const saved = readRoundState<ProverbRoundState>("draw", roundKey);
 
     if (saved && saved.rounds.length > 0) {
       setRounds(saved.rounds);
@@ -93,9 +77,7 @@ export default function ProverbGame({
       return;
     }
 
-    setRounds(
-      proverbDeck.draw(TOTAL_ROUNDS)
-    );
+    setRounds(proverbDeck.draw(TOTAL_ROUNDS));
 
     setIndex(0);
 
@@ -111,18 +93,14 @@ export default function ProverbGame({
       return;
     }
 
-    writeRoundState<ProverbRoundState>(
-      "draw",
-      roundKey,
-      {
-        rounds,
-        index,
-        revealed,
-        secondTurn,
-        side1Score,
-        side2Score,
-      }
-    );
+    writeRoundState<ProverbRoundState>("draw", roundKey, {
+      rounds,
+      index,
+      revealed,
+      secondTurn,
+      side1Score,
+      side2Score,
+    });
   }, [
     loaded,
     roundKey,
@@ -134,36 +112,24 @@ export default function ProverbGame({
     side2Score,
   ]);
 
-
   const current = rounds[index];
 
   const mainTurn: TeamSide = useMemo(
-    () =>
-      index % 2 === 0
-        ? "side1"
-        : "side2",
-    [index]
+    () => (index % 2 === 0 ? "side1" : "side2"),
+    [index],
   );
 
-  const activeTurn: TeamSide =
-    secondTurn
-      ? mainTurn === "side1"
-        ? "side2"
-        : "side1"
-      : mainTurn;
+  const activeTurn: TeamSide = secondTurn
+    ? mainTurn === "side1"
+      ? "side2"
+      : "side1"
+    : mainTurn;
 
   const activeTeamName =
-    activeTurn === "side1"
-      ? side1Name || "فريق 1"
-      : side2Name || "فريق 2";
+    activeTurn === "side1" ? side1Name || "فريق 1" : side2Name || "فريق 2";
 
   useEffect(() => {
-    if (
-      !timerEnabled ||
-      revealed ||
-      !current ||
-      showWinnerPicker
-    ) {
+    if (!timerEnabled || revealed || !current || showWinnerPicker) {
       return;
     }
 
@@ -179,26 +145,13 @@ export default function ProverbGame({
     }
 
     const timer = setTimeout(() => {
-      setTimeLeft(
-        (previous) => previous - 1
-      );
+      setTimeLeft((previous) => previous - 1);
     }, 1000);
 
-    return () =>
-      clearTimeout(timer);
-  }, [
-    timeLeft,
-    revealed,
-    secondTurn,
-    current,
-    timerEnabled,
-    showWinnerPicker,
-  ]);
+    return () => clearTimeout(timer);
+  }, [timeLeft, revealed, secondTurn, current, timerEnabled, showWinnerPicker]);
 
-  function finishGame(
-    final1: number,
-    final2: number
-  ) {
+  function finishGame(final1: number, final2: number) {
     if (final1 > final2) {
       onRoundEnd("side1");
       return;
@@ -212,25 +165,14 @@ export default function ProverbGame({
     onRoundEnd("none");
   }
 
-  function goNext(
-    next1: number,
-    next2: number
-  ) {
-    if (
-      index + 1 >= rounds.length
-    ) {
-      finishGame(
-        next1,
-        next2
-      );
+  function goNext(next1: number, next2: number) {
+    if (index + 1 >= rounds.length) {
+      finishGame(next1, next2);
 
       return;
     }
 
-    setIndex(
-      (currentIndex) =>
-        currentIndex + 1
-    );
+    setIndex((currentIndex) => currentIndex + 1);
 
     setTimeLeft(timerSeconds);
 
@@ -239,29 +181,17 @@ export default function ProverbGame({
     setShowWinnerPicker(false);
   }
 
-  function givePoint(
-    winner:
-      | "side1"
-      | "side2"
-      | "none"
-  ) {
-    const next1 =
-      side1Score +
-      (winner === "side1" ? 1 : 0);
+  function givePoint(winner: "side1" | "side2" | "none") {
+    const next1 = side1Score + (winner === "side1" ? 1 : 0);
 
-    const next2 =
-      side2Score +
-      (winner === "side2" ? 1 : 0);
+    const next2 = side2Score + (winner === "side2" ? 1 : 0);
 
     setSide1Score(next1);
     setSide2Score(next2);
 
     setShowWinnerPicker(false);
 
-    goNext(
-      next1,
-      next2
-    );
+    goNext(next1, next2);
   }
 
   if (!current) {
@@ -273,9 +203,7 @@ export default function ProverbGame({
 
         <button
           type="button"
-          onClick={() =>
-            onRoundEnd("none")
-          }
+          onClick={() => onRoundEnd("none")}
           className="btn-primary mt-4"
         >
           إنهاء الجولة
@@ -291,19 +219,14 @@ export default function ProverbGame({
         ? "text-yellow-200"
         : "text-cyan-200";
 
-  const isLastProverb =
-    index + 1 >= rounds.length;
+  const isLastProverb = index + 1 >= rounds.length;
 
   return (
     <>
       <GameLayout
         title="خمن المثل"
-        side1={
-          side1Name || "فريق 1"
-        }
-        side2={
-          side2Name || "فريق 2"
-        }
+        side1={side1Name || "فريق 1"}
+        side2={side2Name || "فريق 2"}
         side1Score={side1Score}
         side2Score={side2Score}
         turn={activeTeamName}
@@ -311,33 +234,26 @@ export default function ProverbGame({
         currentRound={currentRound}
       >
         <div className="flex flex-col gap-4">
-
           <div className="flex flex-wrap items-center justify-center gap-2">
-
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
-              المثل{" "}
-              <span className="text-white">
-                {index + 1}
-              </span>
+              المثل <span className="text-white">{index + 1}</span>
               {" / "}
               {rounds.length}
             </div>
 
-            {secondTurn &&
-              !revealed && (
-                <div className="rounded-full border border-yellow-300/25 bg-yellow-400/10 px-4 py-2 text-sm font-bold text-yellow-100">
-                  فرصة ثانية
-                </div>
-              )}
+            {secondTurn && !revealed && (
+              <div className="rounded-full border border-yellow-300/25 bg-yellow-400/10 px-4 py-2 text-sm font-bold text-yellow-100">
+                فرصة ثانية
+              </div>
+            )}
 
-            {timerEnabled &&
-              !revealed && (
-                <div
-                  className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 text-lg font-black ${timerTextClass}`}
-                >
-                  ⏱️ {timeLeft}
-                </div>
-              )}
+            {timerEnabled && !revealed && (
+              <div
+                className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 text-lg font-black ${timerTextClass}`}
+              >
+                ⏱️ {timeLeft}
+              </div>
+            )}
           </div>
 
           <img
@@ -349,9 +265,7 @@ export default function ProverbGame({
 
           {revealed && (
             <div className="rounded-2xl border border-yellow-300/25 bg-yellow-300/10 p-5">
-              <p className="text-sm font-bold text-white/60">
-                الإجابة
-              </p>
+              <p className="text-sm font-bold text-white/60">الإجابة</p>
 
               <p className="mt-2 text-2xl font-black text-white">
                 {current.answer}
@@ -363,9 +277,7 @@ export default function ProverbGame({
             {!revealed ? (
               <button
                 type="button"
-                onClick={() =>
-                  setRevealed(true)
-                }
+                onClick={() => setRevealed(true)}
                 className="btn-primary"
               >
                 إظهار الإجابة
@@ -373,14 +285,10 @@ export default function ProverbGame({
             ) : (
               <button
                 type="button"
-                onClick={() =>
-                  setShowWinnerPicker(true)
-                }
+                onClick={() => setShowWinnerPicker(true)}
                 className="btn-primary min-w-[170px]"
               >
-                {isLastProverb
-                  ? "إنهاء الجولة"
-                  : "المثل اللي بعده"}
+                {isLastProverb ? "إنهاء الجولة" : "المثل اللي بعده"}
               </button>
             )}
           </div>

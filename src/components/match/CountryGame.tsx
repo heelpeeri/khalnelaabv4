@@ -1,18 +1,12 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 
 import QrCode from "@/components/QrCode";
 import GameLayout from "@/components/match/GameLayout";
-import {
-  COUNTRIES,
-  type CountryItem,
-} from "@/data/countries";
+import { COUNTRIES, type CountryItem } from "@/data/countries";
 import { createDeck } from "@/lib/deck";
-import {
-  readRoundState,
-  writeRoundState,
-} from "@/lib/roundState";
+import { readRoundState, writeRoundState } from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 type Props = {
@@ -33,8 +27,7 @@ type CountryRoundState = {
   revealed: boolean;
 };
 
-const actionButtonClass =
-  "btn-primary mt-5 w-full py-3 text-lg";
+const actionButtonClass = "btn-primary mt-5 w-full py-3 text-lg";
 
 export default function CountryGame({
   side1Name,
@@ -45,65 +38,28 @@ export default function CountryGame({
   timerEnabled = false,
   timerSeconds = 60,
 }: Props) {
-  const [
-    countries,
-    setCountries,
-  ] =
-    useState<
-      [
-        CountryItem,
-        CountryItem,
-      ] | null
-    >(null);
+  const [countries, setCountries] = useState<[CountryItem, CountryItem] | null>(
+    null,
+  );
 
-  const [
-    origin,
-    setOrigin,
-  ] =
-    useState("");
+  const [origin, setOrigin] = useState("");
 
-  const [
-    started,
-    setStarted,
-  ] =
-    useState(false);
+  const [started, setStarted] = useState(false);
 
-  const [
-    revealed,
-    setRevealed,
-  ] =
-    useState(false);
+  const [revealed, setRevealed] = useState(false);
 
-  const [
-    timeLeft,
-    setTimeLeft,
-  ] =
-    useState(
-      timerSeconds
-    );
+  const [timeLeft, setTimeLeft] = useState(timerSeconds);
 
-  const side1 =
-    side1Name ||
-    "فريق 1";
+  const side1 = side1Name || "فريق 1";
 
-  const side2 =
-    side2Name ||
-    "فريق 2";
+  const side2 = side2Name || "فريق 2";
 
   useEffect(() => {
-    setOrigin(
-      window.location.origin
-    );
+    setOrigin(window.location.origin);
 
-    setTimeLeft(
-      timerSeconds
-    );
+    setTimeLeft(timerSeconds);
 
-    const saved =
-      readRoundState<CountryRoundState>(
-        "country",
-        roundKey
-      );
+    const saved = readRoundState<CountryRoundState>("country", roundKey);
 
     if (saved && saved.countries.length === 2) {
       setCountries(saved.countries);
@@ -112,108 +68,57 @@ export default function CountryGame({
       return;
     }
 
-    const picked =
-      countryDeck.draw(2);
+    const picked = countryDeck.draw(2);
 
-    if (
-      picked.length < 2
-    ) {
+    if (picked.length < 2) {
       return;
     }
 
-    setCountries([
-      picked[0],
-      picked[1],
-    ]);
+    setCountries([picked[0], picked[1]]);
 
     setStarted(false);
     setRevealed(false);
-  }, [
-    roundKey,
-    timerSeconds,
-  ]);
+  }, [roundKey, timerSeconds]);
 
   useEffect(() => {
     if (!countries) {
       return;
     }
 
-    writeRoundState<CountryRoundState>(
-      "country",
-      roundKey,
-      {
-        countries,
-        started,
-        revealed,
-      }
-    );
-  }, [
-    roundKey,
-    countries,
-    started,
-    revealed,
-  ]);
+    writeRoundState<CountryRoundState>("country", roundKey, {
+      countries,
+      started,
+      revealed,
+    });
+  }, [roundKey, countries, started, revealed]);
 
   useEffect(() => {
-    if (
-      !timerEnabled ||
-      !started ||
-      revealed ||
-      timeLeft <= 0
-    ) {
+    if (!timerEnabled || !started || revealed || timeLeft <= 0) {
       return;
     }
 
-    const timer =
-      window.setTimeout(
-        () => {
-          setTimeLeft(
-            (current) =>
-              Math.max(
-                0,
-                current - 1
-              )
-          );
-        },
-        1000
-      );
+    const timer = window.setTimeout(() => {
+      setTimeLeft((current) => Math.max(0, current - 1));
+    }, 1000);
 
     return () => {
-      window.clearTimeout(
-        timer
-      );
+      window.clearTimeout(timer);
     };
-  }, [
-    timerEnabled,
-    started,
-    revealed,
-    timeLeft,
-  ]);
+  }, [timerEnabled, started, revealed, timeLeft]);
 
   if (!countries) {
     return (
       <div className="mx-auto max-w-xl p-8 text-center text-white">
-        <p className="font-black">
-          جاري تجهيز الأعلام...
-        </p>
+        <p className="font-black">جاري تجهيز الأعلام...</p>
       </div>
     );
   }
 
-  const [
-    side1Country,
-    side2Country,
-  ] = countries;
+  const [side1Country, side2Country] = countries;
 
-  const side1FlagUrl =
-    origin
-      ? `${origin}/country/${side1Country.id}`
-      : "";
+  const side1FlagUrl = origin ? `${origin}/country/${side1Country.id}` : "";
 
-  const side2FlagUrl =
-    origin
-      ? `${origin}/country/${side2Country.id}`
-      : "";
+  const side2FlagUrl = origin ? `${origin}/country/${side2Country.id}` : "";
 
   return (
     <GameLayout
@@ -229,20 +134,11 @@ export default function CountryGame({
             ? { side1: "يخمنون 🤔", side2: "يخمنون 🤔" }
             : { side1: "يمسحون 📱", side2: "يمسحون 📱" }
       }
-      turn={
-        started
-          ? "خمنوا الأعلام"
-          : "جاهزين؟ 👀"
-      }
+      turn={started ? "خمنوا الأعلام" : "جاهزين؟ 👀"}
       neutralTurnStyle="duo"
-      currentRound={
-        currentRound
-      }
+      currentRound={currentRound}
     >
-      <div
-        className="mx-auto w-full max-w-5xl"
-        dir="rtl"
-      >
+      <div className="mx-auto w-full max-w-5xl" dir="rtl">
         {!started ? (
           <>
             <div className="mb-4 text-center">
@@ -279,9 +175,7 @@ export default function CountryGame({
                   shadow-[0_0_24px_rgba(217,70,239,.05)]
                 "
               >
-                <p className="text-base font-black text-fuchsia-100">
-                  {side1}
-                </p>
+                <p className="text-base font-black text-fuchsia-100">{side1}</p>
 
                 <div className="mx-auto mt-3 w-fit rounded-[16px] bg-white p-2">
                   {side2FlagUrl ? (
@@ -310,9 +204,7 @@ export default function CountryGame({
                   shadow-[0_0_24px_rgba(34,211,238,.05)]
                 "
               >
-                <p className="text-base font-black text-cyan-100">
-                  {side2}
-                </p>
+                <p className="text-base font-black text-cyan-100">{side2}</p>
 
                 <div className="mx-auto mt-3 w-fit rounded-[16px] bg-white p-2">
                   {side1FlagUrl ? (
@@ -351,17 +243,11 @@ export default function CountryGame({
             <button
               type="button"
               onClick={() => {
-                setStarted(
-                  true
-                );
+                setStarted(true);
 
-                setTimeLeft(
-                  timerSeconds
-                );
+                setTimeLeft(timerSeconds);
               }}
-              className={
-                actionButtonClass
-              }
+              className={actionButtonClass}
             >
               الكل شاف العلم؟ ابدأوا
             </button>
@@ -415,14 +301,8 @@ export default function CountryGame({
             {!revealed ? (
               <button
                 type="button"
-                onClick={() =>
-                  setRevealed(
-                    true
-                  )
-                }
-                className={
-                  actionButtonClass
-                }
+                onClick={() => setRevealed(true)}
+                className={actionButtonClass}
               >
                 كشف الأعلام
               </button>
@@ -446,20 +326,14 @@ export default function CountryGame({
 
                     <div className="mt-3 overflow-hidden rounded-[16px] bg-white p-2 sm:p-3">
                       <img
-                        src={
-                          side1Country.flag
-                        }
-                        alt={
-                          side1Country.nameAr
-                        }
+                        src={side1Country.flag}
+                        alt={side1Country.nameAr}
                         className="mx-auto h-[110px] w-full object-contain sm:h-[145px]"
                       />
                     </div>
 
                     <p className="mt-3 text-base font-black text-white sm:text-xl">
-                      {
-                        side1Country.nameAr
-                      }
+                      {side1Country.nameAr}
                     </p>
                   </div>
 
@@ -480,32 +354,22 @@ export default function CountryGame({
 
                     <div className="mt-3 overflow-hidden rounded-[16px] bg-white p-2 sm:p-3">
                       <img
-                        src={
-                          side2Country.flag
-                        }
-                        alt={
-                          side2Country.nameAr
-                        }
+                        src={side2Country.flag}
+                        alt={side2Country.nameAr}
                         className="mx-auto h-[110px] w-full object-contain sm:h-[145px]"
                       />
                     </div>
 
                     <p className="mt-3 text-base font-black text-white sm:text-xl">
-                      {
-                        side2Country.nameAr
-                      }
+                      {side2Country.nameAr}
                     </p>
                   </div>
                 </div>
 
                 <button
                   type="button"
-                  onClick={() =>
-                    onRoundEnd()
-                  }
-                  className={
-                    actionButtonClass
-                  }
+                  onClick={() => onRoundEnd()}
+                  className={actionButtonClass}
                 >
                   إنهاء الجولة
                 </button>
