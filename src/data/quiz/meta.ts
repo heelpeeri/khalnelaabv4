@@ -1,8 +1,4 @@
-export type QuizCategoryKey =
-  | "seerah"
-  | "saudi"
-  | "football"
-  | "geography";
+export type QuizCategoryKey = "seerah" | "saudi" | "football" | "geography";
 
 export const quizCategoryMeta: Record<
   QuizCategoryKey,
@@ -18,5 +14,5 @@ export const quizCategoryList = Object.entries(quizCategoryMeta).map(
   ([key, value]) => ({
     key: key as QuizCategoryKey,
     ...value,
-  })
+  }),
 );

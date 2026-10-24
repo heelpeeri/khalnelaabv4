@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -105,11 +105,9 @@ const CARD_TRANSITION =
 export default function Home() {
   const router = useRouter();
 
-  const [hoveredCard, setHoveredCard] =
-    useState<number | null>(null);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
-  const [isLeaving, setIsLeaving] =
-    useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
 
   useEffect(() => {
     router.prefetch("/match");
@@ -219,8 +217,7 @@ export default function Home() {
 
             <div className="mx-auto mt-3 max-w-2xl rounded-2xl border border-yellow-300/[0.08] bg-gradient-to-r from-yellow-300/[0.035] via-yellow-200/[0.06] to-yellow-300/[0.035] px-5 py-2">
               <p className="text-sm font-bold leading-6 text-yellow-50/65 sm:text-[15px]">
-                اختاروا كم لعبة، سمّوا الفرق،
-                واللي يجمع أكثر هو بطل الجلسة.
+                اختاروا كم لعبة، سمّوا الفرق، واللي يجمع أكثر هو بطل الجلسة.
               </p>
             </div>
 
@@ -297,9 +294,7 @@ export default function Home() {
           >
             <div className="relative z-10 text-center">
               <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-400/[0.09] px-5 py-1.5 shadow-[0_0_16px_rgba(34,211,238,.07)]">
-                <span className="text-sm">
-                  ⚡
-                </span>
+                <span className="text-sm">⚡</span>
 
                 <span className="text-sm font-black text-cyan-100">
                   لعبة سريعة
@@ -317,9 +312,7 @@ export default function Home() {
 
             <div
               className="relative mx-auto hidden h-[268px] max-w-[1020px] lg:block"
-              onMouseLeave={() =>
-                setHoveredCard(null)
-              }
+              onMouseLeave={() => setHoveredCard(null)}
             >
               <div
                 className="
@@ -339,61 +332,41 @@ export default function Home() {
               />
 
               <div className="absolute left-1/2 top-[49%]">
-                {GAME_CARDS.map(
-                  (card, index) => {
-                    const active =
-                      hoveredCard === index;
+                {GAME_CARDS.map((card, index) => {
+                  const active = hoveredCard === index;
 
-                    const spread =
-                      hoveredCard === null
-                        ? 0
-                        : index < hoveredCard
-                          ? -24
-                          : index > hoveredCard
-                            ? 24
-                            : 0;
+                  const spread =
+                    hoveredCard === null
+                      ? 0
+                      : index < hoveredCard
+                        ? -24
+                        : index > hoveredCard
+                          ? 24
+                          : 0;
 
-                    const finalX =
-                      card.x + spread;
+                  const finalX = card.x + spread;
 
-                    const finalY =
-                      active
-                        ? card.y - 30
-                        : card.y;
+                  const finalY = active ? card.y - 30 : card.y;
 
-                    return (
-                      <Link
-                        key={card.title}
-                        href={card.href}
-                        prefetch={false}
-                        aria-label={card.title}
-                        onClick={
-                          prepareNavigation
+                  return (
+                    <Link
+                      key={card.title}
+                      href={card.href}
+                      prefetch={false}
+                      aria-label={card.title}
+                      onClick={prepareNavigation}
+                      onMouseEnter={() => {
+                        if (!isLeaving) {
+                          setHoveredCard(index);
                         }
-                        onMouseEnter={() => {
-                          if (
-                            !isLeaving
-                          ) {
-                            setHoveredCard(
-                              index
-                            );
-                          }
-                        }}
-                        onFocus={() => {
-                          if (
-                            !isLeaving
-                          ) {
-                            setHoveredCard(
-                              index
-                            );
-                          }
-                        }}
-                        onBlur={() =>
-                          setHoveredCard(
-                            null
-                          )
+                      }}
+                      onFocus={() => {
+                        if (!isLeaving) {
+                          setHoveredCard(index);
                         }
-                        className="
+                      }}
+                      onBlur={() => setHoveredCard(null)}
+                      className="
                           home-card-link
                           group
                           absolute
@@ -403,15 +376,13 @@ export default function Home() {
                           rounded-[20px]
                           outline-none
                         "
-                        style={{
-                          width: "190px",
-                          height: "238px",
+                      style={{
+                        width: "190px",
+                        height: "238px",
 
-                          zIndex: active
-                            ? 100
-                            : card.z,
+                        zIndex: active ? 100 : card.z,
 
-                          transform: `
+                        transform: `
                             translate(-50%, -50%)
                             translate3d(
                               ${finalX}px,
@@ -419,28 +390,17 @@ export default function Home() {
                               0
                             )
                             scale(
-                              ${
-                                active
-                                  ? card.scale +
-                                    0.11
-                                  : card.scale
-                              }
+                              ${active ? card.scale + 0.11 : card.scale}
                             )
                           `,
 
-                          transition:
-                            CARD_TRANSITION,
+                        transition: CARD_TRANSITION,
 
-                          opacity:
-                            hoveredCard !==
-                              null &&
-                            !active
-                              ? 0.78
-                              : 1,
-                        }}
-                      >
-                        <div
-                          className={`
+                        opacity: hoveredCard !== null && !active ? 0.78 : 1,
+                      }}
+                    >
+                      <div
+                        className={`
                             game-idle-card
                             relative
                             h-full
@@ -460,54 +420,43 @@ export default function Home() {
                                 : "border-yellow-200/35 shadow-[0_12px_20px_rgba(0,0,0,.28)]"
                             }
                           `}
-                          style={{
-                            animationDelay:
-                              `${card.delay}s`,
-                          }}
-                        >
-                          <Image
-                            src={
-                              card.image
-                            }
-                            alt=""
-                            fill
-                            sizes="190px"
-                            className={`
+                        style={{
+                          animationDelay: `${card.delay}s`,
+                        }}
+                      >
+                        <Image
+                          src={card.image}
+                          alt=""
+                          fill
+                          sizes="190px"
+                          className={`
                               object-cover
                               transition-transform
                               duration-500
                               ease-out
 
-                              ${
-                                active
-                                  ? "scale-[1.025]"
-                                  : "scale-100"
-                              }
+                              ${active ? "scale-[1.025]" : "scale-100"}
                             `}
-                          />
-                        </div>
-                      </Link>
-                    );
-                  }
-                )}
+                        />
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 
             <div className="relative z-10 mt-4 grid grid-cols-2 gap-3 pb-2 sm:grid-cols-3 lg:hidden">
-              {GAME_CARDS.map(
-                (card) => (
-                  <Link
-                    key={card.title}
-                    href={card.href}
-                    prefetch={false}
-                    aria-label={card.title}
-                    onClick={
-                      prepareNavigation
-                    }
-                    className="group rounded-[20px] outline-none"
-                  >
-                    <div
-                      className="
+              {GAME_CARDS.map((card) => (
+                <Link
+                  key={card.title}
+                  href={card.href}
+                  prefetch={false}
+                  aria-label={card.title}
+                  onClick={prepareNavigation}
+                  className="group rounded-[20px] outline-none"
+                >
+                  <div
+                    className="
                         game-mobile-card
                         relative
                         aspect-[4/5]
@@ -522,24 +471,20 @@ export default function Home() {
                         group-focus-visible:ring-cyan-300
                         group-active:scale-[0.97]
                       "
-                      style={{
-                        animationDelay:
-                          `${card.delay}s`,
-                      }}
-                    >
-                      <Image
-                        src={
-                          card.image
-                        }
-                        alt=""
-                        fill
-                        sizes="(max-width: 640px) 45vw, 30vw"
-                        className="object-cover"
-                      />
-                    </div>
-                  </Link>
-                )
-              )}
+                    style={{
+                      animationDelay: `${card.delay}s`,
+                    }}
+                  >
+                    <Image
+                      src={card.image}
+                      alt=""
+                      fill
+                      sizes="(max-width: 640px) 45vw, 30vw"
+                      className="object-cover"
+                    />
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         </section>

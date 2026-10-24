@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import QrCode from "@/components/QrCode";
@@ -6,10 +6,7 @@ import GameLayout from "@/components/match/GameLayout";
 import { JudgeModal } from "@/components/match/Overlays";
 import { WHO_GAME } from "@/data/scramble";
 import { createDeck } from "@/lib/deck";
-import {
-  readRoundState,
-  writeRoundState,
-} from "@/lib/roundState";
+import { readRoundState, writeRoundState } from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 const TOTAL_ROUNDS = 2;
@@ -46,32 +43,23 @@ export default function ScrambleGame({
 }) {
   const [index, setIndex] = useState(0);
 
-  const [loaded, setLoaded] =
-    useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  const [rounds, setRounds] =
-    useState<typeof WHO_GAME>([]);
+  const [rounds, setRounds] = useState<typeof WHO_GAME>([]);
 
-  const [started, setStarted] =
-    useState(false);
+  const [started, setStarted] = useState(false);
 
-  const [revealed, setRevealed] =
-    useState(false);
+  const [revealed, setRevealed] = useState(false);
 
-  const [showJudge, setShowJudge] =
-    useState(false);
+  const [showJudge, setShowJudge] = useState(false);
 
-  const [timeLeft, setTimeLeft] =
-    useState(timerSeconds);
+  const [timeLeft, setTimeLeft] = useState(timerSeconds);
 
-  const [origin, setOrigin] =
-    useState("");
+  const [origin, setOrigin] = useState("");
 
-  const [side1Score, setSide1Score] =
-    useState(0);
+  const [side1Score, setSide1Score] = useState(0);
 
-  const [side2Score, setSide2Score] =
-    useState(0);
+  const [side2Score, setSide2Score] = useState(0);
 
   useEffect(() => {
     setOrigin(window.location.origin);
@@ -83,11 +71,7 @@ export default function ScrambleGame({
     setShowJudge(false);
     setTimeLeft(timerSeconds);
 
-    const saved =
-      readRoundState<ScrambleRoundState>(
-        "scramble",
-        roundKey
-      );
+    const saved = readRoundState<ScrambleRoundState>("scramble", roundKey);
 
     if (saved && saved.rounds.length > 0) {
       setRounds(saved.rounds);
@@ -99,9 +83,7 @@ export default function ScrambleGame({
       return;
     }
 
-    setRounds(
-      peopleDeck.draw(TOTAL_ROUNDS)
-    );
+    setRounds(peopleDeck.draw(TOTAL_ROUNDS));
 
     setIndex(0);
 
@@ -110,28 +92,21 @@ export default function ScrambleGame({
 
     setSide1Score(0);
     setSide2Score(0);
-  }, [
-    roundKey,
-    timerSeconds,
-  ]);
+  }, [roundKey, timerSeconds]);
 
   useEffect(() => {
     if (!loaded || rounds.length === 0) {
       return;
     }
 
-    writeRoundState<ScrambleRoundState>(
-      "scramble",
-      roundKey,
-      {
-        rounds,
-        index,
-        started,
-        revealed,
-        side1Score,
-        side2Score,
-      }
-    );
+    writeRoundState<ScrambleRoundState>("scramble", roundKey, {
+      rounds,
+      index,
+      started,
+      revealed,
+      side1Score,
+      side2Score,
+    });
   }, [
     loaded,
     roundKey,
@@ -143,36 +118,20 @@ export default function ScrambleGame({
     side2Score,
   ]);
 
-  const current =
-    rounds[index];
+  const current = rounds[index];
 
-  const activeSide: TeamSide =
-    useMemo(
-      () =>
-        index % 2 === 0
-          ? "side1"
-          : "side2",
-      [index]
-    );
+  const activeSide: TeamSide = useMemo(
+    () => (index % 2 === 0 ? "side1" : "side2"),
+    [index],
+  );
 
   const activeTeamName =
-    activeSide === "side1"
-      ? side1Name || "فريق 1"
-      : side2Name || "فريق 2";
+    activeSide === "side1" ? side1Name || "فريق 1" : side2Name || "فريق 2";
 
-  const personUrl =
-    current && origin
-      ? `${origin}/person/${current.id}`
-      : "";
+  const personUrl = current && origin ? `${origin}/person/${current.id}` : "";
 
   useEffect(() => {
-    if (
-      !timerEnabled ||
-      !started ||
-      revealed ||
-      !current ||
-      showJudge
-    ) {
+    if (!timerEnabled || !started || revealed || !current || showJudge) {
       return;
     }
 
@@ -182,31 +141,18 @@ export default function ScrambleGame({
     }
 
     const timer = setTimeout(() => {
-      setTimeLeft(
-        (previous) => previous - 1
-      );
+      setTimeLeft((previous) => previous - 1);
     }, 1000);
 
-    return () =>
-      clearTimeout(timer);
-  }, [
-    timerEnabled,
-    started,
-    revealed,
-    timeLeft,
-    current,
-    showJudge,
-  ]);
+    return () => clearTimeout(timer);
+  }, [timerEnabled, started, revealed, timeLeft, current, showJudge]);
 
   function startGuessing() {
     setStarted(true);
     setTimeLeft(timerSeconds);
   }
 
-  function finishGame(
-    final1: number,
-    final2: number
-  ) {
+  function finishGame(final1: number, final2: number) {
     if (final1 > final2) {
       onRoundEnd("side1");
       return;
@@ -220,26 +166,14 @@ export default function ScrambleGame({
     onRoundEnd("none");
   }
 
-  function goNext(
-    next1: number,
-    next2: number
-  ) {
-    if (
-      index + 1 >=
-      rounds.length
-    ) {
-      finishGame(
-        next1,
-        next2
-      );
+  function goNext(next1: number, next2: number) {
+    if (index + 1 >= rounds.length) {
+      finishGame(next1, next2);
 
       return;
     }
 
-    setIndex(
-      (currentIndex) =>
-        currentIndex + 1
-    );
+    setIndex((currentIndex) => currentIndex + 1);
 
     setStarted(false);
     setRevealed(false);
@@ -248,33 +182,17 @@ export default function ScrambleGame({
     setTimeLeft(timerSeconds);
   }
 
-  function givePoint(
-    winner:
-      | "side1"
-      | "side2"
-      | "none"
-  ) {
-    const next1 =
-      side1Score +
-      (winner === "side1"
-        ? 1
-        : 0);
+  function givePoint(winner: "side1" | "side2" | "none") {
+    const next1 = side1Score + (winner === "side1" ? 1 : 0);
 
-    const next2 =
-      side2Score +
-      (winner === "side2"
-        ? 1
-        : 0);
+    const next2 = side2Score + (winner === "side2" ? 1 : 0);
 
     setSide1Score(next1);
     setSide2Score(next2);
 
     setShowJudge(false);
 
-    goNext(
-      next1,
-      next2
-    );
+    goNext(next1, next2);
   }
 
   function markCorrect() {
@@ -290,15 +208,11 @@ export default function ScrambleGame({
 
     return (
       <div className="text-center text-white">
-        <p>
-          ما فيه شخصيات كافية
-        </p>
+        <p>ما فيه شخصيات كافية</p>
 
         <button
           type="button"
-          onClick={() =>
-            onRoundEnd("none")
-          }
+          onClick={() => onRoundEnd("none")}
           className="btn-primary mt-4"
         >
           إنهاء الجولة
@@ -314,19 +228,14 @@ export default function ScrambleGame({
         ? "text-yellow-300"
         : "text-cyan-300";
 
-  const isLastCharacter =
-    index + 1 >= rounds.length;
+  const isLastCharacter = index + 1 >= rounds.length;
 
   return (
     <>
       <GameLayout
         title="منهو ذا؟"
-        side1={
-          side1Name || "فريق 1"
-        }
-        side2={
-          side2Name || "فريق 2"
-        }
+        side1={side1Name || "فريق 1"}
+        side2={side2Name || "فريق 2"}
         side1Score={side1Score}
         side2Score={side2Score}
         turn={activeTeamName}
@@ -334,33 +243,26 @@ export default function ScrambleGame({
         currentRound={currentRound}
       >
         <div className="flex flex-col gap-4">
-
           <div className="flex flex-wrap items-center justify-center gap-2">
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
-              الشخصية{" "}
-              <span className="text-white">
-                {index + 1}
-              </span>
+              الشخصية <span className="text-white">{index + 1}</span>
               {" / "}
               {rounds.length}
             </div>
 
-            {started &&
-              !revealed &&
-              timerEnabled && (
-                <div
-                  className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 text-lg font-black ${timerClass}`}
-                >
-                  ⏱️ {timeLeft}
-                </div>
-              )}
+            {started && !revealed && timerEnabled && (
+              <div
+                className={`rounded-full border border-white/10 bg-white/5 px-4 py-2 text-lg font-black ${timerClass}`}
+              >
+                ⏱️ {timeLeft}
+              </div>
+            )}
 
-            {!started &&
-              !revealed && (
-                <div className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-100">
-                  واحد من {activeTeamName} يمسح الكود
-                </div>
-              )}
+            {!started && !revealed && (
+              <div className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-100">
+                واحد من {activeTeamName} يمسح الكود
+              </div>
+            )}
           </div>
 
           <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 sm:p-6">
@@ -404,42 +306,33 @@ export default function ScrambleGame({
           </div>
 
           <div className="flex flex-wrap justify-center gap-3">
+            {!started && !revealed && (
+              <button
+                type="button"
+                onClick={startGuessing}
+                className="btn-primary"
+              >
+                ابدأ الوصف
+              </button>
+            )}
 
-            {!started &&
-              !revealed && (
-                <button
-                  type="button"
-                  onClick={startGuessing}
-                  className="btn-primary"
-                >
-                  ابدأ الوصف
-                </button>
-              )}
-
-            {started &&
-              !revealed && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    setRevealed(true)
-                  }
-                  className="btn-primary"
-                >
-                  إظهار الإجابة
-                </button>
-              )}
+            {started && !revealed && (
+              <button
+                type="button"
+                onClick={() => setRevealed(true)}
+                className="btn-primary"
+              >
+                إظهار الإجابة
+              </button>
+            )}
 
             {revealed && (
               <button
                 type="button"
-                onClick={() =>
-                  setShowJudge(true)
-                }
+                onClick={() => setShowJudge(true)}
                 className="btn-primary min-w-[170px]"
               >
-                {isLastCharacter
-                  ? "إنهاء الجولة"
-                  : "الشخصية اللي بعدها"}
+                {isLastCharacter ? "إنهاء الجولة" : "الشخصية اللي بعدها"}
               </button>
             )}
           </div>

@@ -21,16 +21,14 @@ export function createDeck<T>(items: readonly T[]): Deck<T> {
     draw(count) {
       const target = Math.max(
         0,
-        Math.min(Math.floor(count) || 0, items.length)
+        Math.min(Math.floor(count) || 0, items.length),
       );
 
       const result: T[] = [];
 
       while (result.length < target) {
         if (pile.length === 0) {
-          pile = shuffle(items).filter(
-            (item) => !result.includes(item)
-          );
+          pile = shuffle(items).filter((item) => !result.includes(item));
 
           if (pile.length === 0) {
             break;

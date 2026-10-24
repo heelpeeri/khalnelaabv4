@@ -5,8 +5,8 @@ const ECC_CODEWORDS_PER_BLOCK = [
 ];
 
 const NUM_ERROR_CORRECTION_BLOCKS = [
-  -1, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5, 5, 8, 9, 9, 10, 10, 11, 13, 14, 16, 17,
-  17, 18, 20, 21, 23, 25, 26, 28, 29, 31, 33, 35, 37, 38, 40, 43, 45, 47, 49,
+  -1, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5, 5, 8, 9, 9, 10, 10, 11, 13, 14, 16, 17, 17,
+  18, 20, 21, 23, 25, 26, 28, 29, 31, 33, 35, 37, 38, 40, 43, 45, 47, 49,
 ];
 
 const ECC_FORMAT_BITS = 0;
@@ -91,9 +91,7 @@ function getAlignmentPositions(version: number, size: number) {
 
   const numAlign = Math.floor(version / 7) + 2;
   const step =
-    version === 32
-      ? 26
-      : Math.ceil((version * 4 + 4) / (numAlign * 2 - 2)) * 2;
+    version === 32 ? 26 : Math.ceil((version * 4 + 4) / (numAlign * 2 - 2)) * 2;
 
   const result = [6];
 
@@ -168,7 +166,7 @@ function addEccAndInterleave(version: number, data: number[]) {
   for (let i = 0, k = 0; i < numBlocks; i += 1) {
     const block = data.slice(
       k,
-      k + shortBlockLen - blockEccLen + (i < numShortBlocks ? 0 : 1)
+      k + shortBlockLen - blockEccLen + (i < numShortBlocks ? 0 : 1),
     );
 
     k += block.length;
@@ -252,11 +250,9 @@ function getPenalty(modules: boolean[][]) {
 
       if (!pattern) continue;
 
-      const lightBefore = [1, 2, 3, 4].every(
-        (d) => i - d < 0 || !get(i - d)
-      );
+      const lightBefore = [1, 2, 3, 4].every((d) => i - d < 0 || !get(i - d));
       const lightAfter = [7, 8, 9, 10].every(
-        (d) => i + d >= size || !get(i + d)
+        (d) => i + d >= size || !get(i + d),
       );
 
       if (lightBefore || lightAfter) {
@@ -302,10 +298,10 @@ export function createQrMatrix(text: string): boolean[][] {
   const size = version * 4 + 17;
 
   const modules: boolean[][] = Array.from({ length: size }, () =>
-    new Array(size).fill(false)
+    new Array(size).fill(false),
   );
   const isFunction: boolean[][] = Array.from({ length: size }, () =>
-    new Array(size).fill(false)
+    new Array(size).fill(false),
   );
 
   const setFunction = (x: number, y: number, dark: boolean) => {
@@ -354,7 +350,7 @@ export function createQrMatrix(text: string): boolean[][] {
           setFunction(
             ax + dx,
             ay + dy,
-            Math.max(Math.abs(dx), Math.abs(dy)) !== 1
+            Math.max(Math.abs(dx), Math.abs(dy)) !== 1,
           );
         }
       }
@@ -377,8 +373,10 @@ export function createQrMatrix(text: string): boolean[][] {
     setFunction(7, 8, getBit(bits, 8));
     for (let i = 9; i < 15; i += 1) setFunction(14 - i, 8, getBit(bits, i));
 
-    for (let i = 0; i < 8; i += 1) setFunction(size - 1 - i, 8, getBit(bits, i));
-    for (let i = 8; i < 15; i += 1) setFunction(8, size - 15 + i, getBit(bits, i));
+    for (let i = 0; i < 8; i += 1)
+      setFunction(size - 1 - i, 8, getBit(bits, i));
+    for (let i = 8; i < 15; i += 1)
+      setFunction(8, size - 15 + i, getBit(bits, i));
     setFunction(8, size - 8, true);
   };
 

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
-type TeamSide = 'side1' | 'side2';
+type TeamSide = "side1" | "side2";
 
 type GameLayoutProps = {
   title: string;
@@ -24,7 +24,7 @@ type GameLayoutProps = {
 
   currentRound?: number;
 
-  neutralTurnStyle?: 'default' | 'duo';
+  neutralTurnStyle?: "default" | "duo";
 
   children: ReactNode;
 };
@@ -32,20 +32,14 @@ type GameLayoutProps = {
 function normalizeTeamName(value: string) {
   return value
     .trim()
-    .replace(/^الدور\s+الحالي\s*/u, '')
-    .replace(/^الدور\s+على\s+/u, '')
-    .replace(/^دور\s+/u, '')
-    .replace(/\s+/g, ' ');
+    .replace(/^الدور\s+الحالي\s*/u, "")
+    .replace(/^الدور\s+على\s+/u, "")
+    .replace(/^دور\s+/u, "")
+    .replace(/\s+/g, " ");
 }
 
-export function GameTitle({
-  title,
-}: {
-  title: string;
-}) {
-  const titleWords = title
-    .trim()
-    .split(/\s+/);
+export function GameTitle({ title }: { title: string }) {
+  const titleWords = title.trim().split(/\s+/);
 
   return (
     <h2
@@ -85,9 +79,7 @@ export function GameTitle({
           }
         >
           {word}
-          {index < titleWords.length - 1
-            ? ' '
-            : ''}
+          {index < titleWords.length - 1 ? " " : ""}
         </span>
       ))}
     </h2>
@@ -110,7 +102,7 @@ export default function GameLayout({
 
   currentRound = 1,
 
-  neutralTurnStyle = 'default',
+  neutralTurnStyle = "default",
 
   children,
 }: GameLayoutProps) {
@@ -121,34 +113,21 @@ export default function GameLayout({
 
   const detectedSide: TeamSide | null =
     turnSide ??
-    (cleanTurn === cleanSide1 ||
-    cleanTurn === 'فريق 1'
-      ? 'side1'
-      : cleanTurn === cleanSide2 ||
-          cleanTurn === 'فريق 2'
-        ? 'side2'
+    (cleanTurn === cleanSide1 || cleanTurn === "فريق 1"
+      ? "side1"
+      : cleanTurn === cleanSide2 || cleanTurn === "فريق 2"
+        ? "side2"
         : null);
 
-  const isSide1Turn =
-    detectedSide === 'side1';
+  const isSide1Turn = detectedSide === "side1";
 
-  const isSide2Turn =
-    detectedSide === 'side2';
+  const isSide2Turn = detectedSide === "side2";
 
-  const isNeutralTurn =
-    !isSide1Turn &&
-    !isSide2Turn;
+  const isNeutralTurn = !isSide1Turn && !isSide2Turn;
 
-  const useDuoNeutral =
-    isNeutralTurn &&
-    neutralTurnStyle === 'duo';
+  const useDuoNeutral = isNeutralTurn && neutralTurnStyle === "duo";
 
-  const displayedTurn =
-    isSide1Turn
-      ? side1
-      : isSide2Turn
-        ? side2
-        : cleanTurn;
+  const displayedTurn = isSide1Turn ? side1 : isSide2Turn ? side2 : cleanTurn;
 
   return (
     <div className="mx-auto w-full max-w-5xl">
@@ -241,11 +220,7 @@ export default function GameLayout({
                 transition-colors
                 duration-500
 
-                ${
-                  isSide1Turn
-                    ? 'text-fuchsia-100'
-                    : 'text-white/45'
-                }
+                ${isSide1Turn ? "text-fuchsia-100" : "text-white/45"}
               `}
             >
               {side1}
@@ -264,11 +239,7 @@ export default function GameLayout({
                 duration-500
                 sm:text-[52px]
 
-                ${
-                  isSide1Turn
-                    ? 'text-fuchsia-100'
-                    : 'text-fuchsia-200/50'
-                }
+                ${isSide1Turn ? "text-fuchsia-100" : "text-fuchsia-200/50"}
               `}
             >
               {sideStatus ? (
@@ -340,11 +311,7 @@ export default function GameLayout({
                 leading-none
                 sm:text-xs
 
-                ${
-                  useDuoNeutral
-                    ? 'text-white/65'
-                    : 'text-white/55'
-                }
+                ${useDuoNeutral ? "text-white/65" : "text-white/55"}
               `}
             >
               الدور الحالي
@@ -364,9 +331,9 @@ export default function GameLayout({
 
                 ${
                   isSide1Turn
-                    ? 'text-fuchsia-50'
+                    ? "text-fuchsia-50"
                     : isSide2Turn
-                      ? 'text-cyan-50'
+                      ? "text-cyan-50"
                       : useDuoNeutral
                         ? `
                           bg-gradient-to-r
@@ -376,7 +343,7 @@ export default function GameLayout({
                           bg-clip-text
                           text-transparent
                         `
-                        : 'text-white'
+                        : "text-white"
                 }
               `}
             >
@@ -429,11 +396,7 @@ export default function GameLayout({
                 transition-colors
                 duration-500
 
-                ${
-                  isSide2Turn
-                    ? 'text-cyan-100'
-                    : 'text-white/45'
-                }
+                ${isSide2Turn ? "text-cyan-100" : "text-white/45"}
               `}
             >
               {side2}
@@ -452,11 +415,7 @@ export default function GameLayout({
                 duration-500
                 sm:text-[52px]
 
-                ${
-                  isSide2Turn
-                    ? 'text-cyan-100'
-                    : 'text-cyan-200/50'
-                }
+                ${isSide2Turn ? "text-cyan-100" : "text-cyan-200/50"}
               `}
             >
               {sideStatus ? (

@@ -1,12 +1,6 @@
-'use client';
+"use client";
 
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type FormEvent,
-} from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import GameLayout from "@/components/match/GameLayout";
 
 import {
@@ -17,10 +11,7 @@ import {
 
 import { createDeck } from "@/lib/deck";
 import { getPointsWinner } from "@/lib/scoring";
-import {
-  readRoundState,
-  writeRoundState,
-} from "@/lib/roundState";
+import { readRoundState, writeRoundState } from "@/lib/roundState";
 import type { TeamTurn as Turn, WinnerType } from "@/types/game";
 import type { WheelValue as Value } from "@/data/wheel";
 
@@ -60,17 +51,15 @@ function splitAnswerWords(answer: string) {
   return answer.trim().split(/\s+/);
 }
 
-function HelpModal({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
+function HelpModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   if (!open) return null;
 
   return (
-    <div role="dialog" aria-modal="true" className="fixed inset-0 z-[999] flex items-center justify-center bg-black/75 px-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/75 px-4"
+    >
       <div className="w-full max-w-lg rounded-[28px] border border-white/15 bg-[#120d2c]/95 p-6 text-right shadow-2xl">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-2xl font-black">طريقة اللعب</h3>
@@ -143,8 +132,9 @@ export default function WheelGame({
 
   const [wheelGlow, setWheelGlow] = useState(false);
 
-  const [activeSegmentIndex, setActiveSegmentIndex] =
-    useState<number | null>(null);
+  const [activeSegmentIndex, setActiveSegmentIndex] = useState<number | null>(
+    null,
+  );
 
   const [showHelp, setShowHelp] = useState(false);
   const [solveOpen, setSolveOpen] = useState(false);
@@ -160,13 +150,12 @@ export default function WheelGame({
 
   const segmentAngle = 360 / SEGMENTS.length;
 
-  const currentTeamName =
-    turn === "side1" ? side1Name : side2Name;
+  const currentTeamName = turn === "side1" ? side1Name : side2Name;
 
   function later(action: () => void, delay: number) {
     const timer = setTimeout(() => {
       flowTimersRef.current = flowTimersRef.current.filter(
-        (item) => item !== timer
+        (item) => item !== timer,
       );
 
       action();
@@ -198,16 +187,11 @@ export default function WheelGame({
     setWheelGlow(false);
     setActiveSegmentIndex(null);
 
-    const saved =
-      readRoundState<WheelRoundState>(
-        "wheel",
-        roundKey
-      );
+    const saved = readRoundState<WheelRoundState>("wheel", roundKey);
 
     if (saved && saved.answer) {
       const guessing =
-        saved.phase === "guess" &&
-        typeof saved.currentValue === "number";
+        saved.phase === "guess" && typeof saved.currentValue === "number";
 
       setAnswer(saved.answer);
       setCategory(saved.category);
@@ -215,9 +199,7 @@ export default function WheelGame({
       setUsedLetters(saved.usedLetters);
       setTurn(saved.turn);
       setPhase(guessing ? "guess" : "spin");
-      setCurrentValue(
-        guessing ? saved.currentValue : null
-      );
+      setCurrentValue(guessing ? saved.currentValue : null);
       setScore1(saved.score1);
       setScore2(saved.score2);
 
@@ -258,21 +240,17 @@ export default function WheelGame({
       return;
     }
 
-    writeRoundState<WheelRoundState>(
-      "wheel",
-      roundKey,
-      {
-        answer,
-        category,
-        revealed,
-        usedLetters,
-        turn,
-        phase,
-        currentValue,
-        score1,
-        score2,
-      }
-    );
+    writeRoundState<WheelRoundState>("wheel", roundKey, {
+      answer,
+      category,
+      revealed,
+      usedLetters,
+      turn,
+      phase,
+      currentValue,
+      score1,
+      score2,
+    });
   }, [
     loaded,
     roundKey,
@@ -321,26 +299,15 @@ export default function WheelGame({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [
-    timerEnabled,
-    phase,
-    timeLeft,
-    timerSeconds,
-  ]);
+  }, [timerEnabled, phase, timeLeft, timerSeconds]);
 
-  const answerWords = useMemo(
-    () => splitAnswerWords(answer),
-    [answer]
-  );
+  const answerWords = useMemo(() => splitAnswerWords(answer), [answer]);
 
   const revealedWordGroups = useMemo(() => {
     let cursor = 0;
 
     return answerWords.map((word) => {
-      const letters = revealed.slice(
-        cursor,
-        cursor + word.length
-      );
+      const letters = revealed.slice(cursor, cursor + word.length);
 
       cursor += word.length + 1;
 
@@ -377,9 +344,7 @@ export default function WheelGame({
 
     if (!audioContextRef.current) return;
 
-    if (
-      audioContextRef.current.state === "suspended"
-    ) {
+    if (audioContextRef.current.state === "suspended") {
       try {
         await audioContextRef.current.resume();
       } catch {}
@@ -402,25 +367,16 @@ export default function WheelGame({
 
     osc.frequency.setValueAtTime(950, now);
 
-    osc.frequency.exponentialRampToValueAtTime(
-      620,
-      now + 0.024
-    );
+    osc.frequency.exponentialRampToValueAtTime(620, now + 0.024);
 
     filter.type = "highpass";
     filter.frequency.setValueAtTime(420, now);
 
     gain.gain.setValueAtTime(0.0001, now);
 
-    gain.gain.exponentialRampToValueAtTime(
-      0.18,
-      now + 0.003
-    );
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.003);
 
-    gain.gain.exponentialRampToValueAtTime(
-      0.0001,
-      now + 0.026
-    );
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.026);
 
     osc.connect(filter);
     filter.connect(gain);
@@ -445,22 +401,13 @@ export default function WheelGame({
 
     osc.frequency.setValueAtTime(560, now);
 
-    osc.frequency.exponentialRampToValueAtTime(
-      380,
-      now + 0.08
-    );
+    osc.frequency.exponentialRampToValueAtTime(380, now + 0.08);
 
     gain.gain.setValueAtTime(0.0001, now);
 
-    gain.gain.exponentialRampToValueAtTime(
-      0.28,
-      now + 0.01
-    );
+    gain.gain.exponentialRampToValueAtTime(0.28, now + 0.01);
 
-    gain.gain.exponentialRampToValueAtTime(
-      0.0001,
-      now + 0.09
-    );
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
 
     osc.connect(gain);
     gain.connect(masterGain);
@@ -470,25 +417,16 @@ export default function WheelGame({
   }
 
   function nextTurn() {
-    setTurn((prev) =>
-      prev === "side1" ? "side2" : "side1"
-    );
+    setTurn((prev) => (prev === "side1" ? "side2" : "side1"));
   }
 
-  function finishRound(
-    final1: number,
-    final2: number
-  ) {
+  function finishRound(final1: number, final2: number) {
     if (phase === "celebrate") return;
 
     const winner = getPointsWinner(final1, final2);
 
     setWinnerName(
-      winner === "side1"
-        ? side1Name
-        : winner === "side2"
-          ? side2Name
-          : ""
+      winner === "side1" ? side1Name : winner === "side2" ? side2Name : "",
     );
 
     setPhase("celebrate");
@@ -498,19 +436,12 @@ export default function WheelGame({
     }, 1400);
   }
 
-  function getPointerSegmentIndex(
-    currentRotation: number
-  ) {
-    const normalized =
-      ((currentRotation % 360) + 360) % 360;
+  function getPointerSegmentIndex(currentRotation: number) {
+    const normalized = ((currentRotation % 360) + 360) % 360;
 
-    const pointerAngle =
-      (360 - normalized) % 360;
+    const pointerAngle = (360 - normalized) % 360;
 
-    return (
-      Math.floor(pointerAngle / segmentAngle) %
-      SEGMENTS.length
-    );
+    return Math.floor(pointerAngle / segmentAngle) % SEGMENTS.length;
   }
 
   function startTicking() {
@@ -520,12 +451,9 @@ export default function WheelGame({
 
     tickTimerRef.current = setInterval(() => {
       setRotation((current) => {
-        const idx =
-          getPointerSegmentIndex(current);
+        const idx = getPointerSegmentIndex(current);
 
-        if (
-          lastTickIndexRef.current !== idx
-        ) {
+        if (lastTickIndexRef.current !== idx) {
           lastTickIndexRef.current = idx;
 
           setActiveSegmentIndex(idx);
@@ -533,10 +461,7 @@ export default function WheelGame({
 
           playTickSound();
 
-          later(
-            () => setWheelGlow(false),
-            90
-          );
+          later(() => setWheelGlow(false), 90);
         }
 
         return current;
@@ -550,25 +475,18 @@ export default function WheelGame({
       tickTimerRef.current = null;
     }
 
-    const idx =
-      getPointerSegmentIndex(finalRotation);
+    const idx = getPointerSegmentIndex(finalRotation);
 
     setActiveSegmentIndex(idx);
     setWheelGlow(true);
 
     playFinalTickSound();
 
-    later(
-      () => setWheelGlow(false),
-      180
-    );
+    later(() => setWheelGlow(false), 180);
   }
 
   async function spinWheel() {
-    if (
-      spinning ||
-      phase !== "spin"
-    ) {
+    if (spinning || phase !== "spin") {
       return;
     }
 
@@ -577,27 +495,18 @@ export default function WheelGame({
     setSpinning(true);
     setTimeLeft(timerSeconds);
 
-    const index =
-      Math.floor(
-        Math.random() * SEGMENTS.length
-      );
+    const index = Math.floor(Math.random() * SEGMENTS.length);
 
-    const value: Value =
-      SEGMENTS[index].value as Value;
+    const value: Value = SEGMENTS[index].value as Value;
 
     setCurrentValue(value);
 
-    const targetCenter =
-      index * segmentAngle +
-      segmentAngle / 2;
+    const targetCenter = index * segmentAngle + segmentAngle / 2;
 
     const extraSpins = 8 * 360;
 
     const nextRotation =
-      rotation +
-      extraSpins +
-      (360 - (rotation % 360)) +
-      (360 - targetCenter);
+      rotation + extraSpins + (360 - (rotation % 360)) + (360 - targetCenter);
 
     startTicking();
 
@@ -642,65 +551,44 @@ export default function WheelGame({
     if (phase !== "guess") return;
     if (usedLetters.includes(letter)) return;
 
-    if (
-      typeof currentValue !== "number"
-    ) {
+    if (typeof currentValue !== "number") {
       return;
     }
 
-    setUsedLetters((prev) => [
-      ...prev,
-      letter,
-    ]);
+    setUsedLetters((prev) => [...prev, letter]);
 
     let count = 0;
 
     const next = [...revealed];
 
-    answer.split("").forEach(
-      (char, i) => {
-        if (char === " ") return;
+    answer.split("").forEach((char, i) => {
+      if (char === " ") return;
 
-        if (
-          normalizeArabic(char) ===
-          normalizeArabic(letter)
-        ) {
-          next[i] = char;
-          count++;
-        }
+      if (normalizeArabic(char) === normalizeArabic(letter)) {
+        next[i] = char;
+        count++;
       }
-    );
+    });
 
     setRevealed(next);
 
     if (count > 0) {
-      const gained =
-        count * currentValue;
+      const gained = count * currentValue;
 
       if (turn === "side1") {
-        setScore1(
-          (score) => score + gained
-        );
+        setScore1((score) => score + gained);
       } else {
-        setScore2(
-          (score) => score + gained
-        );
+        setScore2((score) => score + gained);
       }
 
       const solved = answer
         .split("")
-        .every(
-          (char, i) =>
-            char === " " ||
-            next[i] !== ""
-        );
+        .every((char, i) => char === " " || next[i] !== "");
 
       if (solved) {
         finishRound(
-          score1 +
-            (turn === "side1" ? gained : 0),
-          score2 +
-            (turn === "side2" ? gained : 0)
+          score1 + (turn === "side1" ? gained : 0),
+          score2 + (turn === "side2" ? gained : 0),
         );
       }
 
@@ -730,17 +618,8 @@ export default function WheelGame({
 
     if (!guess) return;
 
-    if (
-      normalizeArabic(guess) ===
-      normalizeArabic(answer)
-    ) {
-      setRevealed(
-        answer
-          .split("")
-          .map((char) =>
-            char === " " ? "" : char
-          )
-      );
+    if (normalizeArabic(guess) === normalizeArabic(answer)) {
+      setRevealed(answer.split("").map((char) => (char === " " ? "" : char)));
 
       finishRound(score1, score2);
       return;
@@ -794,20 +673,15 @@ export default function WheelGame({
         currentRound={currentRound}
       >
         <div className="flex flex-col gap-4">
-
           <div className="flex flex-wrap items-center justify-center gap-3">
             <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-100">
-              <span className="text-white/70">
-                التصنيف:
-              </span>
+              <span className="text-white/70">التصنيف:</span>
 
               <span>{category}</span>
             </div>
 
             <button
-              onClick={() =>
-                setShowHelp(true)
-              }
+              onClick={() => setShowHelp(true)}
               type="button"
               className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white transition hover:bg-white/10"
             >
@@ -817,76 +691,56 @@ export default function WheelGame({
 
           <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-base font-bold md:text-lg">
             {phase === "result"
-              ? `طلعت لك: ${formatValue(
-                  currentValue
-                )}`
+              ? `طلعت لك: ${formatValue(currentValue)}`
               : phase === "guess"
-                ? `اختاروا حرف — الحرف بـ ${formatValue(
-                    currentValue
-                  )}`
+                ? `اختاروا حرف — الحرف بـ ${formatValue(currentValue)}`
                 : phase === "celebrate"
                   ? "🏆 انتهت الجولة!"
                   : "لف العجلة"}
 
-            {phase === "guess" &&
-              timerEnabled && (
-                <span
-                  className={`mr-3 font-black ${timerTextClass}`}
-                >
-                  ⏱️ {timeLeft}
-                </span>
-              )}
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-            {revealedWordGroups.map(
-              (word, wordIndex) => (
-                <div
-                  key={wordIndex}
-                  className="flex max-w-full items-center gap-4"
-                >
-                  <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
-                    {word.map(
-                      (letter, i) => (
-                        <div
-                          key={`${wordIndex}-${i}`}
-                          className="flex h-10 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-xl font-black sm:h-14 sm:w-14 sm:rounded-2xl sm:text-2xl"
-                        >
-                          {letter || ""}
-                        </div>
-                      )
-                    )}
-                  </div>
-
-                  {wordIndex <
-                    revealedWordGroups.length -
-                      1 && (
-                    <div className="hidden h-10 w-6 items-center justify-center md:flex">
-                      <div className="h-1 w-6 rounded-full bg-cyan-300/50" />
-                    </div>
-                  )}
-                </div>
-              )
+            {phase === "guess" && timerEnabled && (
+              <span className={`mr-3 font-black ${timerTextClass}`}>
+                ⏱️ {timeLeft}
+              </span>
             )}
           </div>
 
-          {revealedWordGroups.length >
-            1 && (
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            {revealedWordGroups.map((word, wordIndex) => (
+              <div
+                key={wordIndex}
+                className="flex max-w-full items-center gap-4"
+              >
+                <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
+                  {word.map((letter, i) => (
+                    <div
+                      key={`${wordIndex}-${i}`}
+                      className="flex h-10 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-xl font-black sm:h-14 sm:w-14 sm:rounded-2xl sm:text-2xl"
+                    >
+                      {letter || ""}
+                    </div>
+                  ))}
+                </div>
+
+                {wordIndex < revealedWordGroups.length - 1 && (
+                  <div className="hidden h-10 w-6 items-center justify-center md:flex">
+                    <div className="h-1 w-6 rounded-full bg-cyan-300/50" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {revealedWordGroups.length > 1 && (
             <p className="text-sm text-white/55">
-              الكلمة مكوّنة من{" "}
-              {
-                revealedWordGroups.length
-              }{" "}
-              كلمات
+              الكلمة مكوّنة من {revealedWordGroups.length} كلمات
             </p>
           )}
 
           <div className="mt-2">
-            {(phase === "spin" ||
-              phase === "result") && (
+            {(phase === "spin" || phase === "result") && (
               <div className="flex flex-col items-center">
                 <div className="relative h-[290px] w-[290px] max-w-full md:h-[340px] md:w-[340px]">
-
                   <div
                     className={`absolute left-1/2 top-0 z-30 -translate-x-1/2 -translate-y-2 transition ${
                       wheelGlow
@@ -902,16 +756,12 @@ export default function WheelGame({
                     style={{
                       background: `conic-gradient(${SEGMENTS.map(
                         (segment, i) => {
-                          const start =
-                            i *
-                            segmentAngle;
+                          const start = i * segmentAngle;
 
-                          const end =
-                            (i + 1) *
-                            segmentAngle;
+                          const end = (i + 1) * segmentAngle;
 
                           return `${segment.color} ${start}deg ${end}deg`;
-                        }
+                        },
                       ).join(", ")})`,
 
                       transform: `rotate(${rotation}deg)`,
@@ -928,57 +778,42 @@ export default function WheelGame({
                     <div
                       className="absolute inset-[10px] rounded-full border border-white/10"
                       style={{
-                        boxShadow:
-                          "inset 0 0 20px rgba(255,255,255,0.06)",
+                        boxShadow: "inset 0 0 20px rgba(255,255,255,0.06)",
                       }}
                     />
 
-                    {SEGMENTS.map(
-                      (segment, i) => {
-                        const angle =
-                          i *
-                            segmentAngle +
-                          segmentAngle / 2;
+                    {SEGMENTS.map((segment, i) => {
+                      const angle = i * segmentAngle + segmentAngle / 2;
 
-                        const isActive =
-                          activeSegmentIndex ===
-                          i;
+                      const isActive = activeSegmentIndex === i;
 
-                        return (
+                      return (
+                        <div
+                          key={`${segment.label}-${i}`}
+                          className="absolute left-1/2 top-1/2 origin-center"
+                          style={{
+                            transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-108px) rotate(${-angle}deg)`,
+                          }}
+                        >
                           <div
-                            key={`${segment.label}-${i}`}
-                            className="absolute left-1/2 top-1/2 origin-center"
+                            className={`w-24 text-center text-sm font-black leading-4 text-white transition md:text-base ${
+                              isActive ? "scale-110" : ""
+                            }`}
                             style={{
-                              transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-108px) rotate(${-angle}deg)`,
+                              textShadow: isActive
+                                ? "0 0 10px rgba(255,255,255,0.95), 0 2px 4px rgba(0,0,0,0.85)"
+                                : "0 2px 4px rgba(0,0,0,0.85)",
                             }}
                           >
-                            <div
-                              className={`w-24 text-center text-sm font-black leading-4 text-white transition md:text-base ${
-                                isActive
-                                  ? "scale-110"
-                                  : ""
-                              }`}
-                              style={{
-                                textShadow:
-                                  isActive
-                                    ? "0 0 10px rgba(255,255,255,0.95), 0 2px 4px rgba(0,0,0,0.85)"
-                                    : "0 2px 4px rgba(0,0,0,0.85)",
-                              }}
-                            >
-                              {
-                                segment.label
-                              }
-                            </div>
+                            {segment.label}
                           </div>
-                        );
-                      }
-                    )}
+                        </div>
+                      );
+                    })}
 
                     <div
                       className={`absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-white/25 bg-[radial-gradient(circle_at_30%_30%,#b91c1c,#7a001f)] text-2xl shadow-[0_0_25px_rgba(239,68,68,0.35)] transition ${
-                        wheelGlow
-                          ? "scale-105"
-                          : ""
+                        wheelGlow ? "scale-105" : ""
                       }`}
                     >
                       🎡
@@ -989,68 +824,43 @@ export default function WheelGame({
                 <button
                   type="button"
                   onClick={spinWheel}
-                  disabled={
-                    phase !== "spin" ||
-                    spinning
-                  }
+                  disabled={phase !== "spin" || spinning}
                   className="btn-primary mt-5 min-w-[170px] disabled:opacity-50"
                 >
-                  {spinning
-                    ? "العجلة تدور..."
-                    : "لف العجلة"}
+                  {spinning ? "العجلة تدور..." : "لف العجلة"}
                 </button>
               </div>
             )}
 
             {phase === "guess" && (
               <div className="space-y-5">
-               
                 <div className="space-y-2">
-                  {LETTER_ROWS.map(
-                    (row, rowIndex) => (
-                      <div
-                        key={rowIndex}
-                        className="flex flex-wrap justify-center gap-1.5 sm:gap-2"
-                      >
-                        {row
-                          .split("")
-                          .map(
-                            (letter) => {
-                              const isUsed =
-                                usedLetters.includes(
-                                  letter
-                                );
+                  {LETTER_ROWS.map((row, rowIndex) => (
+                    <div
+                      key={rowIndex}
+                      className="flex flex-wrap justify-center gap-1.5 sm:gap-2"
+                    >
+                      {row.split("").map((letter) => {
+                        const isUsed = usedLetters.includes(letter);
 
-                              return (
-                                <button
-                                  key={
-                                    letter
-                                  }
-                                  type="button"
-                                  onClick={() =>
-                                    pickLetter(
-                                      letter
-                                    )
-                                  }
-                                  disabled={
-                                    isUsed
-                                  }
-                                  className={`h-11 min-w-[40px] rounded-xl border px-2 text-base font-bold transition sm:min-w-[44px] sm:px-3 ${
-                                    isUsed
-                                      ? "border-white/5 bg-white/5 text-white/25"
-                                      : "border-white/10 bg-white/10 text-white hover:bg-white/20 active:scale-95"
-                                  }`}
-                                >
-                                  {
-                                    letter
-                                  }
-                                </button>
-                              );
-                            }
-                          )}
-                      </div>
-                    )
-                  )}
+                        return (
+                          <button
+                            key={letter}
+                            type="button"
+                            onClick={() => pickLetter(letter)}
+                            disabled={isUsed}
+                            className={`h-11 min-w-[40px] rounded-xl border px-2 text-base font-bold transition sm:min-w-[44px] sm:px-3 ${
+                              isUsed
+                                ? "border-white/5 bg-white/5 text-white/25"
+                                : "border-white/10 bg-white/10 text-white hover:bg-white/20 active:scale-95"
+                            }`}
+                          >
+                            {letter}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ))}
                 </div>
 
                 {solveOpen ? (
@@ -1061,9 +871,7 @@ export default function WheelGame({
                     <input
                       autoFocus
                       value={solveGuess}
-                      onChange={(event) =>
-                        setSolveGuess(event.target.value)
-                      }
+                      onChange={(event) => setSolveGuess(event.target.value)}
                       placeholder="اكتبوا الجواب كامل"
                       aria-label="الجواب"
                       className="h-12 min-w-0 flex-1 rounded-2xl border border-white/15 bg-black/25 px-4 text-center text-lg font-black text-white outline-none placeholder:text-white/35 focus:border-cyan-300/60"
@@ -1104,9 +912,7 @@ export default function WheelGame({
             {phase === "celebrate" && (
               <div className="mt-4">
                 <div className="rounded-3xl border border-yellow-300/40 bg-yellow-400/15 px-6 py-8 shadow-2xl">
-                  <p className="text-5xl">
-                    {winnerName ? "🏆" : "🤝"}
-                  </p>
+                  <p className="text-5xl">{winnerName ? "🏆" : "🤝"}</p>
 
                   <p className="mt-4 text-3xl font-black">
                     {winnerName || "تعادل"}
@@ -1124,12 +930,7 @@ export default function WheelGame({
         </div>
       </GameLayout>
 
-      <HelpModal
-        open={showHelp}
-        onClose={() =>
-          setShowHelp(false)
-        }
-      />
+      <HelpModal open={showHelp} onClose={() => setShowHelp(false)} />
     </>
   );
 }

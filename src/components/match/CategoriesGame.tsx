@@ -1,13 +1,10 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import { GameTitle } from "@/components/match/GameLayout";
 import { CATEGORY_LETTERS as letters } from "@/data/categories";
 import { createDeck } from "@/lib/deck";
-import {
-  readRoundState,
-  writeRoundState,
-} from "@/lib/roundState";
+import { readRoundState, writeRoundState } from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
 const letterDeck = createDeck(letters);
@@ -55,11 +52,7 @@ export default function CategoriesGame({
   useEffect(() => {
     setTimeLeft(timerSeconds);
 
-    const saved =
-      readRoundState<CategoriesRoundState>(
-        "categories",
-        roundKey
-      );
+    const saved = readRoundState<CategoriesRoundState>("categories", roundKey);
 
     if (saved && saved.letter) {
       setLetter(saved.letter);
@@ -91,19 +84,15 @@ export default function CategoriesGame({
       return;
     }
 
-    writeRoundState<CategoriesRoundState>(
-      "categories",
-      roundKey,
-      {
-        letter,
-        revealed,
-        side1Ready,
-        side2Ready,
-        side1Time,
-        side2Time,
-        roundStartedAt,
-      }
-    );
+    writeRoundState<CategoriesRoundState>("categories", roundKey, {
+      letter,
+      revealed,
+      side1Ready,
+      side2Ready,
+      side1Time,
+      side2Time,
+      roundStartedAt,
+    });
   }, [
     roundKey,
     letter,
@@ -135,20 +124,14 @@ export default function CategoriesGame({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [
-    timeLeft,
-    revealed,
-    side1Ready,
-    side2Ready,
-    timerEnabled,
-  ]);
+  }, [timeLeft, revealed, side1Ready, side2Ready, timerEnabled]);
 
   function markReady(side: "side1" | "side2") {
     if (revealed) return;
 
     const elapsedTime = Math.max(
       1,
-      Math.floor((Date.now() - roundStartedAt) / 1000)
+      Math.floor((Date.now() - roundStartedAt) / 1000),
     );
 
     if (side === "side1") {
@@ -173,10 +156,7 @@ export default function CategoriesGame({
 
   const progressWidth =
     timerEnabled && timerSeconds > 0
-      ? `${Math.max(
-          0,
-          Math.min(100, (timeLeft / timerSeconds) * 100)
-        )}%`
+      ? `${Math.max(0, Math.min(100, (timeLeft / timerSeconds) * 100))}%`
       : "100%";
 
   const side1Label = side1Name || "فريق 1";
@@ -209,23 +189,17 @@ export default function CategoriesGame({
           </p>
 
           <p className="mt-1 text-lg font-black text-fuchsia-100 sm:text-2xl">
-            {side1Ready
-              ? `✓ ${side1Time ?? ""}ث`
-              : "⏳"}
+            {side1Ready ? `✓ ${side1Time ?? ""}ث` : "⏳"}
           </p>
         </div>
 
         <div className="flex min-h-[64px] min-w-0 flex-col items-center justify-center rounded-[16px] border border-violet-300/45 bg-gradient-to-r from-fuchsia-500/20 via-violet-500/20 to-cyan-400/20 px-2 py-1.5 sm:min-h-[76px]">
           <p className="text-[11px] font-bold text-white/60 sm:text-xs">
-            {timerEnabled && !revealed
-              ? "الوقت"
-              : "الدور"}
+            {timerEnabled && !revealed ? "الوقت" : "الدور"}
           </p>
 
           {timerEnabled && !revealed ? (
-            <p
-              className={`mt-1 text-2xl font-black ${timerTextClass}`}
-            >
+            <p className={`mt-1 text-2xl font-black ${timerTextClass}`}>
               {timeLeft}
             </p>
           ) : (
@@ -247,9 +221,7 @@ export default function CategoriesGame({
           </p>
 
           <p className="mt-1 text-lg font-black text-cyan-100 sm:text-2xl">
-            {side2Ready
-              ? `✓ ${side2Time ?? ""}ث`
-              : "⏳"}
+            {side2Ready ? `✓ ${side2Time ?? ""}ث` : "⏳"}
           </p>
         </div>
       </div>
@@ -278,7 +250,8 @@ export default function CategoriesGame({
           </p>
 
           <p className="mt-1.5 text-sm leading-6 text-white/60">
-            كلها تبدأ بنفس الحرف. اللي يخلص يضغط زره، وإذا الإجابات صح ياخذها الأسرع.
+            كلها تبدأ بنفس الحرف. اللي يخلص يضغط زره، وإذا الإجابات صح ياخذها
+            الأسرع.
           </p>
         </div>
 
@@ -291,9 +264,7 @@ export default function CategoriesGame({
               className="btn-team-1"
             >
               <span className="block truncate">
-                {side1Ready
-                  ? "✓ خلصوا"
-                  : `${side1Label} خلصوا`}
+                {side1Ready ? "✓ خلصوا" : `${side1Label} خلصوا`}
               </span>
             </button>
 
@@ -304,9 +275,7 @@ export default function CategoriesGame({
               className="btn-team-2"
             >
               <span className="block truncate">
-                {side2Ready
-                  ? "✓ خلصوا"
-                  : `${side2Label} خلصوا`}
+                {side2Ready ? "✓ خلصوا" : `${side2Label} خلصوا`}
               </span>
             </button>
           </div>

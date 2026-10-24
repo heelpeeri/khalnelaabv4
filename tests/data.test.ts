@@ -7,11 +7,7 @@ import { LOGOS } from "@/data/logos";
 import { PROVERB_PUZZLES } from "@/data/proverbs";
 import { quizCategoryList, quizQuestions } from "@/data/quiz";
 import { WHO_GAME } from "@/data/scramble";
-import {
-  WHEEL_LETTER_ROWS,
-  WHEEL_PUZZLES,
-  WHEEL_SEGMENTS,
-} from "@/data/wheel";
+import { WHEEL_LETTER_ROWS, WHEEL_PUZZLES, WHEEL_SEGMENTS } from "@/data/wheel";
 import { WORDS } from "@/data/words";
 import { isPlayableWord, normalizeArabic } from "@/lib/wordRules";
 
@@ -35,7 +31,7 @@ describe("quiz questions", () => {
       for (const question of quizQuestions[key]) {
         if (question.options) {
           expect(question.options, question.question).toContain(
-            question.answer
+            question.answer,
           );
           expect(duplicates(question.options), question.question).toEqual([]);
         }
@@ -46,7 +42,7 @@ describe("quiz questions", () => {
   it("has no repeated questions in a category", () => {
     for (const { key } of quizCategoryList) {
       const texts = quizQuestions[key].map(
-        (question) => `${question.question}|${question.image ?? ""}`
+        (question) => `${question.question}|${question.image ?? ""}`,
       );
 
       expect(duplicates(texts)).toEqual([]);
@@ -92,7 +88,7 @@ describe("wheel of fortune", () => {
       expect(
         typeof segment.value === "number"
           ? segment.value > 0
-          : ["bankrupt", "lose"].includes(segment.value)
+          : ["bankrupt", "lose"].includes(segment.value),
       ).toBe(true);
     }
   });
