@@ -4,3 +4,5 @@ public
 package-lock.json
 next-env.d.ts
 tests/__snapshots__
+.open-next
+.wrangler
