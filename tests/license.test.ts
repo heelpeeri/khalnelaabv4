@@ -39,16 +39,22 @@ describe("license codes", () => {
   });
 
   it("rejects tampered or random codes", async () => {
-    const code = await createLicenseCode({
-      type: "purchase",
-      id: randomId(),
-      secret: secrets.purchase,
-    });
-    const lastChar = code.at(-1) === "0" ? "1" : "0";
+    for (let round = 0; round < 50; round += 1) {
+      const code = await createLicenseCode({
+        type: "purchase",
+        id: randomId(),
+        secret: secrets.purchase,
+      });
 
-    expect(
-      (await verifyLicenseCode(code.slice(0, -1) + lastChar, secrets)).valid,
-    ).toBe(false);
+      for (const char of "0123456789ABCDEFGHJKMNPQRSTVWXYZ") {
+        if (char === code.at(-1)) continue;
+
+        expect(
+          (await verifyLicenseCode(code.slice(0, -1) + char, secrets)).valid,
+        ).toBe(false);
+      }
+    }
+
     expect((await verifyLicenseCode("KN-1234-5678", secrets)).valid).toBe(
       false,
     );
