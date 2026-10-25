@@ -66,6 +66,10 @@ function fromBase32(text: string) {
     }
   }
 
+  if (bits >= 5 || (value & ((1 << bits) - 1)) !== 0) {
+    return null;
+  }
+
   return new Uint8Array(output);
 }
 
