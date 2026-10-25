@@ -120,4 +120,17 @@ openssl rand -base64 32
 
 ## النشر
 
-الموقع منشور على Vercel، وأي دمج في `main` ينشر النسخة الجديدة تلقائيًا.
+الموقع يشتغل على Vercel أو Cloudflare.
+
+**Vercel:** أي دمج في `main` ينشر النسخة الجديدة تلقائيًا.
+
+**Cloudflare Workers:** الإعدادات في `wrangler.jsonc` و`open-next.config.ts`.
+
+| الإعداد في Cloudflare | القيمة                              |
+| --------------------- | ----------------------------------- |
+| Build command         | `npx opennextjs-cloudflare build`   |
+| Deploy command        | `npx opennextjs-cloudflare deploy`  |
+| Variables and Secrets | نفس متغيرات قسم الدفع والتفعيل      |
+| Build variables       | `NEXT_PUBLIC_SITE_URL` برابط الموقع |
+
+تجربة نسخة Cloudflare محليًا: حط المتغيرات في `.dev.vars` وشغّل `npm run cf:preview`.

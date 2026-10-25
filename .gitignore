@@ -4,3 +4,6 @@ tsconfig.tsbuildinfo
 .env*
 !.env.example
 .vercel/
+.open-next/
+.wrangler/
+.dev.vars*

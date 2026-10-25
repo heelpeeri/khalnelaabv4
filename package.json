@@ -6,29 +6,34 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "lint": "eslint . --max-warnings=0",
     "test": "vitest run",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "next": "15.5.28",
+    "next": "16.3.8",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
+    "@opennextjs/cloudflare": "1.20.10",
     "@types/node": "^22.10.1",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.39.5",
-    "eslint-config-next": "^15.5.28",
+    "eslint-config-next": "^16.3.8",
     "postcss": "^8.4.49",
     "prettier": "3.9.10",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.2",
-    "vitest": "^5.0.5"
+    "vitest": "^5.0.5",
+    "wrangler": "4.149.0"
   },
   "overrides": {
     "next": {

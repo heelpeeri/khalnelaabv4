@@ -100,7 +100,12 @@ export default function UnlockForm({
           event.preventDefault();
 
           if (paymentId.trim()) {
-            window.location.href = `/api/purchase/complete?from=restore&id=${encodeURIComponent(paymentId.trim())}`;
+            window.location.assign(
+              new URL(
+                `/api/purchase/complete?from=restore&id=${encodeURIComponent(paymentId.trim())}`,
+                window.location.origin,
+              ),
+            );
           }
         }}
         className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 sm:p-5"
