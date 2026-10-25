@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import PageShell from "@/components/PageShell";
 import PolicySection from "@/components/PolicySection";
 import { SITE } from "@/data/site";
@@ -13,17 +12,6 @@ export default function TermsPage() {
   return (
     <PageShell title="الشروط والاسترجاع">
       <div className="space-y-3">
-        <PolicySection title="المنتج">
-          <p>
-            «خل نلعب» لعبة جماعية رقمية تشتغل من المتصفح، فيها ثمان ألعاب
-            للجلسات. الشراء يعطيك وصول كامل للعبة بدون حد لعدد الجلسات، ويشمل أي
-            محتوى نضيفه مستقبلًا.
-          </p>
-          <p>
-            المنتج رقمي بالكامل وما فيه شحن. التفعيل يتم مباشرة بعد نجاح الدفع.
-          </p>
-        </PolicySection>
-
         <PolicySection title="السعر والدفع">
           <p>
             السعر الأساسي {PRICING.basePrice} ريال، ويدفع مرة واحدة فقط بدون
@@ -58,25 +46,6 @@ export default function TermsPage() {
               {SITE.contactEmail}
             </a>
             . نحاول نحل المشكلة، وإذا ما قدرنا نرجع لك المبلغ كامل.
-          </p>
-        </PolicySection>
-
-        <PolicySection title="المحتوى">
-          <p>
-            الشعارات والصور المستخدمة في الألعاب ملك لأصحابها، ومستخدمة لغرض
-            الترفيه والتخمين فقط.
-          </p>
-        </PolicySection>
-
-        <PolicySection title="بيانات البائع">
-          <p>
-            {SITE.name}، يعمل بوثيقة عمل حر رقم {SITE.freelanceLicense}.
-          </p>
-          <p>
-            للتواصل:{" "}
-            <Link href="/contact" className="font-bold text-cyan-200 underline">
-              صفحة التواصل
-            </Link>
           </p>
         </PolicySection>
       </div>
