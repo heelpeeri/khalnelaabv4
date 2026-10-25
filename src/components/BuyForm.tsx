@@ -48,7 +48,7 @@ export default function BuyForm({
       description: "خل نلعب - اللعبة كاملة",
       publishable_api_key: publishableKey,
       callback_url: `${origin}/api/purchase/complete`,
-      methods: ["creditcard", "applepay", "stcpay"],
+      methods: ["creditcard", "applepay"],
       apple_pay: {
         country: "SA",
         label: "خل نلعب",
