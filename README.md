@@ -108,7 +108,7 @@ public/images/            صور الألعاب
 openssl rand -base64 32
 ```
 
-السعر في `src/lib/pricing.ts`، وبيانات التواصل في `src/data/site.ts`.
+السعر في `src/lib/pricing.ts`، ورابط الموقع وبيانات التواصل في `src/data/site.ts`.
 
 أكواد الإهداء: افتح `/admin/gifts`، اكتب كلمة المرور، واختر المدة.
 
@@ -126,11 +126,10 @@ openssl rand -base64 32
 
 **Cloudflare Workers:** الإعدادات في `wrangler.jsonc` و`open-next.config.ts`.
 
-| الإعداد في Cloudflare | القيمة                              |
-| --------------------- | ----------------------------------- |
-| Build command         | `npx opennextjs-cloudflare build`   |
-| Deploy command        | `npx opennextjs-cloudflare deploy`  |
-| Variables and Secrets | نفس متغيرات قسم الدفع والتفعيل      |
-| Build variables       | `NEXT_PUBLIC_SITE_URL` برابط الموقع |
+| الإعداد في Cloudflare | القيمة                             |
+| --------------------- | ---------------------------------- |
+| Build command         | `npx opennextjs-cloudflare build`  |
+| Deploy command        | `npx opennextjs-cloudflare deploy` |
+| Variables and Secrets | نفس متغيرات قسم الدفع والتفعيل     |
 
 تجربة نسخة Cloudflare محليًا: حط المتغيرات في `.dev.vars` وشغّل `npm run cf:preview`.

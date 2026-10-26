@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { SITE } from "@/data/site";
 import "./globals.css";
 
 const somar = localFont({
@@ -19,11 +20,7 @@ const somar = localFont({
   display: "swap",
 });
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "http://localhost:3000");
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || SITE.url;
 
 const description = "ألعاب جماعية للجلسات: فريقين، ثمان ألعاب، وبطل واحد.";
 
