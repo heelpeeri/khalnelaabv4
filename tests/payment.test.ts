@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { isPaidPurchase, isValidPaymentId } from "@/lib/payment";
+import { safeNextPath } from "@/lib/licenseCookie";
 import { PRICING, getCurrentPrice, toHalalas } from "@/lib/pricing";
 
 const payment = {
@@ -30,5 +31,17 @@ describe("isValidPaymentId", () => {
     expect(isValidPaymentId("3f2c1a9e-1111-4c4c-9e9e-123456789abc")).toBe(true);
     expect(isValidPaymentId("../../admin")).toBe(false);
     expect(isValidPaymentId("short")).toBe(false);
+  });
+});
+
+describe("safeNextPath", () => {
+  it("returns to the game when coming from it", () => {
+    expect(safeNextPath("/match?game=word")).toBe("/match?game=word");
+  });
+
+  it("falls back to the home page otherwise", () => {
+    expect(safeNextPath(undefined)).toBe("/");
+    expect(safeNextPath("//evil.com/match")).toBe("/");
+    expect(safeNextPath("https://evil.com")).toBe("/");
   });
 });

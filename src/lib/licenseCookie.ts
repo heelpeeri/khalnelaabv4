@@ -15,5 +15,5 @@ export function isPaywallEnabled() {
 export function safeNextPath(next: string | null | undefined) {
   return next && next.startsWith("/match") && !next.startsWith("//")
     ? next
-    : "/match";
+    : "/";
 }

@@ -66,7 +66,7 @@ export default function BuyForm({
         <p className="mt-1 text-sm font-bold text-white/60">
           نجهز بوابة الدفع، ارجع لنا بعد شوي.
         </p>
-        <UnlockLinks />
+        <UnlockLinks next={next} />
       </section>
     );
   }
@@ -159,8 +159,7 @@ export default function BuyForm({
 }
 
 function UnlockLinks({ next }: { next?: string }) {
-  const query =
-    next && next !== "/match" ? `?next=${encodeURIComponent(next)}` : "";
+  const query = next && next !== "/" ? `?next=${encodeURIComponent(next)}` : "";
 
   return (
     <p className="mt-3 text-center text-sm font-bold text-white/60">
