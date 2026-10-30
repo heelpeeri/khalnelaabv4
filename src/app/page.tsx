@@ -203,7 +203,7 @@ export default function Home() {
 
           <div className="text-center">
             <h1 className="text-4xl font-black leading-normal sm:text-5xl">
-              🏆 تحدي الجلسة
+              تحدي الجلسة 🏆
             </h1>
 
             <div className="mx-auto mt-3 max-w-2xl rounded-2xl border border-yellow-300/[0.08] bg-gradient-to-r from-yellow-300/[0.035] via-yellow-200/[0.06] to-yellow-300/[0.035] px-5 py-2">
@@ -252,37 +252,7 @@ export default function Home() {
             <div className="h-px flex-1 bg-gradient-to-l from-transparent via-white/10 to-cyan-300/15" />
           </div>
 
-          <div
-            className="
-              relative
-              mx-auto
-              mt-3
-              max-w-[1120px]
-              rounded-[28px]
-              border
-              border-cyan-300/[0.14]
-              px-3
-              pb-1
-              pt-3
-              shadow-[inset_0_1px_0_rgba(255,255,255,.025)]
-              sm:px-5
-            "
-            style={{
-              backgroundImage: `
-                radial-gradient(
-                  ellipse 500px 150px at 50% 0%,
-                  rgba(34,211,238,0.055),
-                  transparent 75%
-                ),
-                linear-gradient(
-                  to bottom,
-                  rgba(34,211,238,0.035),
-                  rgba(255,255,255,0.018),
-                  transparent
-                )
-              `,
-            }}
-          >
+          <div className="relative mx-auto mt-3 max-w-[1120px] pb-1 pt-3">
             <div className="relative z-10 text-center">
               <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-400/[0.09] px-5 py-1.5 shadow-[0_0_16px_rgba(34,211,238,.07)]">
                 <span className="text-sm">⚡</span>
