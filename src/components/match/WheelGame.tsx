@@ -823,6 +823,10 @@ export default function WheelGame({
                       onChange={(event) => setSolveGuess(event.target.value)}
                       placeholder="اكتبوا الجواب كامل"
                       aria-label="الجواب"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      enterKeyHint="done"
                       className="h-12 min-w-0 flex-1 rounded-2xl border border-white/15 bg-black/25 px-4 text-center text-lg font-black text-white outline-none placeholder:text-white/35 focus:border-cyan-300/60"
                     />
 

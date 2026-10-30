@@ -38,7 +38,7 @@ export function OverlayShell({
     <div
       role="dialog"
       aria-modal="true"
-      className={`fixed inset-0 ${zIndex} overflow-y-auto bg-black/75 px-4 py-6`}
+      className={`fixed inset-0 ${zIndex} overflow-y-auto overscroll-contain bg-black/75 px-4 py-6`}
     >
       <div className="flex min-h-full items-center justify-center">
         <div className={`arcade-card w-full ${width} p-5 text-center sm:p-8`}>

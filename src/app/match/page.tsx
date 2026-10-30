@@ -647,7 +647,7 @@ export default function MatchPage() {
   }
 
   return (
-    <main className="min-h-screen px-3 pb-6 pt-4 text-white sm:p-6">
+    <main className="min-h-[100dvh] px-3 pb-6 pt-4 text-white sm:p-6">
       <Link
         href="/"
         prefetch

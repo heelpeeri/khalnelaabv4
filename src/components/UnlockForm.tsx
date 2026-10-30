@@ -70,7 +70,9 @@ export default function UnlockForm({
             placeholder="KN-XXXX-XXXX-..."
             dir="ltr"
             autoCapitalize="characters"
+            autoCorrect="off"
             autoComplete="off"
+            enterKeyHint="go"
             spellCheck={false}
             maxLength={80}
             className="mt-2 h-12 w-full rounded-xl border border-white/15 bg-black/25 px-4 text-center text-base font-black tracking-wide text-white outline-none placeholder:text-white/30 focus:border-cyan-300/60"
@@ -120,7 +122,10 @@ export default function UnlockForm({
           onChange={(event) => setPaymentId(event.target.value)}
           placeholder="رقم العملية"
           dir="ltr"
+          autoCapitalize="none"
+          autoCorrect="off"
           autoComplete="off"
+          enterKeyHint="go"
           spellCheck={false}
           maxLength={64}
           className="mt-3 h-12 w-full rounded-xl border border-white/15 bg-black/25 px-4 text-center text-base font-bold text-white outline-none placeholder:text-white/30 focus:border-cyan-300/60"

@@ -124,7 +124,7 @@ export default function Home() {
     <main
       className={`
         relative
-        min-h-screen
+        min-h-[100svh]
         overflow-x-hidden
         px-4
         pb-4
