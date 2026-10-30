@@ -488,6 +488,14 @@ export default function MatchPage() {
 
     if (urlMode === "session" || !isGameType(gameParam)) {
       setMode("session");
+
+      if (isGameType(gameParam)) {
+        setSelectedGames([gameParam]);
+        setGameRounds({
+          [gameParam]: getDefaultRounds(gameParam),
+        });
+      }
+
       return;
     }
 
