@@ -58,6 +58,8 @@ src/
     shareImage.ts         صورة مشاركة النتيجة
 tests/                    الاختبارات
 public/images/            صور الألعاب
+plans/                    خطط تحسين الحركة ومتابعتها
+.claude/skills/           سكلز التصميم والحركة لـClaude Code
 ```
 
 ## إضافة محتوى
