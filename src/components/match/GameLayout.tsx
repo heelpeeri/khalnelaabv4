@@ -33,6 +33,16 @@ type GameLayoutProps = {
   children: ReactNode;
 };
 
+const EMOJI_PATTERN =
+  /(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*)/u;
+
+function splitEmoji(value: string) {
+  return value
+    .split(EMOJI_PATTERN)
+    .filter(Boolean)
+    .map((text) => ({ text, emoji: EMOJI_PATTERN.test(text) }));
+}
+
 function normalizeTeamName(value: string) {
   return value
     .trim()
@@ -355,20 +365,24 @@ export default function GameLayout({
                     ? "text-fuchsia-50"
                     : isSide2Turn
                       ? "text-cyan-50"
-                      : useDuoNeutral
-                        ? `
-                          bg-gradient-to-r
-                          from-fuchsia-200
-                          via-white
-                          to-cyan-200
-                          bg-clip-text
-                          text-transparent
-                        `
-                        : "text-white"
+                      : "text-white"
                 }
               `}
             >
-              {displayedTurn}
+              {useDuoNeutral
+                ? splitEmoji(displayedTurn).map((part, index) =>
+                    part.emoji ? (
+                      <span key={index}>{part.text}</span>
+                    ) : (
+                      <span
+                        key={index}
+                        className="bg-gradient-to-r from-fuchsia-200 via-white to-cyan-200 bg-clip-text text-transparent"
+                      >
+                        {part.text}
+                      </span>
+                    ),
+                  )
+                : displayedTurn}
             </p>
           </div>
 
