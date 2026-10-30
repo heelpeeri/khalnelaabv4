@@ -9,7 +9,7 @@ import { createDeck } from "@/lib/deck";
 import { readRoundState, writeRoundState } from "@/lib/roundState";
 import type { WinnerType } from "@/types/game";
 
-const TOTAL_ROUNDS = 2;
+const TOTAL_ROUNDS = 1;
 
 type TeamSide = "side1" | "side2";
 
@@ -32,6 +32,7 @@ export default function ScrambleGame({
   currentRound = 1,
   timerEnabled = false,
   timerSeconds = 30,
+  gameRoundIndex = 0,
 }: {
   side1Name: string;
   side2Name: string;
@@ -40,6 +41,7 @@ export default function ScrambleGame({
   currentRound?: number;
   timerEnabled?: boolean;
   timerSeconds?: number;
+  gameRoundIndex?: number;
 }) {
   const [index, setIndex] = useState(0);
 
@@ -118,8 +120,8 @@ export default function ScrambleGame({
   const current = rounds[index];
 
   const activeSide: TeamSide = useMemo(
-    () => (index % 2 === 0 ? "side1" : "side2"),
-    [index],
+    () => ((gameRoundIndex + index) % 2 === 0 ? "side1" : "side2"),
+    [gameRoundIndex, index],
   );
 
   const activeTeamName =
@@ -237,11 +239,13 @@ export default function ScrambleGame({
       >
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
-              الشخصية <span className="text-white">{index + 1}</span>
-              {" / "}
-              {rounds.length}
-            </div>
+            {rounds.length > 1 && (
+              <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white/70">
+                الشخصية <span className="text-white">{index + 1}</span>
+                {" / "}
+                {rounds.length}
+              </div>
+            )}
 
             {started && !revealed && timerEnabled && (
               <div

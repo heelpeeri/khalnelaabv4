@@ -88,11 +88,13 @@ function getRoundOptions(gameId: string) {
     case "categories":
       return [1, 2];
 
+    case "scramble":
+      return [1, 2, 3];
+
     case "quiz":
       return [];
 
     case "word":
-    case "scramble":
     case "draw":
     case "logo":
     case "country":
