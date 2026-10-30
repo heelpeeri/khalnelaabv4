@@ -6,3 +6,4 @@ next-env.d.ts
 tests/__snapshots__
 .open-next
 .wrangler
+.claude
