@@ -1,6 +1,6 @@
 # 001 — Add shared motion easing tokens
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: 7071895
 - **Severity**: LOW
 - **Category**: Cohesion & tokens

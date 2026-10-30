@@ -155,10 +155,10 @@ export default function CategoriesGame({
         ? "text-yellow-200"
         : "text-cyan-200";
 
-  const progressWidth =
+  const progressScale =
     timerEnabled && timerSeconds > 0
-      ? `${Math.max(0, Math.min(100, (timeLeft / timerSeconds) * 100))}%`
-      : "100%";
+      ? Math.max(0, Math.min(1, timeLeft / timerSeconds))
+      : 1;
 
   const side1Label = side1Name || "فريق 1";
   const side2Label = side2Name || "فريق 2";
@@ -238,8 +238,8 @@ export default function CategoriesGame({
           <div className="mx-auto mb-4 max-w-md">
             <div className="h-2 w-full overflow-hidden rounded-full border border-white/10 bg-white/10">
               <div
-                className="h-full bg-gradient-to-r from-fuchsia-500 via-purple-500 to-cyan-400 transition-[width] duration-1000"
-                style={{ width: progressWidth }}
+                className="h-full w-full origin-right bg-gradient-to-r from-fuchsia-500 via-purple-500 to-cyan-400 transition-transform duration-1000 ease-linear"
+                style={{ transform: `scaleX(${progressScale})` }}
               />
             </div>
           </div>

@@ -1,6 +1,6 @@
 # 006 — Session battle bar: animate transform, not width/left
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: 7071895
 - **Severity**: MEDIUM
 - **Category**: Performance

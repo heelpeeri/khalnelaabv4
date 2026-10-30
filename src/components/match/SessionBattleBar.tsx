@@ -80,17 +80,18 @@ export default function SessionBattleBar({
         <div className="relative h-2.5 overflow-hidden rounded-full border border-white/[0.07] bg-gradient-to-r from-cyan-500 via-cyan-500 to-cyan-400">
           <div
             className="
-              absolute inset-y-0 right-0
+              absolute inset-0
+              origin-right
               bg-gradient-to-l
               from-fuchsia-600
               via-fuchsia-500
               to-purple-500
-              transition-[width]
+              transition-transform
               duration-700
-              ease-out
+              ease-[var(--ease-out)]
             "
             style={{
-              width: `${side1Control}%`,
+              transform: `scaleX(${side1Control / 100})`,
             }}
           />
 
@@ -100,24 +101,30 @@ export default function SessionBattleBar({
         <div
           className="
             pointer-events-none
-            absolute top-1/2 z-20
-            flex h-5 w-5
-            -translate-x-1/2 -translate-y-1/2
-            items-center justify-center
-            rounded-full
-            border border-white/15
-            bg-[#130b20]
-            text-[9px]
-            shadow-[0_0_7px_rgba(139,92,246,.18)]
-            transition-[left]
+            absolute inset-0 z-20
+            transition-transform
             duration-700
-            ease-out
+            ease-[var(--ease-out)]
           "
           style={{
-            left: `${markerPosition}%`,
+            transform: `translateX(${markerPosition}%)`,
           }}
         >
-          🏆
+          <div
+            className="
+              absolute left-0 top-1/2
+              flex h-5 w-5
+              -translate-x-1/2 -translate-y-1/2
+              items-center justify-center
+              rounded-full
+              border border-white/15
+              bg-[#130b20]
+              text-[9px]
+              shadow-[0_0_7px_rgba(139,92,246,.18)]
+            "
+          >
+            🏆
+          </div>
         </div>
       </div>
     </div>

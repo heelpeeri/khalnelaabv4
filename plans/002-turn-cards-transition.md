@@ -1,6 +1,6 @@
 # 002 — Replace transition-all on turn/score cards
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: 7071895
 - **Severity**: HIGH
 - **Category**: Performance / Easing & duration

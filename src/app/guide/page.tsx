@@ -86,7 +86,7 @@ export default function GuidePage() {
                   "
                   style={{
                     transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
-                    transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                    transitionTimingFunction: "var(--ease-out)",
                   }}
                 >
                   <div

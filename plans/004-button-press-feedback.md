@@ -1,6 +1,6 @@
 # 004 — Faster, ease-out button press feedback
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: 7071895
 - **Severity**: MEDIUM
 - **Category**: Physicality & origin / Easing & duration

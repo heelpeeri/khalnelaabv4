@@ -1,6 +1,6 @@
 # 005 — Smooth categories timer bar with transform
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: 7071895
 - **Severity**: MEDIUM
 - **Category**: Performance / Easing

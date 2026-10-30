@@ -1,6 +1,6 @@
 # 003 — Strong ease-out for the per-round judge buttons
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: 7071895
 - **Severity**: MEDIUM
 - **Category**: Easing & duration

@@ -197,8 +197,9 @@ export default function GameLayout({
               border
               px-2
               py-1.5
-              transition-all
-              duration-500
+              transition-[opacity,border-color,box-shadow,background-color]
+              duration-200
+              ease-[var(--ease-out)]
               sm:min-h-[76px]
               sm:px-3
 
@@ -231,7 +232,8 @@ export default function GameLayout({
                 font-bold
                 leading-tight
                 transition-colors
-                duration-500
+                duration-200
+                ease-[var(--ease-out)]
 
                 ${isSide1Turn ? "text-fuchsia-100" : "text-white/75"}
               `}
@@ -248,8 +250,9 @@ export default function GameLayout({
                 text-[34px]
                 font-black
                 leading-[0.9]
-                transition-all
-                duration-500
+                transition-colors
+                duration-200
+                ease-[var(--ease-out)]
                 sm:text-[52px]
 
                 ${isSide1Turn ? "text-fuchsia-100" : "text-fuchsia-200/75"}
@@ -277,8 +280,9 @@ export default function GameLayout({
               border
               px-2
               py-1.5
-              transition-all
-              duration-500
+              transition-[opacity,border-color,box-shadow,background-color]
+              duration-200
+              ease-[var(--ease-out)]
               sm:min-h-[76px]
               sm:px-3
 
@@ -342,7 +346,8 @@ export default function GameLayout({
                 font-black
                 leading-tight
                 transition-colors
-                duration-500
+                duration-200
+                ease-[var(--ease-out)]
                 sm:text-2xl
 
                 ${
@@ -379,8 +384,9 @@ export default function GameLayout({
               border
               px-2
               py-1.5
-              transition-all
-              duration-500
+              transition-[opacity,border-color,box-shadow,background-color]
+              duration-200
+              ease-[var(--ease-out)]
               sm:min-h-[76px]
               sm:px-3
 
@@ -413,7 +419,8 @@ export default function GameLayout({
                 font-bold
                 leading-tight
                 transition-colors
-                duration-500
+                duration-200
+                ease-[var(--ease-out)]
 
                 ${isSide2Turn ? "text-cyan-100" : "text-white/75"}
               `}
@@ -430,8 +437,9 @@ export default function GameLayout({
                 text-[34px]
                 font-black
                 leading-[0.9]
-                transition-all
-                duration-500
+                transition-colors
+                duration-200
+                ease-[var(--ease-out)]
                 sm:text-[52px]
 
                 ${isSide2Turn ? "text-cyan-100" : "text-cyan-200/75"}
