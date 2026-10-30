@@ -59,6 +59,7 @@ export default function WheelGame({
   currentRound = 1,
   timerEnabled = false,
   timerSeconds = 30,
+  gameRoundIndex = 0,
 }: {
   side1Name: string;
   side2Name: string;
@@ -67,8 +68,11 @@ export default function WheelGame({
   currentRound?: number;
   timerEnabled?: boolean;
   timerSeconds?: number;
+  gameRoundIndex?: number;
 }) {
-  const [turn, setTurn] = useState<Turn>("side1");
+  const startingTurn: Turn = gameRoundIndex % 2 === 0 ? "side1" : "side2";
+
+  const [turn, setTurn] = useState<Turn>(startingTurn);
   const [phase, setPhase] = useState<Phase>("spin");
 
   const [rotation, setRotation] = useState(0);
@@ -174,7 +178,7 @@ export default function WheelGame({
     setRevealed(Array(q.answer.length).fill(""));
     setUsedLetters([]);
 
-    setTurn("side1");
+    setTurn(startingTurn);
     setPhase("spin");
 
     setCurrentValue(null);
@@ -183,7 +187,7 @@ export default function WheelGame({
     setScore2(0);
 
     return cleanup;
-  }, [roundKey, timerSeconds]);
+  }, [roundKey, timerSeconds, startingTurn]);
 
   useEffect(() => {
     if (

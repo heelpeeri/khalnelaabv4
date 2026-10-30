@@ -82,24 +82,14 @@ const GAMES: {
 
 function getRoundOptions(gameId: string) {
   switch (gameId) {
-    case "wheel":
-      return [1, 3, 5];
-
-    case "categories":
-      return [1, 2];
-
-    case "scramble":
-      return [1, 2, 3];
-
     case "quiz":
       return [];
 
     case "word":
-    case "draw":
-    case "logo":
-    case "country":
-    default:
       return [2, 4, 6];
+
+    default:
+      return [1, 2, 3];
   }
 }
 
@@ -108,17 +98,12 @@ function getDefaultRounds(gameId: string) {
     case "quiz":
       return 6;
 
-    case "wheel":
-    case "categories":
-      return 1;
-
     case "word":
     case "scramble":
-    case "draw":
-    case "logo":
-    case "country":
-    default:
       return 2;
+
+    default:
+      return 1;
   }
 }
 

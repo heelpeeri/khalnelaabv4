@@ -33,9 +33,9 @@ export const DEFAULT_ROUNDS: Record<GameType, number> = {
   scramble: 2,
   wheel: 1,
   categories: 1,
-  draw: 2,
-  logo: 2,
-  country: 2,
+  draw: 1,
+  logo: 1,
+  country: 1,
 };
 
 export function isGameType(value: string | null): value is GameType {
