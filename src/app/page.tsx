@@ -208,7 +208,8 @@ export default function Home() {
 
             <div className="mx-auto mt-3 max-w-2xl rounded-2xl border border-yellow-300/[0.08] bg-gradient-to-r from-yellow-300/[0.035] via-yellow-200/[0.06] to-yellow-300/[0.035] px-5 py-2">
               <p className="text-sm font-bold leading-6 text-yellow-50/65 sm:text-[15px]">
-                اختاروا كم لعبة، سمّوا الفرق، واللي يجمع أكثر هو بطل الجلسة.
+                تقسمون نفسكم فريقين، تلعبون كم لعبة ورا بعض، واللي يجمع نقاط
+                أكثر يفوز.
               </p>
             </div>
 
