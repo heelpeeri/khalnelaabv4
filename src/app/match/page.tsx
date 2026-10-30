@@ -639,7 +639,16 @@ export default function MatchPage() {
         );
 
       case "wheel":
-        return <WheelGame key={index} {...commonGameProps} />;
+        return (
+          <WheelGame
+            key={index}
+            {...commonGameProps}
+            gameRoundIndex={
+              queue.slice(0, index).filter((round) => round.game === "wheel")
+                .length
+            }
+          />
+        );
 
       case "categories":
         return <CategoriesGame key={index} {...commonGameProps} />;
