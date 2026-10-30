@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "خل نلعب",
     short_name: "خل نلعب",
-    description: "ألعاب جماعية للجلسات: فريقين، ثمان ألعاب، وبطل واحد.",
+    description: "ألعاب جماعية للجلسات: فريقين، تسع ألعاب، وبطل واحد.",
     start_url: "/",
     display: "standalone",
     dir: "rtl",
