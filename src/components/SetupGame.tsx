@@ -241,6 +241,8 @@ export default function SetupGame({
             <input
               value={side1}
               maxLength={20}
+              autoComplete="off"
+              enterKeyHint="done"
               onChange={(event) => setSide1(event.target.value)}
               placeholder="فريق 1"
               className="h-10 w-full rounded-xl border border-fuchsia-300/20 bg-black/20 px-3 text-center text-base font-black text-white outline-none transition placeholder:text-white/30 focus:border-fuchsia-300/60"
@@ -264,6 +266,8 @@ export default function SetupGame({
             <input
               value={side2}
               maxLength={20}
+              autoComplete="off"
+              enterKeyHint="done"
               onChange={(event) => setSide2(event.target.value)}
               placeholder="فريق 2"
               className="h-10 w-full rounded-xl border border-cyan-300/20 bg-black/20 px-3 text-center text-base font-black text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/60"
