@@ -86,7 +86,7 @@ export function WinnerOverlay({
         title={isDraw ? "تعادل! 🤝" : "كفووو! 🏆"}
       />
 
-      <p className="mt-2 truncate text-xl font-black text-white sm:text-3xl">
+      <p className="mt-2 text-xl font-black text-white [overflow-wrap:anywhere] sm:text-3xl">
         {isDraw ? "الفريقين قدّها" : `الفائز: ${winnerName}`}
       </p>
 
@@ -98,7 +98,10 @@ export function WinnerOverlay({
               : "border-fuchsia-300/30 bg-fuchsia-500/10"
           }`}
         >
-          <p className="truncate text-sm font-black text-fuchsia-100/90 sm:text-base">
+          <p
+            dir="auto"
+            className="line-clamp-2 text-sm font-black text-fuchsia-100/90 [overflow-wrap:anywhere] sm:text-base"
+          >
             {side1Leads && "👑 "}
             {side1Name || "فريق 1"}
           </p>
@@ -119,7 +122,10 @@ export function WinnerOverlay({
               : "border-cyan-300/30 bg-cyan-400/10"
           }`}
         >
-          <p className="truncate text-sm font-black text-cyan-100/90 sm:text-base">
+          <p
+            dir="auto"
+            className="line-clamp-2 text-sm font-black text-cyan-100/90 [overflow-wrap:anywhere] sm:text-base"
+          >
             {side2Leads && "👑 "}
             {side2Name || "فريق 2"}
           </p>
@@ -262,7 +268,7 @@ export function RoundResultOverlay({
         title={isDraw ? "تعادل! 🤝" : "كفووو! 🏆"}
       />
 
-      <p className="arcade-winner mt-5 truncate">
+      <p className="arcade-winner mt-5 [overflow-wrap:anywhere]">
         {isDraw ? "محد أخذ نقطة الجولة" : `الجولة لـ ${winnerName}`}
       </p>
     </OverlayShell>

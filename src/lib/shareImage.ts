@@ -225,6 +225,7 @@ export async function createResultShareImage({
     isDraw ? "الفريقين قدّها" : `الفائز: ${finalWinnerName}`,
     width / 2,
     370,
+    940,
   );
 
   drawRoundedRect(ctx, 585, 445, 390, 270, 38);
@@ -249,7 +250,7 @@ export async function createResultShareImage({
 
   ctx.font = `900 32px ${fontFamily}`;
 
-  ctx.fillText(side1 || "فريق 1", 780, 515);
+  ctx.fillText(side1 || "فريق 1", 780, 515, 340);
 
   ctx.font = `900 110px ${fontFamily}`;
 
@@ -277,7 +278,7 @@ export async function createResultShareImage({
 
   ctx.font = `900 32px ${fontFamily}`;
 
-  ctx.fillText(side2 || "فريق 2", 300, 515);
+  ctx.fillText(side2 || "فريق 2", 300, 515, 340);
 
   ctx.font = `900 110px ${fontFamily}`;
 

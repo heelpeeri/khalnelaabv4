@@ -541,6 +541,7 @@ export default function WordGame({
         side1Score={side1Score}
         side2Score={side2Score}
         turn={getCurrentTurnName()}
+        turnSide={activeSide}
         currentRound={currentRound}
         game="word"
       >

@@ -108,7 +108,9 @@ export function TeamPickModal({
           onClick={() => runOnce(() => onPick("side1"))}
           className="btn-team-1"
         >
-          <span className="block truncate">{side1Name || "فريق 1"}</span>
+          <span dir="auto" className="block truncate">
+            {side1Name || "فريق 1"}
+          </span>
         </button>
 
         <button
@@ -116,7 +118,9 @@ export function TeamPickModal({
           onClick={() => runOnce(() => onPick("side2"))}
           className="btn-team-2"
         >
-          <span className="block truncate">{side2Name || "فريق 2"}</span>
+          <span dir="auto" className="block truncate">
+            {side2Name || "فريق 2"}
+          </span>
         </button>
       </div>
 
@@ -177,7 +181,9 @@ export function InlineTeamPick({
           onClick={() => runOnce(() => onPick("side1"))}
           className="btn-team-1"
         >
-          <span className="block truncate">{side1Name || "فريق 1"}</span>
+          <span dir="auto" className="block truncate">
+            {side1Name || "فريق 1"}
+          </span>
         </button>
 
         <button
@@ -185,7 +191,9 @@ export function InlineTeamPick({
           onClick={() => runOnce(() => onPick("side2"))}
           className="btn-team-2"
         >
-          <span className="block truncate">{side2Name || "فريق 2"}</span>
+          <span dir="auto" className="block truncate">
+            {side2Name || "فريق 2"}
+          </span>
         </button>
       </div>
 

@@ -185,7 +185,10 @@ export default function CategoriesGame({
               : "border-fuchsia-300/70 bg-gradient-to-br from-fuchsia-500/30 to-purple-500/15"
           }`}
         >
-          <p className="max-w-full truncate text-xs font-bold text-fuchsia-100">
+          <p
+            dir="auto"
+            className="line-clamp-2 max-w-full text-center text-xs font-bold text-fuchsia-100 [overflow-wrap:anywhere]"
+          >
             {side1Label}
           </p>
 
@@ -217,7 +220,10 @@ export default function CategoriesGame({
               : "border-cyan-300/70 bg-gradient-to-br from-cyan-400/30 to-blue-500/15"
           }`}
         >
-          <p className="max-w-full truncate text-xs font-bold text-cyan-100">
+          <p
+            dir="auto"
+            className="line-clamp-2 max-w-full text-center text-xs font-bold text-cyan-100 [overflow-wrap:anywhere]"
+          >
             {side2Label}
           </p>
 
@@ -264,9 +270,16 @@ export default function CategoriesGame({
               disabled={side1Ready}
               className="btn-team-1"
             >
-              <span className="block truncate">
-                {side1Ready ? "✓ خلصوا" : `${side1Label} خلصوا`}
-              </span>
+              {side1Ready ? (
+                "✓ خلصوا"
+              ) : (
+                <span className="flex min-w-0 max-w-full flex-col items-center leading-tight">
+                  <span dir="auto" className="max-w-full truncate">
+                    {side1Label}
+                  </span>
+                  <span className="text-sm opacity-80">خلصوا</span>
+                </span>
+              )}
             </button>
 
             <button
@@ -275,9 +288,16 @@ export default function CategoriesGame({
               disabled={side2Ready}
               className="btn-team-2"
             >
-              <span className="block truncate">
-                {side2Ready ? "✓ خلصوا" : `${side2Label} خلصوا`}
-              </span>
+              {side2Ready ? (
+                "✓ خلصوا"
+              ) : (
+                <span className="flex min-w-0 max-w-full flex-col items-center leading-tight">
+                  <span dir="auto" className="max-w-full truncate">
+                    {side2Label}
+                  </span>
+                  <span className="text-sm opacity-80">خلصوا</span>
+                </span>
+              )}
             </button>
           </div>
         )}
