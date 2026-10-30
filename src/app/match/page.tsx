@@ -627,7 +627,16 @@ export default function MatchPage() {
         );
 
       case "scramble":
-        return <ScrambleGame key={index} {...commonGameProps} />;
+        return (
+          <ScrambleGame
+            key={index}
+            {...commonGameProps}
+            gameRoundIndex={
+              queue.slice(0, index).filter((round) => round.game === "scramble")
+                .length
+            }
+          />
+        );
 
       case "wheel":
         return <WheelGame key={index} {...commonGameProps} />;
