@@ -221,10 +221,13 @@ export default function GameLayout({
             `}
           >
             <p
+              dir="auto"
               className={`
+                line-clamp-2
                 max-w-full
-                truncate
+                text-center
                 text-xs
+                [overflow-wrap:anywhere]
                 font-bold
                 leading-tight
                 transition-colors
@@ -328,11 +331,14 @@ export default function GameLayout({
             </p>
 
             <p
+              dir="auto"
               className={`
                 mt-1
+                line-clamp-2
                 max-w-full
-                truncate
+                text-center
                 text-base
+                [overflow-wrap:anywhere]
                 font-black
                 leading-tight
                 transition-colors
@@ -397,10 +403,13 @@ export default function GameLayout({
             `}
           >
             <p
+              dir="auto"
               className={`
+                line-clamp-2
                 max-w-full
-                truncate
+                text-center
                 text-xs
+                [overflow-wrap:anywhere]
                 font-bold
                 leading-tight
                 transition-colors

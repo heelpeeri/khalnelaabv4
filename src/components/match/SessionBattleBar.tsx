@@ -40,7 +40,10 @@ export default function SessionBattleBar({
         className="mb-1.5 grid grid-cols-[1fr_auto_1fr] items-center gap-3"
         dir="ltr"
       >
-        <p className="min-w-0 truncate text-left text-[11px] font-black text-cyan-100/70 sm:text-xs">
+        <p
+          dir="auto"
+          className="min-w-0 truncate text-left text-[11px] font-black text-cyan-100/70 sm:text-xs"
+        >
           {side2Name || "فريق 2"}
         </p>
 
@@ -65,7 +68,10 @@ export default function SessionBattleBar({
           )}
         </div>
 
-        <p className="min-w-0 truncate text-right text-[11px] font-black text-fuchsia-100/70 sm:text-xs">
+        <p
+          dir="auto"
+          className="min-w-0 truncate text-right text-[11px] font-black text-fuchsia-100/70 sm:text-xs"
+        >
           {side1Name || "فريق 1"}
         </p>
       </div>
