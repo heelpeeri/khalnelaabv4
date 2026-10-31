@@ -12,7 +12,8 @@ type SetupGameId =
   | "categories"
   | "draw"
   | "logo"
-  | "country";
+  | "country"
+  | "car";
 
 type SetupGameProps = {
   mode?: "session" | "quick";
@@ -67,6 +68,11 @@ const GAMES: {
     id: "logo",
     name: "خمن الشعار",
     image: "/images/posters/Logogame.png",
+  },
+  {
+    id: "car",
+    name: "عينك عالموتر",
+    image: "/images/posters/Cargame.png",
   },
   {
     id: "country",

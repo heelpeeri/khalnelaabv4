@@ -22,7 +22,7 @@ const somar = localFont({
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || SITE.url;
 
-const description = "ألعاب جماعية للجلسات: فريقين، ثمان ألعاب، وبطل واحد.";
+const description = "ألعاب جماعية للجلسات: فريقين، تسع ألعاب، وبطل واحد.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
